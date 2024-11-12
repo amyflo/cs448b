@@ -46,25 +46,25 @@ def process_csv_to_json(csv_file):
                 comment = {
                     "body": row.get(headers[0], ""),
                     "parentID": row.get("postId", ""),
-                    "commentId": row["id"],
+                    "commentId": post_id,
                     "url": row.get("url", ""),
                     "username": row.get("username", ""),
                     "createdAt": row["createdAt"]
                 }
-                data["postId"]["comments"].append(comment)
+                data[row.get("postId")]["comments"].append(comment)
 
     # Convert defaultdict to regular dict
     final_data = {"post": dict(data)}
 
     # Output JSON data
-    json_data = json.dumps(final_data, indent=4)
-    return json_data
+    final_data = {"post": dict(data)}
+    return final_data
 
-# Usage example:
 csv_file = "uncleaned-data.csv"
 json_result = process_csv_to_json(csv_file)
 output_file = "output.json"
 
+# Write JSON object directly to a file
 with open(output_file, 'w', encoding='utf-8') as f:
     json.dump(json_result, f, indent=4)
 
