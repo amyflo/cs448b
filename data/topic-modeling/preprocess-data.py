@@ -7,14 +7,7 @@ import json
 import contractions
 import string
 
-# example test text 
-example = "I haven\u2019t bothered to want to impress anybody. I\u2019m always the strong looking one.\n\nHow to show you my soft side?\n\nNot the overdone clubbing Y2K -chic hollywood -holiday party side, the metal girl, the not giving 2 fucks i\u2019ll wear the clothes I slept in all day and shower tomorrow lazy bum of a girl, the single mom look, but a woman who is deserving of your attention?\n\nMy OCD is set on you and all I do today.\n\nHopefully you will get to see all side and still see me in the way I hope you do in your thoughts. \n\nI want 1 date night every other week. No kids - Just us as we are today.\n\nDeal?"
-
-# processing tools
-# nlp = English()
 nlp = spacy.load("en_core_web_sm")
-# tokenizer = Tokenizer(nlp.vocab)
-
 
 def addApostrophes(text):
   return text.replace('\u2018', "'").replace('\u2019', "'")
@@ -23,33 +16,45 @@ def expandContractions(text):
    # need to pass in text without unicode (\u2019 need to be changed to ')
   return contractions.fix(text)
 
-# use spaCy tokenizer and lemma tools 
-# splits letter into individual words 
-# also finds the root form of each word
-def tokenize(text):
-  # lowercaseText = text.lower()
+# use spaCy tokenizer, lemma, and stop word tools 
+def tokenizeAndRemoveStopWords(text):
+  # change to lowercase and remove any leading hyphens
   lowercaseText = re.sub(r'[^a-zA-Z0-9\s]', '', text).lower()  # Remove leading hyphen
-
   doc = nlp(lowercaseText)
   tokens = []
   lemmas = []
+  # only add tokens that are not punctuation, spaces, or stop words (and, a ... )
   for token in doc:
-    if (not token.is_punct and not token.is_space): 
+    if (not token.is_punct and not token.is_space and not token.is_stop): 
       tokens.append(token.text)
       lemmas.append(token.lemma_)
       
   return tokens, lemmas
 
-# decode the unicode --> changing "haven\u2019t" to haven't for contraction expansion
+# decode unicode and expand contractions 
+# return rootwords of relevant words in letter 
 def processText(text):
-  withApostrophes = addApostrophes(text)
+  withApostrophes = addApostrophes(text) # 
   contractionsExpanded = expandContractions(withApostrophes)
-  words, rootWords = tokenize(contractionsExpanded)
+  words, rootWords = tokenizeAndRemoveStopWords(contractionsExpanded)
+  return rootWords
 
-  print("ORIGINAL WORDS: ", words)
-  print("-------------")
-  print("ROOT WORDS: ", rootWords)
-  # return processedText
+# open and load data from the posts json file:
+postsFilepath = "../output.json"
+with open(postsFilepath, "r") as file:
+  data = json.load(file)
+  posts = data["post"]
 
-processed = processText(example)
-# print("Processed Text:", processed)
+# loop through all posts and process the text 
+processedPosts = {}
+for postId, postData in posts.items():
+  body = postData.get("body")
+  if (body and not body.startswith("URL:")):
+    processedBody = processText(body)
+    processedPosts[postId] = processedBody
+print("Number of posts without URLs as body text: ", len(processedPosts))
+
+# export to file 
+outputFilepath = "../cleaned-root-words.json"
+with open(outputFilepath, "w") as outputFile:
+  json.dump(processedPosts, outputFile, indent=4)
