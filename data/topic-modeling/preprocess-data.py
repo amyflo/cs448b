@@ -47,14 +47,26 @@ with open(postsFilepath, "r") as file:
 
 # loop through all posts and process the text 
 processedPosts = {}
-for postId, postData in posts.items():
-  body = postData.get("body")
-  if (body and not body.startswith("URL:")):
-    processedBody = processText(body)
-    processedPosts[postId] = processedBody
+
+# export bag of words 
+bagOfWordsFilepath = "../cleaned-bag-of-words.txt"
+
+with open(bagOfWordsFilepath, "w") as bagOfWordsFile:
+  for postId, postData in posts.items():
+    body = postData.get("body")
+
+    # set array of words as value of post_id dictionary
+    if (body and not body.startswith("URL:")):
+      processedBody = processText(body)
+      processedPosts[postId] = processedBody
+
+      # dump words into txt file 
+      for word in processedBody:
+        bagOfWordsFile.write(word + "\n")
+
 print("Number of posts without URLs as body text: ", len(processedPosts))
 
-# export to file 
+# export labeled structure to file 
 outputFilepath = "../cleaned-root-words.json"
 with open(outputFilepath, "w") as outputFile:
   json.dump(processedPosts, outputFile, indent=4)
