@@ -2,8 +2,9 @@ anyascii==0.3.2
 click==8.1.7
 contractions==0.1.73
 joblib==1.4.2
-nltk==3.9.1
 pyahocorasick==2.1.0
 regex==2024.11.6
 textsearch==0.0.24
 tqdm==4.67.0
+spacy==3.8.2  # Add spaCy to your requirements
+

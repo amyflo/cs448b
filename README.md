@@ -22,17 +22,17 @@
 4. **Tokenization**
 
    - Split text in letter into individual words so we can iterate through.
-   - **Library:** `NLTK`
+   - **Library:** `spacy`
 
 5. **Remove Stop Words**
 
    - Filters out common stop words like "and," "the," and "is."
-   - **Library:** `NLTK`
+   - **Library:** `spacy`
 
 6. **Lemmatization**
 
    - Converts words to their base/root form like `"running"` → `"run"`.
-   - **Library:** `NLTK`
+   - **Library:** `spacy`
 
 7. **Save Cleaned Data**
    - Outputs the cleaned text to an array of JSON objects where each object is:
@@ -48,5 +48,6 @@
 Use `pip` to install the necessary Python packages:
 
 ```bash
-pip install contractions nltk
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
