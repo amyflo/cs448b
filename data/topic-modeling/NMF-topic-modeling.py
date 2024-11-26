@@ -70,7 +70,8 @@ for i in range(len(post_ids)):
     "topics": {
       "first": {"topic": int(top_two_topic_idx[i, 0]), "weight": float(top_two_weights[i, 0])},
       "second": {"topic": int(top_two_topic_idx[i, 1]), "weight": float(top_two_weights[i, 1])}
-    }
+    },
+    "all_weights": topic_distribution[i].tolist()
   }
   results.append(result)
 
