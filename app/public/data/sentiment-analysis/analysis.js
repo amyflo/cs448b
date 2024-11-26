@@ -20,6 +20,7 @@ const analyzeSentiment = (text) => sentiment.analyze(text);
 const results = Object.entries(posts).map(([postId, postData]) => {
   const titleSentiment = analyzeSentiment(postData.title);
   const bodySentiment = analyzeSentiment(postData.body);
+  const date = postData.createdAt;
 
   const commentsSentiment = (postData.comments || []).map((comment, index) => ({
     commentId: index + 1,
@@ -43,6 +44,7 @@ const results = Object.entries(posts).map(([postId, postData]) => {
     commentsSentiment,
     commentsSentiment,
     averageCommentScore,
+    date,
   };
 });
 
@@ -53,7 +55,7 @@ const results = Object.entries(posts).map(([postId, postData]) => {
 //   commentScores: postResult.commentsSentiment.map((c) => c.sentiment.score),
 // }));
 
-const outputFilePath = "./sentiment-results.json";
+const outputFilePath = "./results.json";
 try {
   fs.writeFileSync(outputFilePath, JSON.stringify(results, null, 2));
   console.log(`Sentiment analysis results written to ${outputFilePath}`);
