@@ -57,22 +57,39 @@
         const margin = 50;
 
         // define the color theme (20 different colors but I'll be using 15 for each topic)
+        // const colors = [
+        //   "#1f77b4",
+        //   "#ff7f0e",
+        //   "#2ca02c",
+        //   "#d62728",
+        //   "#9467bd",
+        //   "#8c564b",
+        //   "#e377c2",
+        //   "#7f7f7f",
+        //   "#bcbd22",
+        //   "#17becf",
+        //   "#f6a829",
+        //   "#f08a5d",
+        //   "#b6d7a8",
+        //   "#ffb5a7",
+        //   "#91c8a6",
+        // ];
         const colors = [
-          "#1f77b4",
-          "#ff7f0e",
-          "#2ca02c",
-          "#d62728",
-          "#9467bd",
-          "#8c564b",
-          "#e377c2",
-          "#7f7f7f",
-          "#bcbd22",
-          "#17becf",
-          "#f6a829",
-          "#f08a5d",
-          "#b6d7a8",
-          "#ffb5a7",
-          "#91c8a6",
+          "#e6194B",
+          "#f58231",
+          "#ffe119",
+          "#bfef45",
+          "#3cb44b",
+          "#42d4f4",
+          "#4363d8",
+          "#911eb4",
+          "#f032e6",
+          "#808000",
+          "#dcbeff",
+          "#9A6324",
+          "#ffd8b1",
+          "#a9a9a9",
+          "#000075",
         ];
         console.log(colors);
 
@@ -117,9 +134,12 @@
         for (let i = 0; i < reducedData.length; i++) {
           const point = reducedData[i];
           const post = assignedTopicsData[i];
+
           const topTopic = post.topics.first.topic;
-          const secondTopic = post.topics.second.topic;
           const topLabel = topicsRefData[topTopic].label;
+          const topWords = topicsRefData[topTopic].top_words;
+
+          const secondTopic = post.topics.second.topic;
           const secondLabel = topicsRefData[secondTopic].label;
 
           const color = colors[topTopic];
@@ -139,7 +159,7 @@
                 .html(
                   `X: ${point.x.toFixed(2)}<br>Y: ${point.y.toFixed(
                     2
-                  )}<br>Topic 1: ${topLabel}<br>Topic 2: ${secondLabel}`
+                  )}<br>Topic 1: ${topLabel}<br>${topWords}`
                 )
                 .style("left", `${event.pageX + 10}px`)
                 .style("top", `${event.pageY - 25}px`);
@@ -152,7 +172,8 @@
     </script>
     <caption>
       T-SNE preserves structure and emphasizes similar points, nonlinear (unlike
-      PCA) so it creates on a 2D mapping rather than linearly
+      PCA) so it creates on a 2D mapping rather than linearly. It reflects how
+      the letters of those topics relate to each other in the dataset
     </caption>
   </body>
 </html>
