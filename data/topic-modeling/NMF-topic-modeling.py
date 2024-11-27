@@ -1,4 +1,4 @@
-# using scikit learn to do topic modeling 
+git# using scikit learn to do topic modeling 
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer # num occur in doc / num occur in all docs
 from sklearn.decomposition import NMF
