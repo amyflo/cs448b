@@ -64,9 +64,9 @@
       // load topic assignment data and the topic reference data
       // (promise for waiting for both sets to load before moving on)
       Promise.all([
-        d3.json("../top_topics_with_weights.json"),
-        d3.json("../topics_NMF_15.json"),
-        d3.json("../reduced-data.json"),
+        d3.json("./results/top_topics_with_weights.json"),
+        d3.json("./results/topics_NMF_15.json"),
+        d3.json("./results/reduced-data.json"),
       ]).then(([assignedTopicsData, topicsRefData, reducedData]) => {
         console.log("Loaded Data: ", assignedTopicsData);
         console.log("Topic Ref Data: ", topicsRefData);

@@ -76,7 +76,7 @@ for i in range(len(post_ids)):
   results.append(result)
 
 # save results to a file 
-with open("../top_topics_with_weights.json", "w") as resultsFile:
+with open("./results/top_topics_with_weights.json", "w") as resultsFile:
     json.dump(results, resultsFile, indent=4)
 
 

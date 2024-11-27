@@ -25,5 +25,5 @@ for point in reducedData:
 
 print(reductedObj)
 # # export data as json 
-with open("../reduced-data.json", "w") as reducedFile:
+with open("./results/reduced-data.json", "w") as reducedFile:
   json.dump(reductedObj, reducedFile)
