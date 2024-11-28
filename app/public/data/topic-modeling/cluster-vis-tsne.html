@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>T-SNE Topic Modeling Visualization</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- D3 library -->
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -16,10 +15,27 @@
         text-align: center;
       }
 
+      #outer-container {
+        display: flex;
+        flex-direction: row; /* Horizontal layout for legend, chart, and details */
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      #chart-container {
+        position: relative;
+        width: 1175px;
+        height: 950px;
+        border: 2px solid #ddd;
+        border-radius: 2%;
+        z-index: 1;
+      }
+
       #chart {
-        display: block;
-        margin: 0 auto;
-        border: 1px solid #ddd;
+        width: 100%;
+        height: 100%;
+        padding-right: 400px;
       }
 
       .tooltip {
@@ -30,20 +46,85 @@
         border-radius: 5px;
         pointer-events: none;
         opacity: 0;
-        z-index: 10;
+        z-index: 3;
       }
 
       circle {
         cursor: pointer;
       }
+
+      #legend {
+        position: absolute;
+        top: 20px; /* Add padding to prevent overlapping points */
+        left: 20px; /* Adjust legend position */
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.8
+        ); /* Semi-transparent background */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column; /* Stack legend items */
+        gap: 10px;
+        z-index: 2;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .legend-item rect {
+        width: 18px;
+        height: 18px;
+      }
+
+      .legend-item text {
+        margin: 0; /* Remove any additional margin around text */
+        line-height: 1; /* Compact spacing between lines of text */
+        font-size: 14px; /* Optional: Adjust text size for consistency */
+      }
+
+      #details-box {
+        flex: 1;
+        max-width: 400px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+      }
+
+      #details-box h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      #details-content {
+        font-size: 14px;
+        line-height: 1.5;
+      }
     </style>
   </head>
   <body>
     <h1>T-SNE Visualization of Topic Modeling</h1>
-    <svg id="chart" width="1000" height="1000"></svg>
-
-    <div id="tooltip" class="tooltip"></div>
-
+    <!-- Container for Details-->
+    <div id="outer-container">
+      <div id="chart-container">
+        <svg id="chart" width="1000" height="1000"></svg>
+        <div id="legend"></div>
+        <div id="tooltip" class="tooltip"></div>
+      </div>
+      <div id="details-box">
+        <h2>Details</h2>
+        <div id="details-content">
+          <p>Click on a point to see more details here.</p>
+        </div>
+      </div>
+    </div>
     <script>
       // Load the T-SNE reduced data
       Promise.all([
@@ -57,23 +138,6 @@
         const margin = 50;
 
         // define the color theme (20 different colors but I'll be using 15 for each topic)
-        // const colors = [
-        //   "#1f77b4",
-        //   "#ff7f0e",
-        //   "#2ca02c",
-        //   "#d62728",
-        //   "#9467bd",
-        //   "#8c564b",
-        //   "#e377c2",
-        //   "#7f7f7f",
-        //   "#bcbd22",
-        //   "#17becf",
-        //   "#f6a829",
-        //   "#f08a5d",
-        //   "#b6d7a8",
-        //   "#ffb5a7",
-        //   "#91c8a6",
-        // ];
         const colors = [
           "#e6194B",
           "#f58231",
@@ -110,26 +174,12 @@
           ])
           .range([height, margin]);
         // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
-        const svg = d3.select("#chart");
+        const chartSVG = d3.select("#chart");
         const tooltip = d3.select("#tooltip");
-
-        svg
-          .append("line")
-          .attr("x1", xScale(0)) // x-axis line at x = 0
-          .attr("y1", 0)
-          .attr("x2", xScale(0)) // x-axis line at x = 0
-          .attr("y2", height)
-          .attr("stroke", "black")
-          .attr("stroke-width", 1);
-
-        svg
-          .append("line")
-          .attr("x1", 0)
-          .attr("y1", yScale(0)) // y-axis line at y = 0
-          .attr("x2", width)
-          .attr("y2", yScale(0)) // y-axis line at y = 0
-          .attr("stroke", "black")
-          .attr("stroke-width", 1);
+        const clickInMsg = "Click on a point to see more details here.";
+        const clickOutMsg =
+          "Choose another point or click anywhere outside the point to unselect.";
+        let selectedPt = null; // no point is selected initially
 
         for (let i = 0; i < reducedData.length; i++) {
           const point = reducedData[i];
@@ -145,9 +195,9 @@
           const color = colors[topTopic];
 
           // Plot the data points as circles
-          svg
+          chartSVG
             .append("circle")
-            .attr("cx", xScale(point.x)) // Set x pos as first tsne component
+            .attr("cx", xScale(point.x) + 250) // Set x pos as first tsne component
             .attr("cy", yScale(point.y)) // Set y pos as second tsne component
             .attr("r", 6)
             .attr("fill", color)
@@ -157,17 +207,91 @@
               tooltip.transition().duration(200).style("opacity", 1);
               tooltip
                 .html(
-                  `X: ${point.x.toFixed(2)}<br>Y: ${point.y.toFixed(
+                  `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
                     2
-                  )}<br>Topic 1: ${topLabel}<br>${topWords}`
+                  )}<br>Y: ${point.y.toFixed(2)}`
                 )
-                .style("left", `${event.pageX + 10}px`)
-                .style("top", `${event.pageY - 25}px`);
+                .style("left", `${event.pageX - 5}px`)
+                .style("top", `${event.pageY - 70}px`);
             })
             .on("mouseout", () => {
               tooltip.transition().duration(200).style("opacity", 0);
+            })
+            .on("click", (event, d) => {
+              console.log("clicked on post: ", post.post_id);
+
+              // if there were prev selected points, reset it so highlights don't persist
+              if (selectedPt) {
+                selectedPt.style("opacity", 0.7);
+                selectedPt.attr("stroke", "000");
+              }
+
+              selectedPt = d3.select(event.target);
+              // lower opacity for all points
+              chartSVG.selectAll("circle").style("opacity", 0.2);
+
+              // increase opacity for specific, selected point
+              selectedPt
+                .style("opacity", 0.8)
+                .attr("stroke", "black")
+                .attr("stroke-width", "2");
+
+              // update the details panel
+              d3.select("#details-content").html(
+                `<p>${clickOutMsg}</p>
+                <strong>Post ID: </strong>${post.post_id}`
+              );
+              event.stopPropagation(); // Prevent click from propagating to the background
             });
+
+          // track click events throughout the entire body
+          // (if user clicks outside, it'll reset point selection)
+          d3.select("body").on("click", (event) => {
+            if (selectedPt) {
+              // check: click position is anywhere other than the currently selected point
+              if (!selectedPt.node().contains(event.target)) {
+                chartSVG
+                  .selectAll("circle")
+                  .style("opacity", 0.7) // reset opacity
+                  .attr("stroke", "000"); // remove outline to be transparent
+
+                // reset the details box
+                d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
+
+                // no points are selected anymore so val should be null
+                selectedPt = null;
+              }
+            }
+          });
         }
+        // append a legend
+        const legendWidth = 200;
+        const legendHeight = 50;
+        const legendMargin = 20;
+        const blockSize = 18;
+        const spacing = 10; // Space between rectangles
+
+        const legendContainer = d3.select("#legend");
+
+        // for each topic, get color and append to legend
+        colors.forEach((color, index) => {
+          const topicLabel = topicsRefData[index].label;
+          const legendItem = legendContainer
+            .append("div")
+            .attr("class", "legend-item");
+
+          legendItem
+            .append("svg")
+            .attr("width", 18) // Match rectangle size
+            .attr("height", 18) // Match rectangle size
+            .append("rect")
+            .attr("fill", color);
+
+          legendItem
+            .append("text")
+            .text(topicLabel)
+            .style("margin-left", "5px");
+        });
       });
     </script>
     <caption>
