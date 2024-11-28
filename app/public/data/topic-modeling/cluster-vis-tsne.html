@@ -11,7 +11,7 @@
         margin: 20px;
       }
 
-      h1 {
+      h3 {
         text-align: center;
       }
 
@@ -20,32 +20,38 @@
         flex-direction: row; /* Horizontal layout for legend, chart, and details */
         justify-content: flex-start;
         align-items: flex-start;
-        gap: 20px;
+        gap: 10px;
       }
 
       #chart-container {
         position: relative;
-        width: 1175px;
-        height: 950px;
-        border: 2px solid #ddd;
-        border-radius: 2%;
+        width: 1020px;
+        height: 750px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
         z-index: 1;
       }
 
+      #chart-container h3 {
+        margin-bottom: 0px; /* Reduce space below the h3 */
+        margin-top: 10px;
+        padding: 0; /* Ensure no extra padding */
+      }
+
       #chart {
+        display: block;
         width: 100%;
         height: 100%;
-        padding-right: 400px;
       }
 
       .tooltip {
         position: absolute;
         background-color: rgba(0, 0, 0, 0.7);
-        color: #fff;
+        color: #ffff;
         padding: 10px;
         border-radius: 5px;
         pointer-events: none;
-        opacity: 0;
+        opacity: 1;
         z-index: 3;
       }
 
@@ -55,38 +61,38 @@
 
       #legend {
         position: absolute;
-        top: 20px; /* Add padding to prevent overlapping points */
-        left: 20px; /* Adjust legend position */
+        top: 10px; /* Add padding to prevent overlapping points */
+        left: 10px; /* Adjust legend position */
         background-color: rgba(
           255,
           255,
           255,
           0.8
         ); /* Semi-transparent background */
-        padding: 10px;
+        padding: 5px;
         border: 1px solid #ddd;
         border-radius: 5px;
         display: flex;
         flex-direction: column; /* Stack legend items */
-        gap: 10px;
-        z-index: 2;
+        gap: 1px;
+        z-index: 4;
       }
 
       .legend-item {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 0px;
       }
 
       .legend-item rect {
-        width: 18px;
-        height: 18px;
+        width: 12px;
+        height: 12px;
       }
 
       .legend-item text {
         margin: 0; /* Remove any additional margin around text */
         line-height: 1; /* Compact spacing between lines of text */
-        font-size: 14px; /* Optional: Adjust text size for consistency */
+        font-size: 12px; /* Optional: Adjust text size for consistency */
       }
 
       #details-box {
@@ -96,6 +102,8 @@
         border: 1px solid #ddd;
         background-color: #f9f9f9;
         overflow-y: auto;
+        border-radius: 5px;
+        z-index: 2;
       }
 
       #details-box h2 {
@@ -110,11 +118,12 @@
     </style>
   </head>
   <body>
-    <h1>T-SNE Visualization of Topic Modeling</h1>
     <!-- Container for Details-->
     <div id="outer-container">
       <div id="chart-container">
-        <svg id="chart" width="1000" height="1000"></svg>
+        <h3>T-SNE Visualization of Topic Modeling</h3>
+
+        <svg id="chart"></svg>
         <div id="legend"></div>
         <div id="tooltip" class="tooltip"></div>
       </div>
@@ -133,9 +142,14 @@
         d3.json("./results/tsne-reduced-data.json"),
       ]).then(([assignedTopicsData, topicsRefData, reducedData]) => {
         // Set the canvas dimensions
-        const width = 900;
-        const height = 900;
-        const margin = 50;
+        const width = 800;
+        const height = 700;
+        const margin = 40;
+        const chartLeftMargin = 200;
+        const chartContainerW = 1020;
+        const chartContainerH = 750;
+        const chartMidX = chartLeftMargin + width / 2;
+        const chartMidY = height / 2;
 
         // define the color theme (20 different colors but I'll be using 15 for each topic)
         const colors = [
@@ -172,15 +186,26 @@
             d3.min(reducedData, (d) => d.y),
             d3.max(reducedData, (d) => d.y),
           ])
-          .range([height, margin]);
+          .range([height, 20]);
+
+        // define zooming transformation (used in on click event for points)
+        const zoom = d3
+          .zoom()
+          .scaleExtent([1, 10]) // Set zoom limits
+          .on("zoom", function (event) {
+            chartSVG.attr("transform", event.transform);
+          });
+
         // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
         const chartSVG = d3.select("#chart");
         const tooltip = d3.select("#tooltip");
         const clickInMsg = "Click on a point to see more details here.";
         const clickOutMsg =
           "Choose another point or click anywhere outside the point to unselect.";
-        let selectedPt = null; // no point is selected initially
 
+        // point selection variables
+        let selectedPt = null; // no point is selected initially
+        let zoomScale = 1;
         for (let i = 0; i < reducedData.length; i++) {
           const point = reducedData[i];
           const post = assignedTopicsData[i];
@@ -197,9 +222,9 @@
           // Plot the data points as circles
           chartSVG
             .append("circle")
-            .attr("cx", xScale(point.x) + 250) // Set x pos as first tsne component
+            .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as first tsne component
             .attr("cy", yScale(point.y)) // Set y pos as second tsne component
-            .attr("r", 6)
+            .attr("r", 5)
             .attr("fill", color)
             .attr("opacity", 0.7)
             .on("mouseover", (event) => {
@@ -236,6 +261,26 @@
                 .attr("stroke", "black")
                 .attr("stroke-width", "2");
 
+              // zoom into selected point area
+              const pointX = xScale(point.x) + chartLeftMargin; // position of the selected point on the x-axis
+              const pointY = yScale(point.y);
+              const zoomCenterX = chartContainerW / 2 - pointX;
+              const zoomCenterY = chartContainerH / 2 - pointY;
+
+              // Apply zooming with a scale factor (zoomScale * 2) around the selected point
+              const zoomedInScale = zoomScale * 2;
+              zoom.scaleTo(chartSVG, zoomedInScale);
+
+              // Apply the transition to the zoom
+              chartSVG
+                .transition()
+                .duration(1000)
+                .call(
+                  zoom.transform,
+                  d3.zoomIdentity
+                    .translate(zoomCenterX, zoomCenterY)
+                    .scale(zoomedInScale)
+                );
               // update the details panel
               d3.select("#details-content").html(
                 `<p>${clickOutMsg}</p>
@@ -257,9 +302,12 @@
 
                 // reset the details box
                 d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
-
                 // no points are selected anymore so val should be null
                 selectedPt = null;
+                chartSVG.transition().duration(750).call(
+                  zoom.transform,
+                  d3.zoomIdentity // Reset zoom and translation
+                );
               }
             }
           });
