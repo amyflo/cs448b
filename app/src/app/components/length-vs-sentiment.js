@@ -9,13 +9,13 @@ const InteractiveBoxPlot = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/data/sentiment-analysis/results.json");
+        const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
-        const parsedData = json.map((post) => ({
-          postId: post.postId,
-          postLength: post.bodySentiment.tokens?.length || 0, // Use token count for post length
-          bodyScore: post.bodySentiment?.score || 0,
+        const parsedData = Object.entries(json).map(([postId, post]) => ({
+          postId,
+          postLength: post.bodySentiment?.tokens?.length || 0, // Use token count for post length
+          bodyScore: post.bodySentiment?.score || 0, // Body sentiment score
         }));
 
         renderBoxPlot(parsedData);
