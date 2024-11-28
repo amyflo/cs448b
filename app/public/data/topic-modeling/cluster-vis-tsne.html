@@ -128,7 +128,7 @@
         <div id="tooltip" class="tooltip"></div>
       </div>
       <div id="details-box">
-        <h2>Details</h2>
+        <h2>Love Letter Details</h2>
         <div id="details-content">
           <p>Click on a point to see more details here.</p>
         </div>
@@ -140,207 +140,254 @@
         d3.json("./results/top_topics_with_weights.json"),
         d3.json("./results/topics_NMF_15.json"),
         d3.json("./results/tsne-reduced-data.json"),
-      ]).then(([assignedTopicsData, topicsRefData, reducedData]) => {
-        // Set the canvas dimensions
-        const width = 800;
-        const height = 700;
-        const margin = 40;
-        const chartLeftMargin = 200;
-        const chartContainerW = 1020;
-        const chartContainerH = 750;
-        const chartMidX = chartLeftMargin + width / 2;
-        const chartMidY = height / 2;
+        d3.json("../output.json"),
+      ]).then(
+        ([assignedTopicsData, topicsRefData, reducedData, lettersData]) => {
+          // Set the canvas dimensions
+          const width = 800;
+          const height = 700;
+          const margin = 40;
+          const chartLeftMargin = 200;
+          const chartContainerW = 1020;
+          const chartContainerH = 750;
+          const chartMidX = chartLeftMargin + width / 2;
+          const chartMidY = height / 2;
 
-        // define the color theme (20 different colors but I'll be using 15 for each topic)
-        const colors = [
-          "#e6194B",
-          "#f58231",
-          "#ffe119",
-          "#bfef45",
-          "#3cb44b",
-          "#42d4f4",
-          "#4363d8",
-          "#911eb4",
-          "#f032e6",
-          "#808000",
-          "#dcbeff",
-          "#9A6324",
-          "#ffd8b1",
-          "#a9a9a9",
-          "#000075",
-        ];
-        console.log(colors);
+          // define the color theme (15 colors for 15 topics)
+          const colors = [
+            "#e6194B",
+            "#f58231",
+            "#ffe119",
+            "#bfef45",
+            "#3cb44b",
+            "#42d4f4",
+            "#4363d8",
+            "#911eb4",
+            "#f032e6",
+            "#808000",
+            "#dcbeff",
+            "#9A6324",
+            "#ffd8b1",
+            "#a9a9a9",
+            "#000075",
+          ];
 
-        // Define scales for the x and y axes so it fits within the canvas
-        // also important for emphasizing the clusters
-        const xScale = d3
-          .scaleLinear()
-          .domain([
-            d3.min(reducedData, (d) => d.x),
-            d3.max(reducedData, (d) => d.x),
-          ])
-          .range([margin, width]);
-        const yScale = d3
-          .scaleLinear()
-          .domain([
-            d3.min(reducedData, (d) => d.y),
-            d3.max(reducedData, (d) => d.y),
-          ])
-          .range([height, 20]);
+          // Define scales for the x and y axes so it fits within the canvas
+          // also important for emphasizing the clusters
+          const xScale = d3
+            .scaleLinear()
+            .domain([
+              d3.min(reducedData, (d) => d.x),
+              d3.max(reducedData, (d) => d.x),
+            ])
+            .range([margin, width]);
+          const yScale = d3
+            .scaleLinear()
+            .domain([
+              d3.min(reducedData, (d) => d.y),
+              d3.max(reducedData, (d) => d.y),
+            ])
+            .range([height, 20]);
 
-        // define zooming transformation (used in on click event for points)
-        const zoom = d3
-          .zoom()
-          .scaleExtent([1, 10]) // Set zoom limits
-          .on("zoom", function (event) {
-            chartSVG.attr("transform", event.transform);
-          });
-
-        // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
-        const chartSVG = d3.select("#chart");
-        const tooltip = d3.select("#tooltip");
-        const clickInMsg = "Click on a point to see more details here.";
-        const clickOutMsg =
-          "Choose another point or click anywhere outside the point to unselect.";
-
-        // point selection variables
-        let selectedPt = null; // no point is selected initially
-        let zoomScale = 1;
-        for (let i = 0; i < reducedData.length; i++) {
-          const point = reducedData[i];
-          const post = assignedTopicsData[i];
-
-          const topTopic = post.topics.first.topic;
-          const topLabel = topicsRefData[topTopic].label;
-          const topWords = topicsRefData[topTopic].top_words;
-
-          const secondTopic = post.topics.second.topic;
-          const secondLabel = topicsRefData[secondTopic].label;
-
-          const color = colors[topTopic];
-
-          // Plot the data points as circles
-          chartSVG
-            .append("circle")
-            .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as first tsne component
-            .attr("cy", yScale(point.y)) // Set y pos as second tsne component
-            .attr("r", 5)
-            .attr("fill", color)
-            .attr("opacity", 0.7)
-            .on("mouseover", (event) => {
-              console.log("Mouseover triggered for: ", post.post_id);
-              tooltip.transition().duration(200).style("opacity", 1);
-              tooltip
-                .html(
-                  `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
-                    2
-                  )}<br>Y: ${point.y.toFixed(2)}`
-                )
-                .style("left", `${event.pageX - 5}px`)
-                .style("top", `${event.pageY - 70}px`);
-            })
-            .on("mouseout", () => {
-              tooltip.transition().duration(200).style("opacity", 0);
-            })
-            .on("click", (event, d) => {
-              console.log("clicked on post: ", post.post_id);
-
-              // if there were prev selected points, reset it so highlights don't persist
-              if (selectedPt) {
-                selectedPt.style("opacity", 0.7);
-                selectedPt.attr("stroke", "000");
-              }
-
-              selectedPt = d3.select(event.target);
-              // lower opacity for all points
-              chartSVG.selectAll("circle").style("opacity", 0.2);
-
-              // increase opacity for specific, selected point
-              selectedPt
-                .style("opacity", 0.8)
-                .attr("stroke", "black")
-                .attr("stroke-width", "2");
-
-              // zoom into selected point area
-              const pointX = xScale(point.x) + chartLeftMargin; // position of the selected point on the x-axis
-              const pointY = yScale(point.y);
-              const zoomCenterX = chartContainerW / 2 - pointX;
-              const zoomCenterY = chartContainerH / 2 - pointY;
-
-              // Apply zooming with a scale factor (zoomScale * 2) around the selected point
-              const zoomedInScale = zoomScale * 2;
-              zoom.scaleTo(chartSVG, zoomedInScale);
-
-              // Apply the transition to the zoom
-              chartSVG
-                .transition()
-                .duration(1000)
-                .call(
-                  zoom.transform,
-                  d3.zoomIdentity
-                    .translate(zoomCenterX, zoomCenterY)
-                    .scale(zoomedInScale)
-                );
-              // update the details panel
-              d3.select("#details-content").html(
-                `<p>${clickOutMsg}</p>
-                <strong>Post ID: </strong>${post.post_id}`
-              );
-              event.stopPropagation(); // Prevent click from propagating to the background
+          // define zooming transformation (used in on click event for points)
+          const zoom = d3
+            .zoom()
+            .scaleExtent([1, 10]) // Set zoom limits
+            .on("zoom", function (event) {
+              chartSVG.attr("transform", event.transform);
             });
 
-          // track click events throughout the entire body
-          // (if user clicks outside, it'll reset point selection)
-          d3.select("body").on("click", (event) => {
-            if (selectedPt) {
-              // check: click position is anywhere other than the currently selected point
-              if (!selectedPt.node().contains(event.target)) {
-                chartSVG
-                  .selectAll("circle")
-                  .style("opacity", 0.7) // reset opacity
-                  .attr("stroke", "000"); // remove outline to be transparent
+          // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
+          const chartSVG = d3.select("#chart");
+          const tooltip = d3.select("#tooltip");
+          const clickInMsg = "Click on a point to see more details here.";
+          const clickOutMsg =
+            "Explore another point or click anywhere outside the point to unselect.";
 
-                // reset the details box
-                d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
-                // no points are selected anymore so val should be null
-                selectedPt = null;
-                chartSVG.transition().duration(750).call(
-                  zoom.transform,
-                  d3.zoomIdentity // Reset zoom and translation
+          // point selection variables
+          let selectedPt = null; // no point is selected initially
+          let zoomScale = 1;
+          for (let i = 0; i < reducedData.length; i++) {
+            const point = reducedData[i];
+            const post = assignedTopicsData[i];
+            const letter = lettersData["post"][post.post_id];
+            const topicWeights = assignedTopicsData[i]["all_weights"];
+
+            const topTopic = post.topics.first.topic;
+            const topLabel = topicsRefData[topTopic].label;
+            const topWords = topicsRefData[topTopic].top_words;
+
+            const secondTopic = post.topics.second.topic;
+            const secondLabel = topicsRefData[secondTopic].label;
+
+            const color = colors[topTopic];
+
+            // Plot the data points as circles
+            chartSVG
+              .append("circle")
+              .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as first tsne component
+              .attr("cy", yScale(point.y)) // Set y pos as second tsne component
+              .attr("r", 5)
+              .attr("fill", color)
+              .attr("opacity", 0.7)
+              .on("mouseover", (event) => {
+                console.log("Mouseover triggered for: ", post.post_id);
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip
+                  .html(
+                    `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
+                      2
+                    )}<br>Y: ${point.y.toFixed(2)}`
+                  )
+                  .style("left", `${event.pageX - 5}px`)
+                  .style("top", `${event.pageY - 70}px`);
+              })
+              .on("mouseout", () => {
+                tooltip.transition().duration(200).style("opacity", 0);
+              })
+              .on("click", (event, d) => {
+                console.log("clicked on post: ", post.post_id);
+
+                // if there were prev selected points, reset it so highlights don't persist
+                if (selectedPt) {
+                  selectedPt.style("opacity", 0.7);
+                  selectedPt.attr("stroke", "000");
+                }
+
+                selectedPt = d3.select(event.target);
+                // lower opacity for all points
+                chartSVG.selectAll("circle").style("opacity", 0.2);
+
+                // increase opacity for specific, selected point
+                selectedPt
+                  .style("opacity", 0.8)
+                  .attr("stroke", "black")
+                  .attr("stroke-width", "2");
+
+                // zoom into selected point area
+                const pointX = xScale(point.x) + chartLeftMargin; // account for the legend padding
+                const pointY = yScale(point.y);
+                const zoomCenterX = chartContainerW / 2 - pointX; // the center of the chart (account for padding)
+                const zoomCenterY = chartContainerH / 2 - pointY;
+
+                // zoom in by 2
+                const zoomedInScale = zoomScale * 2;
+                zoom.scaleTo(chartSVG, zoomedInScale);
+
+                // zoom transition and eased animation with time duration of 1000 ms
+                chartSVG
+                  .transition()
+                  .duration(1000)
+                  .call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                      .translate(zoomCenterX, zoomCenterY)
+                      .scale(zoomedInScale)
+                  );
+                // update the details panel
+                const sortedWeights = topicWeights
+                  .map((weight, index) => ({
+                    index,
+                    weight,
+                  }))
+                  .sort((a, b) => b.weight - a.weight);
+
+                const formattedWeights = sortedWeights.map(
+                  (item) =>
+                    `${topicsRefData[item.index].label}: ${item.weight.toFixed(
+                      5
+                    )}`
                 );
+                d3.select("#details-content").html(
+                  `<p>${clickOutMsg}</p>
+                  <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
+                    <h3 style="margin: 0; font-size: 10; text-align: left;">${
+                      letter.title
+                    }</h3>
+                    <p style="font-size: 1; color: #555;">By <strong>${
+                      letter.username
+                    }
+                      </strong> on ${new Date(
+                        letter.createdAt
+                      ).toLocaleDateString()}
+                    </p>
+                    <p style="margin-top: 10px; font-size: 0.3; color: #333;">
+                      ${
+                        letter.body.length > 300
+                          ? letter.body.substring(0, 300) + "..."
+                          : letter.body
+                      }
+                    </p>
+                    <a href="${
+                      letter.url
+                    }" target="_blank">See the original post.</a>
+                  </div>
+                  <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
+                    <strong style="margin: 0; font-size: 3; text-align: left;">Topic Weights Distribution</strong>
+                    <ol>
+                      ${formattedWeights
+                        .map((topic) => `<li>${topic}</li>`)
+                        .join("")}
+                    </ol>
+                    </div>
+`
+                );
+                event.stopPropagation(); // Prevent click from propagating to the background
+              });
+
+            // track click events throughout the entire body
+            // (if user clicks outside, it'll reset point selection)
+            d3.select("body").on("click", (event) => {
+              if (selectedPt) {
+                // check: click position is anywhere other than the currently selected point
+                if (!selectedPt.node().contains(event.target)) {
+                  chartSVG
+                    .selectAll("circle")
+                    .style("opacity", 0.7) // reset opacity
+                    .attr("stroke", "000"); // remove outline to be transparent
+
+                  // reset the details box
+                  d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
+                  // no points are selected anymore so val should be null
+                  selectedPt = null;
+                  chartSVG.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity // Reset zoom and transition
+                  );
+                }
               }
-            }
+            });
+          }
+          // append a legend
+          const legendWidth = 200;
+          const legendHeight = 50;
+          const legendMargin = 20;
+          const blockSize = 18;
+          const spacing = 10; // Space between rectangles
+
+          const legendContainer = d3.select("#legend");
+
+          // for each topic, get color and append to legend
+          colors.forEach((color, index) => {
+            const topicLabel = topicsRefData[index].label;
+            const legendItem = legendContainer
+              .append("div")
+              .attr("class", "legend-item");
+
+            legendItem
+              .append("svg")
+              .attr("width", 18) // Match rectangle size
+              .attr("height", 18) // Match rectangle size
+              .append("rect")
+              .attr("fill", color);
+
+            legendItem
+              .append("text")
+              .text(topicLabel)
+              .style("margin-left", "5px");
           });
         }
-        // append a legend
-        const legendWidth = 200;
-        const legendHeight = 50;
-        const legendMargin = 20;
-        const blockSize = 18;
-        const spacing = 10; // Space between rectangles
-
-        const legendContainer = d3.select("#legend");
-
-        // for each topic, get color and append to legend
-        colors.forEach((color, index) => {
-          const topicLabel = topicsRefData[index].label;
-          const legendItem = legendContainer
-            .append("div")
-            .attr("class", "legend-item");
-
-          legendItem
-            .append("svg")
-            .attr("width", 18) // Match rectangle size
-            .attr("height", 18) // Match rectangle size
-            .append("rect")
-            .attr("fill", color);
-
-          legendItem
-            .append("text")
-            .text(topicLabel)
-            .style("margin-left", "5px");
-        });
-      });
+      );
     </script>
     <caption>
       T-SNE preserves structure and emphasizes similar points, nonlinear (unlike
