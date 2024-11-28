@@ -3,6 +3,8 @@ from matplotlib import pyplot as plt
 
 import generate as gen
 
+FULL_CORPUS_SIZE = 843
+
 class ProjViz:
     """ Class for producing a projection map visualization for the love letters corpus
     """
@@ -55,7 +57,7 @@ class ProjViz:
         
 
 if __name__ == "__main__":
-    viz = ProjViz(dim=100)
+    viz = ProjViz(dim=100, n_samples=FULL_CORPUS_SIZE)
     viz.set_axis("man", "woman")
     viz.project_words(["sorry", "snuggle", "angry", "alcohol", "abused", "abuser", "alone", "anxiety", "calm", "love", "confused", "certain"])
     viz.plot_projections()
