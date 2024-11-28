@@ -10,17 +10,17 @@ const SentimentBoxChart = () => {
     // Fetch the sentiment-results.json file
     const fetchData = async () => {
       try {
-        const response = await fetch("/data/sentiment-analysis/results.json");
+        const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
         // Map data to include titleScore, bodyScore, and averageCommentScore
-        const mappedData = json.map((post) => ({
-          postId: post.postId,
+        const parsedData = Object.entries(json).map(([postId, post]) => ({
+          postId,
           titleScore: post.titleSentiment.score,
           bodyScore: post.bodySentiment.score,
           averageCommentScore: post.averageCommentScore,
         }));
-        setData(mappedData);
+        setData(parsedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

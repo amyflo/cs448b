@@ -9,10 +9,11 @@ const SentimentHeatmap = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/data/sentiment-analysis/results.json");
+        const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
-        const parsedData = json.map((post) => ({
+        const parsedData = Object.entries(json).map(([postId, post]) => ({
+          postId,
           date: new Date(post.date),
           bodyScore: post.bodySentiment.score,
         }));
