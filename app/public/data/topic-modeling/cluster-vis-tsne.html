@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>T-SNE Topic Modeling Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- D3 library -->
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      #chart {
+        display: block;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+      }
+
+      .tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 10;
+      }
+
+      circle {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>T-SNE Visualization of Topic Modeling</h1>
+    <svg id="chart" width="1000" height="1000"></svg>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+      // Load the T-SNE reduced data
+      Promise.all([
+        d3.json("./results/top_topics_with_weights.json"),
+        d3.json("./results/topics_NMF_15.json"),
+        d3.json("./results/tsne-reduced-data.json"),
+      ]).then(([assignedTopicsData, topicsRefData, reducedData]) => {
+        // Set the canvas dimensions
+        const width = 900;
+        const height = 900;
+        const margin = 50;
+
+        // define the color theme (20 different colors but I'll be using 15 for each topic)
+        // const colors = [
+        //   "#1f77b4",
+        //   "#ff7f0e",
+        //   "#2ca02c",
+        //   "#d62728",
+        //   "#9467bd",
+        //   "#8c564b",
+        //   "#e377c2",
+        //   "#7f7f7f",
+        //   "#bcbd22",
+        //   "#17becf",
+        //   "#f6a829",
+        //   "#f08a5d",
+        //   "#b6d7a8",
+        //   "#ffb5a7",
+        //   "#91c8a6",
+        // ];
+        const colors = [
+          "#e6194B",
+          "#f58231",
+          "#ffe119",
+          "#bfef45",
+          "#3cb44b",
+          "#42d4f4",
+          "#4363d8",
+          "#911eb4",
+          "#f032e6",
+          "#808000",
+          "#dcbeff",
+          "#9A6324",
+          "#ffd8b1",
+          "#a9a9a9",
+          "#000075",
+        ];
+        console.log(colors);
+
+        // Define scales for the x and y axes so it fits within the canvas
+        // also important for emphasizing the clusters
+        const xScale = d3
+          .scaleLinear()
+          .domain([
+            d3.min(reducedData, (d) => d.x),
+            d3.max(reducedData, (d) => d.x),
+          ])
+          .range([margin, width]);
+        const yScale = d3
+          .scaleLinear()
+          .domain([
+            d3.min(reducedData, (d) => d.y),
+            d3.max(reducedData, (d) => d.y),
+          ])
+          .range([height, margin]);
+        // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
+        const svg = d3.select("#chart");
+        const tooltip = d3.select("#tooltip");
+
+        svg
+          .append("line")
+          .attr("x1", xScale(0)) // x-axis line at x = 0
+          .attr("y1", 0)
+          .attr("x2", xScale(0)) // x-axis line at x = 0
+          .attr("y2", height)
+          .attr("stroke", "black")
+          .attr("stroke-width", 1);
+
+        svg
+          .append("line")
+          .attr("x1", 0)
+          .attr("y1", yScale(0)) // y-axis line at y = 0
+          .attr("x2", width)
+          .attr("y2", yScale(0)) // y-axis line at y = 0
+          .attr("stroke", "black")
+          .attr("stroke-width", 1);
+
+        for (let i = 0; i < reducedData.length; i++) {
+          const point = reducedData[i];
+          const post = assignedTopicsData[i];
+
+          const topTopic = post.topics.first.topic;
+          const topLabel = topicsRefData[topTopic].label;
+          const topWords = topicsRefData[topTopic].top_words;
+
+          const secondTopic = post.topics.second.topic;
+          const secondLabel = topicsRefData[secondTopic].label;
+
+          const color = colors[topTopic];
+
+          // Plot the data points as circles
+          svg
+            .append("circle")
+            .attr("cx", xScale(point.x)) // Set x pos as first tsne component
+            .attr("cy", yScale(point.y)) // Set y pos as second tsne component
+            .attr("r", 6)
+            .attr("fill", color)
+            .attr("opacity", 0.7)
+            .on("mouseover", (event) => {
+              console.log("Mouseover triggered for: ", post.post_id);
+              tooltip.transition().duration(200).style("opacity", 1);
+              tooltip
+                .html(
+                  `X: ${point.x.toFixed(2)}<br>Y: ${point.y.toFixed(
+                    2
+                  )}<br>Topic 1: ${topLabel}<br>${topWords}`
+                )
+                .style("left", `${event.pageX + 10}px`)
+                .style("top", `${event.pageY - 25}px`);
+            })
+            .on("mouseout", () => {
+              tooltip.transition().duration(200).style("opacity", 0);
+            });
+        }
+      });
+    </script>
+    <caption>
+      T-SNE preserves structure and emphasizes similar points, nonlinear (unlike
+      PCA) so it creates on a 2D mapping rather than linearly. It reflects how
+      the letters of those topics relate to each other in the dataset
+    </caption>
+  </body>
+</html>
