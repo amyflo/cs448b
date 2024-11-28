@@ -8,12 +8,12 @@ import pprint
 import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = [10, 5]
 
-from json import load as load_json
+import json
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 love_letters_dataset = []
-with open(dir_path+ "/../output.json", "r") as f:
-    love_letters_dataset = load_json(f)
+with open(dir_path + "/../output.json", "r") as f:
+    love_letters_dataset = json.load(f)
 
 import re
 import numpy as np
@@ -29,6 +29,10 @@ START_TOKEN = '<START>'
 END_TOKEN = '<END>'
 NUM_SAMPLES = 150
 
+default_corpus_fname = dir_path + "/samples-love_letters_corpus.json"
+default_dict_fname = dir_path + "/samples-word2ind.json"
+default_matrix_fname = dir_path + "/samples-co-occurrence_matrix.npy" 
+
 np.random.seed(0)
 random.seed(0)
 
@@ -36,17 +40,29 @@ random.seed(0)
 # Data Handling 
 # ------------------------------------------
 
-def read_corpus():
+def read_corpus(n_samples=NUM_SAMPLES, corpus_fname = default_corpus_fname):
     """ Read files from Love Letters dataset
         Return:
             list of lists, with words from each of the processed files
     """
-    print("reading corpus")
-    # get a list of the first NUM_SAMPLES objects in the love letters dataset
-    files = list(love_letters_dataset['post'].values())[:NUM_SAMPLES]
-    # extract the title and the body from our list of objects.
-    # Then perform data cleaning: add start and end tags, convert words to lowercase
-    return [[START_TOKEN] + [re.sub(r'[^\w]', '', w.lower()) for w in (f['title'] + " " + f['body']).split(" ")] + [END_TOKEN] for f in files]
+    
+    if os.path.exists(corpus_fname):
+        print("Loading corpus from", corpus_fname)
+        with open(corpus_fname, "r") as f:
+            corpus = json.load(f)
+    else:
+        print("reading corpus")
+        # get a list of the first NUM_SAMPLES objects in the love letters dataset
+        files = list(love_letters_dataset['post'].values())[:n_samples]
+        # extract the title and the body from our list of objects.
+        # Then perform data cleaning: add start and end tags, convert words to lowercase
+        corpus = [[START_TOKEN] + [re.sub(r'[^\w]', '', w.lower()) for w in (f['title'] + " " + f['body']).split(" ")] + [END_TOKEN] for f in files]
+
+        with open(corpus_fname, "w") as f:
+            print("Saving corpus to", corpus_fname)
+            json.dump(corpus, f)
+        
+    return corpus
 
 def distinct_words(corpus):
     """ Determine a list of distinct words for the corpus.
@@ -74,7 +90,7 @@ def distinct_words(corpus):
 # Produce co-occurence embeddings
 # -------------------------------
 
-def compute_co_occurrence_matrix(corpus, window_size=4):
+def compute_co_occurrence_matrix(corpus, window_size=4, dict_fname=default_dict_fname, matrix_fname=default_matrix_fname):
     """ Compute co-occurrence matrix for the given corpus and window_size (default of 4).
     
         Note: Each word in a document should be at the center of a window. Words near edges will have a smaller
@@ -92,33 +108,46 @@ def compute_co_occurrence_matrix(corpus, window_size=4):
                 The ordering of the words in the rows/columns should be the same as the ordering of the words given by the distinct_words function.
             word2ind (dict): dictionary that maps word to index (i.e. row/column number) for matrix M.
     """
-    print("computing co-occurence matrix")
+    if os.path.exists(dict_fname) and os.path.exists(matrix_fname):
+        print("Loading word2ind dict from", dict_fname)
+        with open(dict_fname, "r") as f:
+            word2ind = json.load(f)        
 
-    words, n_words = distinct_words(corpus)
-    M = None
-    word2ind = {}
-    
-    # map words to their position in the list of distinct words
-    # this will be used later to assign indeces in the matrix M
-    word2ind = {words[i]:i for i in range(n_words)}
+        print("Loading co-occurrence matrix from", matrix_fname)
+        M = np.load(matrix_fname)
+    else:
+        print("computing co-occurence matrix")
 
-    # create empty 2-d array of size n_words * n_words
-    M = np.zeros((n_words, n_words))
-    
-    # itereate over each review in the corpus
-    for review in corpus:
-    # iterate over each word in the review
-        for word_idx in range(len(review)):
-            # calculate indices of the window
-            min_index = 0 if word_idx - window_size < 0 else word_idx - window_size
-            max_index = len(review) - 1 if word_idx + window_size > len(review) - 1 else word_idx + window_size
-            
-            # for each word in the window, count its co-occurence with the center word
-            for window_word in review[min_index:word_idx]:
-                M[word2ind[review[word_idx]], word2ind[window_word]] += 1
-            for window_word in review[word_idx + 1: max_index + 1]:
-                M[word2ind[review[word_idx]], word2ind[window_word]] += 1
+        words, n_words = distinct_words(corpus)
+        M = None
+        word2ind = {}
+        
+        # map words to their position in the list of distinct words
+        # this will be used later to assign indeces in the matrix M
+        word2ind = {words[i]:i for i in range(n_words)}
 
+        # create empty 2-d array of size n_words * n_words
+        M = np.zeros((n_words, n_words))
+        
+        # itereate over each review in the corpus
+        for review in corpus:
+        # iterate over each word in the review
+            for word_idx in range(len(review)):
+                # calculate indices of the window
+                min_index = 0 if word_idx - window_size < 0 else word_idx - window_size
+                max_index = len(review) - 1 if word_idx + window_size > len(review) - 1 else word_idx + window_size
+                
+                # for each word in the window, count its co-occurence with the center word
+                for window_word in review[min_index:word_idx]:
+                    M[word2ind[review[word_idx]], word2ind[window_word]] += 1
+                for window_word in review[word_idx + 1: max_index + 1]:
+                    M[word2ind[review[word_idx]], word2ind[window_word]] += 1
+
+        with open(dict_fname, "w") as f:
+            print("Saving word2ind dict to", dict_fname)
+            json.dump(word2ind, f)
+        print("Saving co-occurrence matrix to", matrix_fname)
+        np.save(matrix_fname, M)
     return M, word2ind
 
 def reduce_to_k_dim(M, k=2):
@@ -222,43 +251,70 @@ def plot_embeddings(M_reduced, word2ind, words):
         plt.text(x, y, word, fontsize=9)
     plt.show()
 
-# --------------------
-# Visualize embeddings
-# --------------------
+def get_co_embeddings(dim=2, n_samples=NUM_SAMPLES):
+    """ Produce a co-occurrence matrix from the love letters dataset
+        
+        Params:
+            dim (integer): the desired dimsnionality of the word vectors. Default is 2, useful for visualization. For more robust analysis, 100 is recommended.
 
-test_words = ['movie', 'book', 'love', 'story', 'hate', 'good', 'interesting', 'sorry', 'silly', 'bad']
-print("Test generate embeddings")
-print("Will plot the following words:", test_words)
+        Returns:
+            M (n_words x dim matrix): Matrix of word vectors normalized to unit length
+            word2ind (dict): dictionary mapping words to rows in the matrix.
 
-parser.add_argument("-m", "--model", help="Specify which model to use to generate embeddings", 
-                 type=str, choices=["glove", "co-occurrence", "both"], default="co-occurrence")
-args = parser.parse_args()
+    """
+    corpus_fname = dir_path + f"/{n_samples}_samples-love_letters_corpus.json"
+    dict_fname = dir_path + f"/{n_samples}_samples-word2ind.json"
+    matrix_fname = dir_path + f"/{n_samples}_samples-co-occurrence_matrix.npy" 
 
-### Generate embeddings from co-occurrence model ###
-if(args.model == "co-occurrence" or args.model == "both"):
-    love_letters_corpus = read_corpus()
-    M_co_occurrence, word2ind_co_occurrence = compute_co_occurrence_matrix(love_letters_corpus)
-    M_reduced_co_occurrence = reduce_to_k_dim(M_co_occurrence, k=2)
+    love_letters_corpus = read_corpus(n_samples, corpus_fname)
+    M_co_occurrence, word2ind_co_occurrence = compute_co_occurrence_matrix(love_letters_corpus, 
+                                                                           dict_fname=dict_fname, 
+                                                                           matrix_fname=matrix_fname)
+    M_reduced_co_occurrence = reduce_to_k_dim(M_co_occurrence, k=dim)
 
     # Rescale (normalize) the rows to make them each of unit-length
     M_lengths = np.linalg.norm(M_reduced_co_occurrence, axis=1)
     M_normalized = M_reduced_co_occurrence / M_lengths[:, np.newaxis] # broadcasting
+    return M_normalized, word2ind_co_occurrence
 
-    # plot co-occurence embeddings
-    print("Co-occurrence embeddings. Close to continue . . .")
-    plot_embeddings(M_normalized, word2ind_co_occurrence, test_words)
+# --------------------
+# Visualize embeddings
+# --------------------
+
+if __name__ == "__main__":
+    test_words = ['movie', 'book', 'love', 'story', 'hate', 'good', 'interesting', 'sorry', 'silly', 'bad']
+    print("Test generate embeddings")
+    print("Will plot the following words:", test_words)
+
+    parser.add_argument("-m", "--model", help="Specify which model to use to generate embeddings", 
+                    type=str, choices=["glove", "co-occurrence", "both"], default="co-occurrence")
+    args = parser.parse_args()
+
+    ### Generate embeddings from co-occurrence model ###
+    if(args.model == "co-occurrence" or args.model == "both"):
+        love_letters_corpus = read_corpus()
+        M_co_occurrence, word2ind_co_occurrence = compute_co_occurrence_matrix(love_letters_corpus)
+        M_reduced_co_occurrence = reduce_to_k_dim(M_co_occurrence, k=2)
+
+        # Rescale (normalize) the rows to make them each of unit-length
+        M_lengths = np.linalg.norm(M_reduced_co_occurrence, axis=1)
+        M_normalized = M_reduced_co_occurrence / M_lengths[:, np.newaxis] # broadcasting
+
+        # plot co-occurence embeddings
+        print("Co-occurrence embeddings. Close to continue . . .")
+        plot_embeddings(M_normalized, word2ind_co_occurrence, test_words)
 
 
-if(args.model == "glove" or args.model == "both"):
-    ### Generate GloVe Embeddings ###
-    wv_from_bin = load_embedding_model()
-    glove_M, glove_word2ind = get_matrix_of_vectors(wv_from_bin, test_words)
-    glove_M_reduced = reduce_to_k_dim(glove_M, k=2)
+    if(args.model == "glove" or args.model == "both"):
+        ### Generate GloVe Embeddings ###
+        wv_from_bin = load_embedding_model()
+        glove_M, glove_word2ind = get_matrix_of_vectors(wv_from_bin, test_words)
+        glove_M_reduced = reduce_to_k_dim(glove_M, k=2)
 
-    # Rescale (normalize) the rows to make them each of unit-length
-    glove_M_lengths = np.linalg.norm(glove_M_reduced, axis=1)
-    glove_M_reduced_normalized = glove_M_reduced / glove_M_lengths[:, np.newaxis] # broadcasting
+        # Rescale (normalize) the rows to make them each of unit-length
+        glove_M_lengths = np.linalg.norm(glove_M_reduced, axis=1)
+        glove_M_reduced_normalized = glove_M_reduced / glove_M_lengths[:, np.newaxis] # broadcasting
 
-    # plot glove emeddings
-    print("GloVe embeddings. Close to continue . . .")
-    plot_embeddings(glove_M_reduced_normalized, glove_word2ind, test_words)
+        # plot glove emeddings
+        print("GloVe embeddings. Close to continue . . .")
+        plot_embeddings(glove_M_reduced_normalized, glove_word2ind, test_words)
