@@ -5,14 +5,17 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "export": "next export",
+    "start": "npx serve@latest out",
     "lint": "next lint"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.8.1",
     "@types/d3": "^7.4.3",
     "d3": "^7.9.0",
     "dependencies": "^0.0.1",
-    "next": "15.0.1",
+    "netlify": "^13.1.21",
+    "next": "^15.0.1",
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
     "sentiment": "^5.0.2"
