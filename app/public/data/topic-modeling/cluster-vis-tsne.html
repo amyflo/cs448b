@@ -63,19 +63,14 @@
         position: absolute;
         top: 10px; /* Add padding to prevent overlapping points */
         left: 10px; /* Adjust legend position */
-        background-color: rgba(
-          255,
-          255,
-          255,
-          0.8
-        ); /* Semi-transparent background */
+        background-color: rgba(255, 255, 255, 0.8);
         padding: 5px;
         border: 1px solid #ddd;
         border-radius: 5px;
         display: flex;
-        flex-direction: column; /* Stack legend items */
+        flex-direction: column;
         gap: 1px;
-        z-index: 4;
+        z-index: 5;
       }
 
       .legend-item {
@@ -90,9 +85,43 @@
       }
 
       .legend-item text {
-        margin: 0; /* Remove any additional margin around text */
-        line-height: 1; /* Compact spacing between lines of text */
-        font-size: 12px; /* Optional: Adjust text size for consistency */
+        font-size: 12px;
+      }
+
+      .legend-item:hover {
+        background-color: #f0f0f0;
+      }
+
+      .legend-item.selected {
+        background-color: #d3d3d3;
+      }
+
+      #topic-details-container {
+        display: flex;
+        flex-direction: column; /* Default direction is vertical */
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .topic-details-box {
+        flex: 1;
+        max-width: 400px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+        border-radius: 5px;
+        z-index: 4;
+      }
+
+      #topic-details-box h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      #topic-details-content {
+        font-size: 14px;
+        line-height: 1.5;
       }
 
       #details-box {
@@ -122,9 +151,9 @@
     <div id="outer-container">
       <div id="chart-container">
         <h3>T-SNE Visualization of Topic Modeling</h3>
-
         <svg id="chart"></svg>
-        <div id="legend"></div>
+        <div id="legend"><p>Select topic filters here:</p></div>
+        <div id="topic-details-container"></div>
         <div id="tooltip" class="tooltip"></div>
       </div>
       <div id="details-box">
@@ -140,7 +169,7 @@
         d3.json("./results/top_topics_with_weights.json"),
         d3.json("./results/topics_NMF_15.json"),
         d3.json("./results/tsne-reduced-data.json"),
-        d3.json("../output.json"),
+        d3.json("../consolidated_posts.json"),
       ]).then(
         ([assignedTopicsData, topicsRefData, reducedData, lettersData]) => {
           // Set the canvas dimensions
@@ -192,7 +221,7 @@
           // define zooming transformation (used in on click event for points)
           const zoom = d3
             .zoom()
-            .scaleExtent([1, 10]) // Set zoom limits
+            .scaleExtent([1, 2]) // Set zoom limits
             .on("zoom", function (event) {
               chartSVG.attr("transform", event.transform);
             });
@@ -208,9 +237,10 @@
           let selectedPt = null; // no point is selected initially
           let zoomScale = 1;
           for (let i = 0; i < reducedData.length; i++) {
+            console.log("circle loop iteration: ", i);
             const point = reducedData[i];
             const post = assignedTopicsData[i];
-            const letter = lettersData["post"][post.post_id];
+            const letter = lettersData[post.post_id];
             const topicWeights = assignedTopicsData[i]["all_weights"];
 
             const topTopic = post.topics.first.topic;
@@ -229,7 +259,8 @@
               .attr("cy", yScale(point.y)) // Set y pos as second tsne component
               .attr("r", 5)
               .attr("fill", color)
-              .attr("opacity", 0.7)
+              .attr("opacity", 0.6)
+              .attr("data-topic", topTopic) // associate with topic for filtering
               .on("mouseover", (event) => {
                 console.log("Mouseover triggered for: ", post.post_id);
                 tooltip.transition().duration(200).style("opacity", 1);
@@ -250,19 +281,29 @@
 
                 // if there were prev selected points, reset it so highlights don't persist
                 if (selectedPt) {
-                  selectedPt.style("opacity", 0.7);
+                  selectedPt.style("opacity", 0.8);
                   selectedPt.attr("stroke", "000");
                 }
 
                 selectedPt = d3.select(event.target);
-                // lower opacity for all points
-                chartSVG.selectAll("circle").style("opacity", 0.2);
+                // lower opacity for unfiltered posts
+                if (activeTopics.size !== 0) {
+                  chartSVG.selectAll("circle").style("opacity", function () {
+                    const topic = +d3.select(this).attr("data-topic");
+                    const isFiltered =
+                      activeTopics.size === 0 || activeTopics.has(topic);
+                    return selectedPt.node() === this || isFiltered ? 0.8 : 0.1;
+                  });
+                } else {
+                  chartSVG.selectAll("circle").style("opacity", 0.2);
+                  selectedPt.style("opacity", 0.8);
+                }
 
                 // increase opacity for specific, selected point
                 selectedPt
-                  .style("opacity", 0.8)
+                  .style("opacity", 1)
                   .attr("stroke", "black")
-                  .attr("stroke-width", "2");
+                  .attr("stroke-width", "2.5");
 
                 // zoom into selected point area
                 const pointX = xScale(point.x) + chartLeftMargin; // account for the legend padding
@@ -329,22 +370,21 @@
                         .map((topic) => `<li>${topic}</li>`)
                         .join("")}
                     </ol>
-                    </div>
-`
+                    </div>`
                 );
                 event.stopPropagation(); // Prevent click from propagating to the background
               });
+            chartSVG.call(zoom);
 
             // track click events throughout the entire body
             // (if user clicks outside, it'll reset point selection)
-            d3.select("body").on("click", (event) => {
+            d3.select("#chart-container").on("click", (event) => {
               if (selectedPt) {
                 // check: click position is anywhere other than the currently selected point
                 if (!selectedPt.node().contains(event.target)) {
-                  chartSVG
-                    .selectAll("circle")
-                    .style("opacity", 0.7) // reset opacity
-                    .attr("stroke", "000"); // remove outline to be transparent
+                  chartSVG.selectAll("circle").attr("stroke", "null"); // remove outline to be transparent
+
+                  updatePointOpacities();
 
                   // reset the details box
                   d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
@@ -369,10 +409,15 @@
 
           // for each topic, get color and append to legend
           colors.forEach((color, index) => {
+            console.log("Legend item created for topic:", index); // Debugging log
             const topicLabel = topicsRefData[index].label;
             const legendItem = legendContainer
               .append("div")
-              .attr("class", "legend-item");
+              .attr("class", "legend-item")
+              .on("click", () => {
+                toggleTopicOpacity(index, legendItem);
+                console.log(`${topicsRefData[index].label} selected`);
+              });
 
             legendItem
               .append("svg")
@@ -386,13 +431,49 @@
               .text(topicLabel)
               .style("margin-left", "5px");
           });
+
+          let activeTopics = new Set();
+
+          // function for keeping track of filter selections
+          function updatePointOpacities() {
+            console.log("update called");
+            d3.selectAll("circle").style("opacity", function () {
+              const topic = +d3.select(this).attr("data-topic");
+              console.log("active topics size: ", activeTopics.size);
+              console.log("active topics: ", activeTopics);
+              return activeTopics.size === 0 || activeTopics.has(topic)
+                ? 0.6
+                : 0.1;
+            });
+          }
+
+          function toggleTopicOpacity(topicIndex, legendItem) {
+            if (activeTopics.has(topicIndex)) {
+              activeTopics.delete(topicIndex); // Deactivate topic
+              legendItem.classed("selected", false);
+              console.log("active topics: ", activeTopics);
+            } else {
+              activeTopics.add(topicIndex); // Activate topic
+              legendItem.classed("selected", true);
+              console.log("active topics: ", activeTopics);
+            }
+            updatePointOpacities();
+          }
+
+          const topicDetailsContainer = document.querySelector(
+            "#topic-details-container"
+          );
+
+          function updateTopicDetails(activeTopics) {
+            topicDetailsHTML = "";
+            activeTopics.forEach((topic) => {
+              // for each topic, make a topic details box
+              const topicDetailsBox = document.createElement("div");
+              topicDetailsBox.className = "topic-details-box";
+            });
+          }
         }
       );
     </script>
-    <caption>
-      T-SNE preserves structure and emphasizes similar points, nonlinear (unlike
-      PCA) so it creates on a 2D mapping rather than linearly. It reflects how
-      the letters of those topics relate to each other in the dataset
-    </caption>
   </body>
 </html>
