@@ -227,7 +227,6 @@
 
             const topTopic = post.topics.first.topic;
             const topLabel = topicsRefData[topTopic].label;
-            const topicDescription = topicsRefData[topTopic].description;
             const topWords = topicsRefData[topTopic].top_words;
 
             const secondTopic = post.topics.second.topic;
@@ -395,6 +394,8 @@
           colors.forEach((color, index) => {
             console.log("Legend item created for topic:", index); // Debugging log
             const topicLabel = topicsRefData[index].label;
+            const topicDescription = topicsRefData[index].description;
+            console.log(topicDescription);
             const legendItem = legendContainer
               .append("div")
               .attr("class", "legend-item")
@@ -408,7 +409,7 @@
                   .html(
                     `<strong>${topicLabel}</strong><br><br><strong>Top Words: </strong>${topicsRefData[
                       index
-                    ].top_words.join(", ")}`
+                    ].top_words.join(", ")}<br><br>${topicDescription}`
                   )
                   .style("left", `${10}px`)
                   .style("top", `${375}px`);
