@@ -53,6 +53,16 @@
         pointer-events: none;
         opacity: 1;
         z-index: 3;
+        max-width: 250px; /* Adjust this value based on your needs */
+
+        /* Ensure text wraps inside the tooltip */
+        word-wrap: break-word;
+        white-space: normal; /* Allow text to wrap within the container */
+        overflow-wrap: break-word;
+      }
+
+      .legend-tooltip {
+        font-size: 14px;
       }
 
       circle {
@@ -94,34 +104,6 @@
 
       .legend-item.selected {
         background-color: #d3d3d3;
-      }
-
-      #topic-details-container {
-        display: flex;
-        flex-direction: column; /* Default direction is vertical */
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .topic-details-box {
-        flex: 1;
-        max-width: 400px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        background-color: #f9f9f9;
-        overflow-y: auto;
-        border-radius: 5px;
-        z-index: 4;
-      }
-
-      #topic-details-box h2 {
-        font-size: 18px;
-        margin-bottom: 10px;
-      }
-
-      #topic-details-content {
-        font-size: 14px;
-        line-height: 1.5;
       }
 
       #details-box {
@@ -245,6 +227,7 @@
 
             const topTopic = post.topics.first.topic;
             const topLabel = topicsRefData[topTopic].label;
+            const topicDescription = topicsRefData[topTopic].description;
             const topWords = topicsRefData[topTopic].top_words;
 
             const secondTopic = post.topics.second.topic;
@@ -406,6 +389,7 @@
           const spacing = 10; // Space between rectangles
 
           const legendContainer = d3.select("#legend");
+          const legendTooltip = d3.select(".legend-tooltip");
 
           // for each topic, get color and append to legend
           colors.forEach((color, index) => {
@@ -417,6 +401,20 @@
               .on("click", () => {
                 toggleTopicOpacity(index, legendItem);
                 console.log(`${topicsRefData[index].label} selected`);
+              })
+              .on("mouseover", () => {
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip
+                  .html(
+                    `<strong>${topicLabel}</strong><br><br><strong>Top Words: </strong>${topicsRefData[
+                      index
+                    ].top_words.join(", ")}`
+                  )
+                  .style("left", `${10}px`)
+                  .style("top", `${375}px`);
+              })
+              .on("mouseout", () => {
+                tooltip.transition().duration(200).style("opacity", 0);
               });
 
             legendItem

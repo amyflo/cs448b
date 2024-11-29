@@ -24,7 +24,8 @@
       "little"
     ],
     "num_letters_assigned": 45,
-    "label": "Reflections on Moments of Time"
+    "label": "Reflections on Moments of Time",
+    "description": "The authors in this topic contemplate on how moments and feelings evolve over time, reflecting on the impact of each experience."
   },
   {
     "topic": 1,
@@ -51,7 +52,8 @@
       "beauty"
     ],
     "num_letters_assigned": 96,
-    "label": "Idealistic Soulmates"
+    "label": "Idealistic Soulmates",
+    "description": "Letters describing a romantic, fantasy vision of soulmates as perfect and eternal connections. These connections are idealized as flawless, overlooking complexities and imperfection."
   },
   {
     "topic": 2,
@@ -78,7 +80,8 @@
       "challenge"
     ],
     "num_letters_assigned": 63,
-    "label": "Enduring Relationship Struggles"
+    "label": "Enduring Relationship Struggles",
+    "description": "Letters on challenges in relationships where love and care are tested by conflict and personal growth."
   },
   {
     "topic": 3,
@@ -105,7 +108,8 @@
       "beauty"
     ],
     "num_letters_assigned": 95,
-    "label": "Serenity and Beauty"
+    "label": "Serenity and Beauty",
+    "description": "Letters that use metaphors to describe love and romantic partners using nature, serenity, light, and dream-like imagery."
   },
   {
     "topic": 4,
@@ -132,7 +136,8 @@
       "girl"
     ],
     "num_letters_assigned": 53,
-    "label": "Playful Flirtation"
+    "label": "Playful Flirtation",
+    "description": "Letters describing a flirtatious exchange with casual slang and bold expressions."
   },
   {
     "topic": 5,
@@ -159,7 +164,8 @@
       "try"
     ],
     "num_letters_assigned": 40,
-    "label": "Hopeful Goodbyes"
+    "label": "Hopeful Goodbyes",
+    "description": "Farewells and goodbye letters with hope and anticipation, looking towards better days and new opportunities."
   },
   {
     "topic": 6,
@@ -186,7 +192,8 @@
       "come"
     ],
     "num_letters_assigned": 83,
-    "label": "Reflection on Life Journey"
+    "label": "Reflection on Life Journey",
+    "description": "Letters reflecting on life’s journey, embracing change, learning from experiences, and growing through failures."
   },
   {
     "topic": 7,
@@ -213,7 +220,8 @@
       "sure"
     ],
     "num_letters_assigned": 49,
-    "label": "Empathy, Forgiveness, Apology"
+    "label": "Empathy, Forgiveness, Apology",
+    "description": "Letters about heartfelt empathy, seeking understanding, and offering apologies to heal emotional wounds and broken trust."
   },
   {
     "topic": 8,
@@ -240,7 +248,8 @@
       "end"
     ],
     "num_letters_assigned": 35,
-    "label": "Vulnerability and Heartbreak"
+    "label": "Vulnerability and Heartbreak",
+    "description": "Emotional journeys through heartbreak, vulnerability, loss, and the feeling of unworthiness."
   },
   {
     "topic": 9,
@@ -267,7 +276,8 @@
       "voice"
     ],
     "num_letters_assigned": 24,
-    "label": "Playful Longing"
+    "label": "Playful Longing",
+    "description": "Mix of playful and affectionate longing that is communicated through lighthearted dialogue."
   },
   {
     "topic": 10,
@@ -294,7 +304,8 @@
       "day"
     ],
     "num_letters_assigned": 51,
-    "label": "Uncertainty in Relationships"
+    "label": "Uncertainty in Relationships",
+    "description": "These authors write about the sense of uncertainty in relationships where there is confusion and unspoken feelings."
   },
   {
     "topic": 11,
@@ -321,7 +332,8 @@
       "fucking"
     ],
     "num_letters_assigned": 35,
-    "label": "Substance Use and Escapism"
+    "label": "Substance Use and Escapism",
+    "description": "These letters describe the author’s experience in coping with fear, stress, and emotions through the temporary relief of substance use."
   },
   {
     "topic": 12,
@@ -348,7 +360,8 @@
       "bring"
     ],
     "num_letters_assigned": 43,
-    "label": "Spirituality and Music"
+    "label": "Spirituality and Music",
+    "description": "These letters speak on soulful connections, divinity, power of song, and the healing and uplifting of spirits."
   },
   {
     "topic": 13,
@@ -375,7 +388,8 @@
       "let"
     ],
     "num_letters_assigned": 25,
-    "label": "Sexuality, Longing, and Confusion"
+    "label": "Sexuality, Longing, and Confusion",
+    "description": "Love, fear, and uncertainty in the author’s personal relationship with their sexuality, longing, and identity."
   },
   {
     "topic": 14,
@@ -402,6 +416,7 @@
       "violet"
     ],
     "num_letters_assigned": 19,
-    "label": "Family Dynamics"
+    "label": "Family Dynamics",
+    "description": "These letters speak on the roles and labels of both conventional and unconventional family dynamics or romantic relationships."
   }
 ]
