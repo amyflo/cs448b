@@ -5,175 +5,463 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>T-SNE Topic Modeling Visualization</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- D3 library -->
     <style>
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
       }
 
-      h1 {
+      h3 {
         text-align: center;
+      }
+
+      #outer-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      #chart-container {
+        position: relative;
+        width: 1020px;
+        height: 750px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        z-index: 1;
+      }
+
+      #chart-container h3 {
+        margin-bottom: 0px;
+        margin-top: 10px;
+        padding: 0;
       }
 
       #chart {
         display: block;
-        margin: 0 auto;
-        border: 1px solid #ddd;
+        width: 100%;
+        height: 100%;
       }
 
       .tooltip {
         position: absolute;
         background-color: rgba(0, 0, 0, 0.7);
-        color: #fff;
+        color: #ffff;
         padding: 10px;
         border-radius: 5px;
         pointer-events: none;
-        opacity: 0;
-        z-index: 10;
+        opacity: 1;
+        z-index: 3;
+        max-width: 250px;
+        word-wrap: break-word;
+        white-space: normal;
+        overflow-wrap: break-word;
+      }
+
+      .legend-tooltip {
+        font-size: 14px;
       }
 
       circle {
         cursor: pointer;
       }
+
+      #legend {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        z-index: 5;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0px;
+      }
+
+      .legend-item rect {
+        width: 12px;
+        height: 12px;
+      }
+
+      .legend-item text {
+        font-size: 12px;
+      }
+
+      .legend-item:hover {
+        background-color: #f0f0f0;
+      }
+
+      .legend-item.selected {
+        background-color: #d3d3d3;
+      }
+
+      #details-box {
+        flex: 1;
+        max-width: 400px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+        border-radius: 5px;
+        z-index: 2;
+      }
+
+      #details-box h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      #details-content {
+        font-size: 14px;
+        line-height: 1.5;
+      }
     </style>
   </head>
   <body>
-    <h1>T-SNE Visualization of Topic Modeling</h1>
-    <svg id="chart" width="1000" height="1000"></svg>
-
-    <div id="tooltip" class="tooltip"></div>
-
+    <!-- Outer container wrapping chart, legend, and details panel -->
+    <div id="outer-container">
+      <div id="chart-container">
+        <h3>T-SNE Visualization of Topic Modeling</h3>
+        <svg id="chart"></svg>
+        <div id="legend"><p>Select topic filters here:</p></div>
+        <div id="tooltip" class="tooltip"></div>
+      </div>
+      <div id="details-box">
+        <h2>Love Letter Details</h2>
+        <div id="details-content">
+          <p>Click on a point to see more details here.</p>
+        </div>
+      </div>
+    </div>
     <script>
-      // Load the T-SNE reduced data
+      // Load the topic assignments, topic reference file, TSNE reduced data, and consolidated posts info
       Promise.all([
         d3.json("./results/top_topics_with_weights.json"),
         d3.json("./results/topics_NMF_15.json"),
         d3.json("./results/tsne-reduced-data.json"),
-      ]).then(([assignedTopicsData, topicsRefData, reducedData]) => {
-        // Set the canvas dimensions
-        const width = 900;
-        const height = 900;
-        const margin = 50;
+        d3.json("../consolidated_posts.json"),
+      ]).then(
+        ([assignedTopicsData, topicsRefData, reducedData, lettersData]) => {
+          // Set the canvas and chart dimensions
+          const width = 800;
+          const height = 700;
+          const margin = 40;
+          const chartLeftMargin = 200;
+          const chartContainerW = 1020;
+          const chartContainerH = 750;
+          const chartMidX = chartLeftMargin + width / 2;
+          const chartMidY = height / 2;
 
-        // define the color theme (20 different colors but I'll be using 15 for each topic)
-        // const colors = [
-        //   "#1f77b4",
-        //   "#ff7f0e",
-        //   "#2ca02c",
-        //   "#d62728",
-        //   "#9467bd",
-        //   "#8c564b",
-        //   "#e377c2",
-        //   "#7f7f7f",
-        //   "#bcbd22",
-        //   "#17becf",
-        //   "#f6a829",
-        //   "#f08a5d",
-        //   "#b6d7a8",
-        //   "#ffb5a7",
-        //   "#91c8a6",
-        // ];
-        const colors = [
-          "#e6194B",
-          "#f58231",
-          "#ffe119",
-          "#bfef45",
-          "#3cb44b",
-          "#42d4f4",
-          "#4363d8",
-          "#911eb4",
-          "#f032e6",
-          "#808000",
-          "#dcbeff",
-          "#9A6324",
-          "#ffd8b1",
-          "#a9a9a9",
-          "#000075",
-        ];
-        console.log(colors);
+          // define the color theme (15 colors for 15 topics)
+          const colors = [
+            "#e6194B",
+            "#f58231",
+            "#ffe119",
+            "#bfef45",
+            "#3cb44b",
+            "#42d4f4",
+            "#4363d8",
+            "#911eb4",
+            "#f032e6",
+            "#808000",
+            "#dcbeff",
+            "#9A6324",
+            "#ffd8b1",
+            "#a9a9a9",
+            "#000075",
+          ];
 
-        // Define scales for the x and y axes so it fits within the canvas
-        // also important for emphasizing the clusters
-        const xScale = d3
-          .scaleLinear()
-          .domain([
-            d3.min(reducedData, (d) => d.x),
-            d3.max(reducedData, (d) => d.x),
-          ])
-          .range([margin, width]);
-        const yScale = d3
-          .scaleLinear()
-          .domain([
-            d3.min(reducedData, (d) => d.y),
-            d3.max(reducedData, (d) => d.y),
-          ])
-          .range([height, margin]);
-        // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
-        const svg = d3.select("#chart");
-        const tooltip = d3.select("#tooltip");
+          // Define scales for the x and y axes so it fits within the canvas
+          // matches the raw data coordinates (tsne first and second components) to pixels in svg
+          // also used for cluster distribution and zooming on selection
+          const xScale = d3
+            .scaleLinear()
+            .domain([
+              d3.min(reducedData, (d) => d.x),
+              d3.max(reducedData, (d) => d.x),
+            ])
+            .range([margin, width]);
+          const yScale = d3
+            .scaleLinear()
+            .domain([
+              d3.min(reducedData, (d) => d.y),
+              d3.max(reducedData, (d) => d.y),
+            ])
+            .range([height, 20]);
 
-        svg
-          .append("line")
-          .attr("x1", xScale(0)) // x-axis line at x = 0
-          .attr("y1", 0)
-          .attr("x2", xScale(0)) // x-axis line at x = 0
-          .attr("y2", height)
-          .attr("stroke", "black")
-          .attr("stroke-width", 1);
-
-        svg
-          .append("line")
-          .attr("x1", 0)
-          .attr("y1", yScale(0)) // y-axis line at y = 0
-          .attr("x2", width)
-          .attr("y2", yScale(0)) // y-axis line at y = 0
-          .attr("stroke", "black")
-          .attr("stroke-width", 1);
-
-        for (let i = 0; i < reducedData.length; i++) {
-          const point = reducedData[i];
-          const post = assignedTopicsData[i];
-
-          const topTopic = post.topics.first.topic;
-          const topLabel = topicsRefData[topTopic].label;
-          const topWords = topicsRefData[topTopic].top_words;
-
-          const secondTopic = post.topics.second.topic;
-          const secondLabel = topicsRefData[secondTopic].label;
-
-          const color = colors[topTopic];
-
-          // Plot the data points as circles
-          svg
-            .append("circle")
-            .attr("cx", xScale(point.x)) // Set x pos as first tsne component
-            .attr("cy", yScale(point.y)) // Set y pos as second tsne component
-            .attr("r", 6)
-            .attr("fill", color)
-            .attr("opacity", 0.7)
-            .on("mouseover", (event) => {
-              console.log("Mouseover triggered for: ", post.post_id);
-              tooltip.transition().duration(200).style("opacity", 1);
-              tooltip
-                .html(
-                  `X: ${point.x.toFixed(2)}<br>Y: ${point.y.toFixed(
-                    2
-                  )}<br>Topic 1: ${topLabel}<br>${topWords}`
-                )
-                .style("left", `${event.pageX + 10}px`)
-                .style("top", `${event.pageY - 25}px`);
-            })
-            .on("mouseout", () => {
-              tooltip.transition().duration(200).style("opacity", 0);
+          // define zooming transformation (used in on click event for points)
+          const zoom = d3
+            .zoom()
+            .scaleExtent([1, 2]) // Set zoom limits (don't want to zoom in too far)
+            .on("zoom", function (event) {
+              chartSVG.attr("transform", event.transform);
             });
+
+          // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
+          const chartSVG = d3.select("#chart");
+          const tooltip = d3.select("#tooltip");
+
+          // detail panel instructions for on-click
+          const clickInMsg = "Click on a point to see more details here.";
+          const clickOutMsg =
+            "Explore another point or click anywhere outside the point to unselect.";
+
+          // point selection variables
+          let selectedPt = null; // no point is selected initially
+          let zoomScale = 1;
+          for (let i = 0; i < reducedData.length; i++) {
+            const point = reducedData[i];
+            const post = assignedTopicsData[i];
+            const letter = lettersData[post.post_id];
+            const topicWeights = assignedTopicsData[i]["all_weights"];
+
+            const topTopic = post.topics.first.topic;
+            const topLabel = topicsRefData[topTopic].label;
+            const topWords = topicsRefData[topTopic].top_words;
+
+            const secondTopic = post.topics.second.topic;
+            const secondLabel = topicsRefData[secondTopic].label;
+
+            const color = colors[topTopic];
+
+            // Plot the data points as circles
+            chartSVG
+              .append("circle")
+              .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as 1st tsne component
+              .attr("cy", yScale(point.y)) // Set y pos as 2nd tsne component
+              .attr("r", 5)
+              .attr("fill", color)
+              .attr("opacity", 0.6)
+              .attr("data-topic", topTopic) // associate with topic for filtering
+              .on("mouseover", (event) => {
+                console.log("Mouseover triggered for: ", post.post_id);
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip
+                  .html(
+                    `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
+                      2
+                    )}<br>Y: ${point.y.toFixed(2)}`
+                  )
+                  .style("left", `${event.pageX - 5}px`)
+                  .style("top", `${event.pageY - 70}px`);
+              })
+              .on("mouseout", () => {
+                tooltip.transition().duration(200).style("opacity", 0);
+              })
+              .on("click", (event, d) => {
+                console.log("clicked on post: ", post.post_id);
+
+                // if there were prev selected points, reset it so highlights don't persist
+                if (selectedPt) {
+                  selectedPt.style("opacity", 0.8);
+                  selectedPt.attr("stroke", "000");
+                }
+
+                selectedPt = d3.select(event.target);
+                // lower opacity for unfiltered posts
+                if (activeTopics.size !== 0) {
+                  chartSVG.selectAll("circle").style("opacity", function () {
+                    const topic = +d3.select(this).attr("data-topic");
+                    const isFiltered =
+                      activeTopics.size === 0 || activeTopics.has(topic);
+                    return selectedPt.node() === this || isFiltered ? 0.8 : 0.1;
+                  });
+                } else {
+                  chartSVG.selectAll("circle").style("opacity", 0.2);
+                  selectedPt.style("opacity", 0.8);
+                }
+
+                // increase opacity and put border for specific, selected point
+                selectedPt
+                  .style("opacity", 1)
+                  .attr("stroke", "black")
+                  .attr("stroke-width", "2.5");
+
+                // zoom into selected point area
+                const pointX = xScale(point.x) + chartLeftMargin; // account for the legend padding
+                const pointY = yScale(point.y);
+                const zoomCenterX = chartContainerW / 2 - pointX; // the center of the chart (account for padding)
+                const zoomCenterY = chartContainerH / 2 - pointY;
+
+                // zoom in by 2
+                const zoomedInScale = zoomScale * 2;
+                zoom.scaleTo(chartSVG, zoomedInScale);
+
+                // zoom transition and eased animation with time duration of 1000 ms
+                chartSVG
+                  .transition()
+                  .duration(1000)
+                  .call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                      .translate(zoomCenterX, zoomCenterY)
+                      .scale(zoomedInScale)
+                  );
+
+                // update the details panel
+                const sortedWeights = topicWeights
+                  .map((weight, index) => ({
+                    index,
+                    weight,
+                  }))
+                  .sort((a, b) => b.weight - a.weight);
+
+                const formattedWeights = sortedWeights.map(
+                  (item) =>
+                    `${topicsRefData[item.index].label}: ${item.weight.toFixed(
+                      5
+                    )}`
+                );
+                d3.select("#details-content").html(
+                  `<p>${clickOutMsg}</p>
+                  <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
+                    <h3 style="margin: 0; font-size: 10; text-align: left;">${
+                      letter.title
+                    }</h3>
+                    <p style="font-size: 1; color: #555;">By <strong>${
+                      letter.username
+                    }
+                      </strong> on ${new Date(
+                        letter.createdAt
+                      ).toLocaleDateString()}
+                    </p>
+                    <p style="margin-top: 10px; font-size: 0.3; color: #333;">
+                      ${
+                        letter.body.length > 300
+                          ? letter.body.substring(0, 300) + "..."
+                          : letter.body
+                      }
+                    </p>
+                    <a href="${
+                      letter.url
+                    }" target="_blank">See the original post.</a>
+                  </div>
+                  <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
+                    <strong style="margin: 0; font-size: 3; text-align: left;">Topic Weights Distribution</strong>
+                    <ol>
+                      ${formattedWeights
+                        .map((topic) => `<li>${topic}</li>`)
+                        .join("")}
+                    </ol>
+                    </div>`
+                );
+                event.stopPropagation(); // Prevent zoom click from propagating to the background
+              });
+
+            // track click events throughout the entire body
+            // (if user clicks outside, it'll reset point selection)
+            d3.select("#chart-container").on("click", (event) => {
+              if (selectedPt) {
+                // check: click position is anywhere other than the currently selected point
+                if (!selectedPt.node().contains(event.target)) {
+                  chartSVG.selectAll("circle").attr("stroke", "null"); // remove outline to be transparent
+
+                  updatePointOpacities();
+
+                  // reset the details box
+                  d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
+                  // no points are selected anymore so val should be null
+                  selectedPt = null;
+                  chartSVG.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity // Reset zoom and transition
+                  );
+                }
+              }
+            });
+          }
+          // append a legend
+          const legendWidth = 200;
+          const legendHeight = 50;
+          const legendMargin = 20;
+          const blockSize = 18;
+          const spacing = 10;
+
+          const legendContainer = d3.select("#legend");
+          const legendTooltip = d3.select(".legend-tooltip");
+
+          // for each topic, get color and append to legend
+          colors.forEach((color, index) => {
+            console.log("Legend item created for topic:", index); // Debugging log
+            const topicLabel = topicsRefData[index].label;
+            const topicDescription = topicsRefData[index].description;
+            console.log(topicDescription);
+            const legendItem = legendContainer
+              .append("div")
+              .attr("class", "legend-item")
+              .on("click", () => {
+                toggleTopicOpacity(index, legendItem);
+                console.log(`${topicsRefData[index].label} selected`);
+              })
+              .on("mouseover", () => {
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip
+                  .html(
+                    `<strong>${topicLabel}</strong><br><br>${topicDescription}<br><br><strong>Top Words: </strong>${topicsRefData[
+                      index
+                    ].top_words.join(", ")}`
+                  )
+                  .style("left", `${10}px`)
+                  .style("top", `${375}px`);
+              })
+              .on("mouseout", () => {
+                tooltip.transition().duration(200).style("opacity", 0);
+              });
+
+            legendItem
+              .append("svg")
+              .attr("width", 18)
+              .attr("height", 18)
+              .append("rect")
+              .attr("fill", color);
+
+            legendItem
+              .append("text")
+              .text(topicLabel)
+              .style("margin-left", "5px");
+          });
+
+          let activeTopics = new Set();
+
+          // function for updating the opacity of points of active/selected topic filters
+          function updatePointOpacities() {
+            console.log("update called");
+            d3.selectAll("circle").style("opacity", function () {
+              const topic = +d3.select(this).attr("data-topic");
+              console.log("active topics size: ", activeTopics.size);
+              console.log("active topics: ", activeTopics);
+              return activeTopics.size === 0 || activeTopics.has(topic)
+                ? 0.6
+                : 0.1;
+            });
+          }
+
+          // function for keeping track of filter selections
+          function toggleTopicOpacity(topicIndex, legendItem) {
+            // Deactivate topic
+            if (activeTopics.has(topicIndex)) {
+              activeTopics.delete(topicIndex);
+              legendItem.classed("selected", false);
+              console.log("active topics: ", activeTopics);
+            } else {
+              // Activate topic
+              activeTopics.add(topicIndex);
+              legendItem.classed("selected", true);
+              console.log("active topics: ", activeTopics);
+            }
+            updatePointOpacities();
+          }
         }
-      });
+      );
     </script>
-    <caption>
-      T-SNE preserves structure and emphasizes similar points, nonlinear (unlike
-      PCA) so it creates on a 2D mapping rather than linearly. It reflects how
-      the letters of those topics relate to each other in the dataset
-    </caption>
   </body>
 </html>
