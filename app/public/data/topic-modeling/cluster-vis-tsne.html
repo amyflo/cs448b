@@ -17,7 +17,7 @@
 
       #outer-container {
         display: flex;
-        flex-direction: row; /* Horizontal layout for legend, chart, and details */
+        flex-direction: row;
         justify-content: flex-start;
         align-items: flex-start;
         gap: 10px;
@@ -33,9 +33,9 @@
       }
 
       #chart-container h3 {
-        margin-bottom: 0px; /* Reduce space below the h3 */
+        margin-bottom: 0px;
         margin-top: 10px;
-        padding: 0; /* Ensure no extra padding */
+        padding: 0;
       }
 
       #chart {
@@ -53,11 +53,9 @@
         pointer-events: none;
         opacity: 1;
         z-index: 3;
-        max-width: 250px; /* Adjust this value based on your needs */
-
-        /* Ensure text wraps inside the tooltip */
+        max-width: 250px;
         word-wrap: break-word;
-        white-space: normal; /* Allow text to wrap within the container */
+        white-space: normal;
         overflow-wrap: break-word;
       }
 
@@ -71,8 +69,8 @@
 
       #legend {
         position: absolute;
-        top: 10px; /* Add padding to prevent overlapping points */
-        left: 10px; /* Adjust legend position */
+        top: 10px;
+        left: 10px;
         background-color: rgba(255, 255, 255, 0.8);
         padding: 5px;
         border: 1px solid #ddd;
@@ -129,13 +127,12 @@
     </style>
   </head>
   <body>
-    <!-- Container for Details-->
+    <!-- Outer container wrapping chart, legend, and details panel -->
     <div id="outer-container">
       <div id="chart-container">
         <h3>T-SNE Visualization of Topic Modeling</h3>
         <svg id="chart"></svg>
         <div id="legend"><p>Select topic filters here:</p></div>
-        <div id="topic-details-container"></div>
         <div id="tooltip" class="tooltip"></div>
       </div>
       <div id="details-box">
@@ -146,7 +143,7 @@
       </div>
     </div>
     <script>
-      // Load the T-SNE reduced data
+      // Load the topic assignments, topic reference file, TSNE reduced data, and consolidated posts info
       Promise.all([
         d3.json("./results/top_topics_with_weights.json"),
         d3.json("./results/topics_NMF_15.json"),
@@ -154,7 +151,7 @@
         d3.json("../consolidated_posts.json"),
       ]).then(
         ([assignedTopicsData, topicsRefData, reducedData, lettersData]) => {
-          // Set the canvas dimensions
+          // Set the canvas and chart dimensions
           const width = 800;
           const height = 700;
           const margin = 40;
@@ -184,7 +181,8 @@
           ];
 
           // Define scales for the x and y axes so it fits within the canvas
-          // also important for emphasizing the clusters
+          // matches the raw data coordinates (tsne first and second components) to pixels in svg
+          // also used for cluster distribution and zooming on selection
           const xScale = d3
             .scaleLinear()
             .domain([
@@ -203,7 +201,7 @@
           // define zooming transformation (used in on click event for points)
           const zoom = d3
             .zoom()
-            .scaleExtent([1, 2]) // Set zoom limits
+            .scaleExtent([1, 2]) // Set zoom limits (don't want to zoom in too far)
             .on("zoom", function (event) {
               chartSVG.attr("transform", event.transform);
             });
@@ -211,6 +209,8 @@
           // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
           const chartSVG = d3.select("#chart");
           const tooltip = d3.select("#tooltip");
+
+          // detail panel instructions for on-click
           const clickInMsg = "Click on a point to see more details here.";
           const clickOutMsg =
             "Explore another point or click anywhere outside the point to unselect.";
@@ -219,7 +219,6 @@
           let selectedPt = null; // no point is selected initially
           let zoomScale = 1;
           for (let i = 0; i < reducedData.length; i++) {
-            console.log("circle loop iteration: ", i);
             const point = reducedData[i];
             const post = assignedTopicsData[i];
             const letter = lettersData[post.post_id];
@@ -237,8 +236,8 @@
             // Plot the data points as circles
             chartSVG
               .append("circle")
-              .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as first tsne component
-              .attr("cy", yScale(point.y)) // Set y pos as second tsne component
+              .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as 1st tsne component
+              .attr("cy", yScale(point.y)) // Set y pos as 2nd tsne component
               .attr("r", 5)
               .attr("fill", color)
               .attr("opacity", 0.6)
@@ -281,7 +280,7 @@
                   selectedPt.style("opacity", 0.8);
                 }
 
-                // increase opacity for specific, selected point
+                // increase opacity and put border for specific, selected point
                 selectedPt
                   .style("opacity", 1)
                   .attr("stroke", "black")
@@ -307,6 +306,7 @@
                       .translate(zoomCenterX, zoomCenterY)
                       .scale(zoomedInScale)
                   );
+
                 // update the details panel
                 const sortedWeights = topicWeights
                   .map((weight, index) => ({
@@ -354,9 +354,8 @@
                     </ol>
                     </div>`
                 );
-                event.stopPropagation(); // Prevent click from propagating to the background
+                event.stopPropagation(); // Prevent zoom click from propagating to the background
               });
-            chartSVG.call(zoom);
 
             // track click events throughout the entire body
             // (if user clicks outside, it'll reset point selection)
@@ -385,7 +384,7 @@
           const legendHeight = 50;
           const legendMargin = 20;
           const blockSize = 18;
-          const spacing = 10; // Space between rectangles
+          const spacing = 10;
 
           const legendContainer = d3.select("#legend");
           const legendTooltip = d3.select(".legend-tooltip");
@@ -407,9 +406,9 @@
                 tooltip.transition().duration(200).style("opacity", 1);
                 tooltip
                   .html(
-                    `<strong>${topicLabel}</strong><br><br><strong>Top Words: </strong>${topicsRefData[
+                    `<strong>${topicLabel}</strong><br><br>${topicDescription}<br><br><strong>Top Words: </strong>${topicsRefData[
                       index
-                    ].top_words.join(", ")}<br><br>${topicDescription}`
+                    ].top_words.join(", ")}`
                   )
                   .style("left", `${10}px`)
                   .style("top", `${375}px`);
@@ -420,8 +419,8 @@
 
             legendItem
               .append("svg")
-              .attr("width", 18) // Match rectangle size
-              .attr("height", 18) // Match rectangle size
+              .attr("width", 18)
+              .attr("height", 18)
               .append("rect")
               .attr("fill", color);
 
@@ -433,7 +432,7 @@
 
           let activeTopics = new Set();
 
-          // function for keeping track of filter selections
+          // function for updating the opacity of points of active/selected topic filters
           function updatePointOpacities() {
             console.log("update called");
             d3.selectAll("circle").style("opacity", function () {
@@ -446,30 +445,20 @@
             });
           }
 
+          // function for keeping track of filter selections
           function toggleTopicOpacity(topicIndex, legendItem) {
+            // Deactivate topic
             if (activeTopics.has(topicIndex)) {
-              activeTopics.delete(topicIndex); // Deactivate topic
+              activeTopics.delete(topicIndex);
               legendItem.classed("selected", false);
               console.log("active topics: ", activeTopics);
             } else {
-              activeTopics.add(topicIndex); // Activate topic
+              // Activate topic
+              activeTopics.add(topicIndex);
               legendItem.classed("selected", true);
               console.log("active topics: ", activeTopics);
             }
             updatePointOpacities();
-          }
-
-          const topicDetailsContainer = document.querySelector(
-            "#topic-details-container"
-          );
-
-          function updateTopicDetails(activeTopics) {
-            topicDetailsHTML = "";
-            activeTopics.forEach((topic) => {
-              // for each topic, make a topic details box
-              const topicDetailsBox = document.createElement("div");
-              topicDetailsBox.className = "topic-details-box";
-            });
           }
         }
       );
