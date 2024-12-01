@@ -12,7 +12,7 @@ import json
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 love_letters_dataset = []
-with open(dir_path + "/../output.json", "r") as f:
+with open(dir_path + "/../../app/public/data/consolidated_posts.json", "r") as f:
     love_letters_dataset = json.load(f)
 
 import re
@@ -28,6 +28,7 @@ parser = argparse.ArgumentParser()
 START_TOKEN = '<START>'
 END_TOKEN = '<END>'
 NUM_SAMPLES = 150
+FULL_CORPUS_SIZE = 843
 
 default_corpus_fname = dir_path + "/samples-love_letters_corpus.json"
 default_dict_fname = dir_path + "/samples-word2ind.json"
@@ -277,32 +278,50 @@ def get_co_embeddings(dim=2, n_samples=NUM_SAMPLES):
     M_normalized = M_reduced_co_occurrence / M_lengths[:, np.newaxis] # broadcasting
     return M_normalized, word2ind_co_occurrence
 
+def save_toJSON(filename, word2ind, M):
+    with open(filename, "w") as f:
+            print("Saving embeddings to", filename)
+            embeddings = {}
+            for w in word2ind.keys():
+                embeddings[w] = M[word2ind[w]].tolist()
+            json.dump(embeddings, f)
+
 # --------------------
 # Visualize embeddings
 # --------------------
 
 if __name__ == "__main__":
-    test_words = ['movie', 'book', 'love', 'story', 'hate', 'good', 'interesting', 'sorry', 'silly', 'bad']
-    print("Test generate embeddings")
-    print("Will plot the following words:", test_words)
-
     parser.add_argument("-m", "--model", help="Specify which model to use to generate embeddings", 
                     type=str, choices=["glove", "co-occurrence", "both"], default="co-occurrence")
+    parser.add_argument("-t", "--test", action="store_true")
+    parser.add_argument("-s", "--saveJSON", action="store_true")
+    parser.add_argument("-f", "--filename", type=str)
+    parser.add_argument("-d", "--dim", type=int, default=2)
+    parser.add_argument("-n", "--num_samples", type=int, default=FULL_CORPUS_SIZE)
     args = parser.parse_args()
+
+    if(args.test):
+        test_words = ['movie', 'book', 'love', 'story', 'hate', 'good', 'interesting', 'sorry', 'silly', 'bad']
+        print("Test generate embeddings")
+        print("Will plot the following words:", test_words)
 
     ### Generate embeddings from co-occurrence model ###
     if(args.model == "co-occurrence" or args.model == "both"):
-        love_letters_corpus = read_corpus()
+        love_letters_corpus = read_corpus(n_samples=args.num_samples)
         M_co_occurrence, word2ind_co_occurrence = compute_co_occurrence_matrix(love_letters_corpus)
-        M_reduced_co_occurrence = reduce_to_k_dim(M_co_occurrence, k=2)
+        M_reduced_co_occurrence = reduce_to_k_dim(M_co_occurrence, k=args.dim)
 
         # Rescale (normalize) the rows to make them each of unit-length
         M_lengths = np.linalg.norm(M_reduced_co_occurrence, axis=1)
         M_normalized = M_reduced_co_occurrence / M_lengths[:, np.newaxis] # broadcasting
 
-        # plot co-occurence embeddings
-        print("Co-occurrence embeddings. Close to continue . . .")
-        plot_embeddings(M_normalized, word2ind_co_occurrence, test_words)
+        if args.saveJSON:
+            save_toJSON(args.filename, word2ind_co_occurrence, M_normalized)
+
+        if args.test:
+            # plot co-occurence embeddings
+            print("Co-occurrence embeddings. Close to continue . . .")
+            plot_embeddings(M_normalized, word2ind_co_occurrence, test_words)
 
 
     if(args.model == "glove" or args.model == "both"):
