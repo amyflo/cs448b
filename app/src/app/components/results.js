@@ -255,7 +255,7 @@ const TSNEVisualization = () => {
       console.log(topicDescription);
       const legendItem = legendContainer
         .append("div")
-        .attr("clas", "legend-item")
+        .attr("class", "legend-item")
         .on("click", () => {
           toggleTopicOpacity(index, legendItem);
           console.log(`${topicsRefData[index].label} selected`);
