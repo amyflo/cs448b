@@ -3,6 +3,7 @@ import SentimentBarChart from "./components/sentiment-posts";
 import SentimentOverTime from "./components/sentiment-over-time";
 import SentimentHeatMap from "./components/sentiment-heatmap";
 import Length from "./components/length-vs-sentiment";
+import TSNEVisualization from "./components/results";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
         <SentimentOverTime />
         <SentimentHeatMap />
         <Length />
+        <TSNEVisualization />
 
         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2">
