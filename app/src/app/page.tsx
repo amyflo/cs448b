@@ -4,6 +4,7 @@ import SentimentBarChart from "./components/sentiment-posts";
 // import SentimentOverTime from "./components/sentiment-over-time";
 import SentimentHeatMap from "./components/sentiment-heatmap";
 import Length from "./components/length-vs-sentiment";
+import EmbeddingGraph from "./components/embedding-graph";
 import TSNEVisualization from "./components/p2/topic-modelling";
 import PostLength from "./components/p1/post-length";
 import FrequencyOfPosts from "./components/p1/frequency-of-posts";
@@ -51,6 +52,33 @@ export default function Home() {
         <SentimentOverTime />
       </div>
 
+      <h1>Word Association Visualization</h1>
+      <EmbeddingGraph
+        axis={["he", "she"]}
+        points={[
+          "movie",
+          "book",
+          "love",
+          "story",
+          "hate",
+          "good",
+          "interesting",
+          "sorry",
+          "silly",
+          "bad",
+        ]}
+      />
+
+      <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+        <li className="mb-2">
+          Get started by editing{" "}
+          <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+            src/app/page.tsx
+          </code>
+          .
+        </li>
+        <li>Save and see your changes instantly.</li>
+      </ol>
       {/* TOPIC MODELLING */}
 
       {/* t-SNE Visualization Explanation */}

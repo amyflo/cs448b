@@ -1,5 +1,6 @@
+.DS_STORE
 data/.DS_Store
 .venv/
-*.npy
+/data/embeddings/*.json
 *.pyc
-data/embeddings/*.json
+*.npy
