@@ -3,6 +3,7 @@ import SentimentBarChart from "./components/sentiment-posts";
 import SentimentOverTime from "./components/sentiment-over-time";
 import SentimentHeatMap from "./components/sentiment-heatmap";
 import Length from "./components/length-vs-sentiment";
+import EmbeddingGraph from "./components/embedding-graph";
 
 export default function Home() {
   return (
@@ -22,6 +23,23 @@ export default function Home() {
         <SentimentOverTime />
         <SentimentHeatMap />
         <Length />
+
+        <h1>Word Association Visualization</h1>
+        <EmbeddingGraph
+          axis={["he", "she"]}
+          points={[
+            "movie",
+            "book",
+            "love",
+            "story",
+            "hate",
+            "good",
+            "interesting",
+            "sorry",
+            "silly",
+            "bad",
+          ]}
+        />
 
         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2">
