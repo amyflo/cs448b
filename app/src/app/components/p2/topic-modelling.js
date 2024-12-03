@@ -304,7 +304,7 @@ const TSNEVisualization = () => {
         const topic = +d3.select(this).attr("data-topic");
         console.log("active topics size: ", activeTopics.size);
         console.log("active topics: ", activeTopics);
-        return activeTopics.size === 0 || activeTopics.has(topic) ? 0.6 : 0.05;
+        return activeTopics.size === 0 || activeTopics.has(topic) ? 0.6 : 0.025;
       });
     }
 
