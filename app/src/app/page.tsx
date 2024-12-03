@@ -1,7 +1,7 @@
 "use client";
 
 import SentimentBarChart from "./components/sentiment-posts";
-// import SentimentOverTime from "./components/sentiment-over-time";
+import Sentiment2OverTime from "./components/sentiment-over-time";
 import SentimentHeatMap from "./components/sentiment-heatmap";
 import Length from "./components/length-vs-sentiment";
 import EmbeddingGraph from "./components/embedding-graph";
@@ -17,6 +17,8 @@ import PostLengthTopicBar from "./components/p2/post-length-bar";
 export default function Home() {
   return (
     <div className="">
+      <Sentiment2OverTime />
+      <SentimentHeatMap />
       {/* Post Length Explanation */}
       <div>
         <h3>Post Length</h3>
