@@ -25,19 +25,19 @@ const TSNEVisualization = () => {
     const colors = [
       "#e6194B",
       "#f58231",
-      "#ffe119",
+      "#FFDB58",
       "#bfef45",
       "#3cb44b",
-      "#42d4f4",
       "#4363d8",
+      "#42d4f4",
       "#911eb4",
       "#f032e6",
       "#808000",
-      "#dcbeff",
+      "#8a9edb",
       "#9A6324",
-      "#ffd8b1",
-      "#a9a9a9",
       "#000075",
+      "#a9a9a9",
+      "#ffd8b1",
     ];
 
     // Define scales for the x and y axes so it fits within the canvas
@@ -104,15 +104,24 @@ const TSNEVisualization = () => {
         .attr("data-topic", topTopic) // associate with topic for filtering
         .on("mouseover", (event) => {
           console.log("Mouseover triggered for: ", post.post_id);
+          console.log(
+            `Tooltip content: Dominant Topic: ${topLabel}, Letter Title: ${letter.title}`
+          );
+          // console.log("Event: ", event);
+          // console.log("page x: ", event.pageX);
+          // console.log("page y: ", event.pageY);
+          const [x, y] = d3.pointer(event);
+
           tooltip.transition().duration(200).style("opacity", 1);
           tooltip
             .html(
-              `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
-                2
-              )}<br>Y: ${point.y.toFixed(2)}`
+              // `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
+              //   2
+              // )}<br>Y: ${point.y.toFixed(2)}`
+              `<strong>${topLabel}</strong><br><span style=" display: block; font-style: italic;">"${letter.title}"</span></h3>`
             )
-            .style("left", `${event.pageX - 5}px`)
-            .style("top", `${event.pageY - 70}px`);
+            .style("left", `${x + 15}px`)
+            .style("top", `${y + 50}px`);
         })
         .on("mouseout", () => {
           tooltip.transition().duration(200).style("opacity", 0);
@@ -133,10 +142,10 @@ const TSNEVisualization = () => {
               const topic = +d3.select(this).attr("data-topic");
               const isFiltered =
                 activeTopics.size === 0 || activeTopics.has(topic);
-              return selectedPt.node() === this || isFiltered ? 0.8 : 0.1;
+              return selectedPt.node() === this || isFiltered ? 0.8 : 0.05;
             });
           } else {
-            chartSVG.selectAll("circle").style("opacity", 0.2);
+            chartSVG.selectAll("circle").style("opacity", 0.1);
             selectedPt.style("opacity", 0.8);
           }
 
@@ -245,6 +254,7 @@ const TSNEVisualization = () => {
     // const spacing = 10;
 
     const legendContainer = d3.select("#legend");
+    legendContainer.selectAll("*").remove();
     // const legendTooltip = d3.select(".legend-tooltip");
 
     // for each topic, get color and append to legend
@@ -294,7 +304,7 @@ const TSNEVisualization = () => {
         const topic = +d3.select(this).attr("data-topic");
         console.log("active topics size: ", activeTopics.size);
         console.log("active topics: ", activeTopics);
-        return activeTopics.size === 0 || activeTopics.has(topic) ? 0.6 : 0.1;
+        return activeTopics.size === 0 || activeTopics.has(topic) ? 0.6 : 0.025;
       });
     }
 
