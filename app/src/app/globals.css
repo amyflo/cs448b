@@ -106,16 +106,8 @@ textarea {
 /* Root Variables for Light and Dark Mode */
 :root {
   --background: #ffffff; /* Light mode background */
-  --foreground: #171717; /* Light mode text color */
 }
 
-/* Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a; /* Dark mode background */
-    --foreground: #ededed; /* Dark mode text color */
-  }
-}
 /* General Text Styling */
 body {
   @apply text-base leading-relaxed tracking-normal text-gray-800; /* Smooth text with good readability */
