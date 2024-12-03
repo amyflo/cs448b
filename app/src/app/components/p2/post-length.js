@@ -3,7 +3,6 @@ import * as d3 from "d3";
 
 const SentimentBoxPlot = () => {
   const [data, setData] = useState([]);
-  const [sortingMethod, setSortingMethod] = useState("median");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,7 +14,10 @@ const SentimentBoxPlot = () => {
         const parsedData = Object.entries(json)
           .map(([postId, post]) => ({
             topic: post.topic_label, // Assuming `topic` is available in the data
-            sentiment: post.bodySentiment?.score || 0,
+            word_len: post.body
+              ? post.body.split(/\s+/).filter((word) => word.trim().length > 0)
+                  .length
+              : 0, // Calculate number of words
           }))
           .filter((post) => post.topic);
 
@@ -40,19 +42,20 @@ const SentimentBoxPlot = () => {
 
   const createBoxPlot = (groupedData) => {
     // Clear previous SVG (if exists)
-    d3.select("#box-plot").select("svg").remove();
+    d3.select("#box-plot-post-length").select("svg").remove();
 
     // Dimensions and margins
     const margin = { top: 40, right: 40, bottom: 80, left: 60 };
     const containerWidth =
-      document.getElementById("box-plot")?.offsetWidth || window.innerWidth;
+      document.getElementById("box-plot-post-length")?.offsetWidth ||
+      window.innerWidth;
     const width = containerWidth - margin.left - margin.right;
 
     const height = 1000 - margin.top - margin.bottom;
 
     // Create SVG canvas
     const svg = d3
-      .select("#box-plot")
+      .select("#box-plot-post-length")
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -61,14 +64,14 @@ const SentimentBoxPlot = () => {
 
     // Prepare data for box plot
     const boxData = Array.from(groupedData, ([topic, values]) => {
-      const sentiments = values.map((d) => d.sentiment).sort(d3.ascending);
-      const q1 = d3.quantile(sentiments, 0.25);
-      const median = d3.quantile(sentiments, 0.5);
-      const q3 = d3.quantile(sentiments, 0.75);
-      const min = d3.min(sentiments);
-      const max = d3.max(sentiments);
+      const word_lens = values.map((d) => d.word_len).sort(d3.ascending);
+      const q1 = d3.quantile(word_lens, 0.25);
+      const median = d3.quantile(word_lens, 0.5);
+      const q3 = d3.quantile(word_lens, 0.75);
+      const min = d3.min(word_lens);
+      const max = d3.max(word_lens);
       const range = max - min;
-      return { topic, q1, median, q3, min, max, range, sentiments };
+      return { topic, q1, median, q3, min, max, range, word_lens };
     });
 
     boxData.sort((a, b) => b.median - a.median);
@@ -113,7 +116,7 @@ const SentimentBoxPlot = () => {
 
     // Tooltip
     const tooltip = d3
-      .select("#box-plot")
+      .select("#box-plot-post-length")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0);
@@ -236,7 +239,7 @@ const SentimentBoxPlot = () => {
       .attr("y", -margin.left + 20)
       .attr("x", -height / 2)
       .style("text-anchor", "middle")
-      .text("Sentiment");
+      .text("Word count");
 
     // Add title
     svg
@@ -245,10 +248,10 @@ const SentimentBoxPlot = () => {
       .attr("y", -margin.top / 2)
       .style("text-anchor", "middle")
       .style("font-size", "16px")
-      .text("Sentiment Distribution Across Topics");
+      .text("Word count Distribution Across Topics");
   };
 
-  return <div id="box-plot"></div>;
+  return <div id="box-plot-post-length"></div>;
 };
 
 export default SentimentBoxPlot;

@@ -9,6 +9,9 @@ import PostLength from "./components/p1/post-length";
 import FrequencyOfPosts from "./components/p1/frequency-of-posts";
 import SentimentOverTime from "./components/p1/sentiment-over-time";
 import TopicSentiment from "./components/p2/topic-by-sentiment";
+import PostLengthTopic from "./components/p2/post-length";
+import TopicSentimentBar from "./components/p2/topic-by-sentiment-bar";
+import PostLengthTopicBar from "./components/p2/post-length-bar";
 
 export default function Home() {
   return (
@@ -20,6 +23,9 @@ export default function Home() {
       // TOPIC MODELLING
       <TSNEVisualization />
       <TopicSentiment />
+      <TopicSentimentBar />
+      <PostLengthTopic />
+      <PostLengthTopicBar />
       //
     </div>
   );
