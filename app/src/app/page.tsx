@@ -1,130 +1,144 @@
-import Image from "next/image";
+"use client";
+
 import SentimentBarChart from "./components/sentiment-posts";
-import SentimentOverTime from "./components/sentiment-over-time";
+// import SentimentOverTime from "./components/sentiment-over-time";
 import SentimentHeatMap from "./components/sentiment-heatmap";
 import Length from "./components/length-vs-sentiment";
 import EmbeddingGraph from "./components/embedding-graph";
+import TSNEVisualization from "./components/p2/topic-modelling";
+import PostLength from "./components/p1/post-length";
+import FrequencyOfPosts from "./components/p1/frequency-of-posts";
+import SentimentOverTime from "./components/p1/sentiment-over-time";
+import TopicSentiment from "./components/p2/topic-by-sentiment";
+import PostLengthTopic from "./components/p2/post-length";
+import TopicSentimentBar from "./components/p2/topic-by-sentiment-bar";
+import PostLengthTopicBar from "./components/p2/post-length-bar";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
+    <div className="">
+      {/* Post Length Explanation */}
+      <div>
+        <h3>Post Length</h3>
+        <p>
+          This visualization tracks the average length of posts over time,
+          showing how the verbosity of posts has evolved. It allows us to see
+          whether users tend to write more or less over the course of the
+          dataset.
+        </p>
+        <PostLength />
+      </div>
 
-        <h1>Sentiment Analysis Visualization</h1>
-        <SentimentBarChart />
+      {/* Frequency of Posts Explanation */}
+      <div>
+        <h3>Frequency of Posts</h3>
+        <p>
+          This graph shows the frequency of posts over a specific period. By
+          tracking the number of posts at regular intervals, we can observe
+          fluctuations and trends in user engagement or activity levels.
+        </p>
+        <FrequencyOfPosts />
+      </div>
+
+      {/* Sentiment Over Time Explanation */}
+      <div>
+        <h3>Sentiment Over Time</h3>
+        <p>
+          This chart visualizes the sentiment of posts, plotting the average
+          sentiment score across time. It helps identify any shifts in mood,
+          whether positive, neutral, or negative, and highlights significant
+          changes or events that might have influenced the tone.
+        </p>
         <SentimentOverTime />
-        <SentimentHeatMap />
-        <Length />
+      </div>
 
-        <h1>Word Association Visualization</h1>
-        <EmbeddingGraph
-          axis={["he", "she"]}
-          points={[
-            "movie",
-            "book",
-            "love",
-            "story",
-            "hate",
-            "good",
-            "interesting",
-            "sorry",
-            "silly",
-            "bad",
-          ]}
-        />
+      <h1>Word Association Visualization</h1>
+      <EmbeddingGraph
+        axis={["he", "she"]}
+        points={[
+          "movie",
+          "book",
+          "love",
+          "story",
+          "hate",
+          "good",
+          "interesting",
+          "sorry",
+          "silly",
+          "bad",
+        ]}
+      />
 
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+        <li className="mb-2">
+          Get started by editing{" "}
+          <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+            src/app/page.tsx
+          </code>
+          .
+        </li>
+        <li>Save and see your changes instantly.</li>
+      </ol>
+      {/* TOPIC MODELLING */}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      {/* t-SNE Visualization Explanation */}
+      <div>
+        <h3>t-SNE Visualization</h3>
+        <p>
+          t-SNE is used to reduce the dimensionality of data while preserving
+          the relationships between data points. This scatter plot helps
+          visualize the clustering of different topics, showing how similar or
+          dissimilar various topics are to one another.
+        </p>
+        <TSNEVisualization />
+      </div>
+
+      {/* Topic Sentiment Explanation */}
+      <div>
+        <h3>Topic Sentiment</h3>
+        <p>
+          This visualization examines the sentiment of posts within each
+          identified topic. By comparing the sentiment across various topics, it
+          offers insights into whether certain topics tend to attract more
+          positive or negative discussions.
+        </p>
+        <TopicSentiment />
+      </div>
+
+      {/* Topic Sentiment Bar Explanation */}
+      <div>
+        <h3>Topic Sentiment Bar</h3>
+        <p>
+          This bar chart presents a breakdown of sentiment by topic, making it
+          easy to compare the relative positivity or negativity of each topic.
+          It allows users to quickly grasp which topics are linked to favorable
+          or unfavorable sentiment.
+        </p>
+        <TopicSentimentBar />
+      </div>
+
+      {/* Post Length by Topic Explanation */}
+      <div>
+        <h3>Post Length by Topic</h3>
+        <p>
+          This chart explores how post length varies across different topics. It
+          gives insight into whether certain topics are discussed in more
+          detail, or if brevity is preferred for specific subject matters.
+        </p>
+        <PostLengthTopic />
+      </div>
+
+      {/* Post Length by Topic Bar Explanation */}
+      <div>
+        <h3>Post Length by Topic Bar</h3>
+        <p>
+          This bar chart presents the average post length for each topic. It
+          provides a straightforward comparison of which topics tend to generate
+          longer posts, helping to understand which discussions are more
+          elaborate or concise.
+        </p>
+        <PostLengthTopicBar />
+      </div>
     </div>
   );
 }
