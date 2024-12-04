@@ -68,6 +68,7 @@ const EmbeddingGraph = ({ axis, points }) => {
     // define chart style
     const axisColor = "crimson";
     const pointsColor = "black;";
+    const text_dx = 5;
 
     // set up chart area
     const margin = { top: 60, right: 50, bottom: 80, left: 80 };
@@ -83,20 +84,22 @@ const EmbeddingGraph = ({ axis, points }) => {
       .style("background-color", "white")
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // function for generating x values
+      
+    // function for generating y values
     const v_axis = diff(emb(axisWords[0]), emb(axisWords[1]));
-    const x_val = (d) => {
-      return dot(v_axis, emb(d));
+    const y = (d) => {
+      return yScale(dot(v_axis, emb(d)));
     };
 
     // define x and y scale
-    const xScale = d3
+    const yScale = d3
       .scaleLinear()
-      .domain(d3.extent(axisWords, x_val))
-      .range([0, width]);
+      .domain(d3.extent(axisWords, (d) => dot(v_axis, emb(d))))
+      .range([0, height]);
 
-    const yScale = d3.scaleLinear().domain([0, 1]).range([0, height]);
+    const xScale = d3.scaleLinear().domain([0, 1]).range([0, width]);
+
+    
 
     // plot points
     svg
@@ -106,46 +109,47 @@ const EmbeddingGraph = ({ axis, points }) => {
       .data(pointsWords, (d) => d)
       .join("text")
       .attr("class", "points")
-      .attr("x", (d) => xScale(x_val(d)))
-      .attr("y", (_, i) => yScale(i / pointsWords.length))
+      .attr("x", width / 2)
+      .attr("dx", text_dx)
+      .attr("y", (d) => y(d))
       .attr("fill", pointsColor)
       .text((d) => d);
 
-    // draw axes and labels
-    svg
-      .append("line") // create horizontal line in the middle of the chart
-      .attr("x1", 0)
-      .attr("x2", width)
-      .attr("y1", height / 2)
-      .attr("y2", height / 2)
-      .style("stroke", axisColor);
-
-    svg
-      .append("line") // create vertical line in the middle of the chart
-      .attr("x1", width / 2)
-      .attr("x2", width / 2)
-      .attr("y1", 0)
-      .attr("y2", height)
-      .attr("stroke-dasharray", "5,5") // dotted
-      .style("stroke", axisColor);
-
-    svg // label the x-axis' endpoints
+    svg // label the y-axis endpoints
       .selectAll("text")
       .data(axisWords, (d) => d)
       .join(
         (enter) =>
           enter
             .append("text")
-            .attr("x", (d) => xScale(x_val(d)))
-            .attr("y", () => height / 2 - 10)
+            .attr("x", width / 2)
+            .attr("dx", text_dx)
+            .attr("y", (d) => y(d))
             .attr("fill", axisColor)
             .text((d) => d),
         (update) => update,
         (exit) => exit
       );
 
-    // center all text
-    svg.selectAll("text").attr("text-anchor", "middle");
+    //draw x axis
+    svg
+      .append("line") // dotted horizontal line in the center of the chart area
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", height / 2)
+      .attr("y2", height / 2)
+      .style("stroke", axisColor)
+      .attr("stroke-dasharray", "5,5");
+
+    // draw y axis
+    svg
+      .append("line") // solid vertical line in the center of the chart area
+      .attr("x1", width / 2)
+      .attr("x2", width / 2)
+      .attr("y1", 0)
+      .attr("y2", height)
+      .style("stroke", axisColor);
+
   };
 
   return <div ref={chartRef} style={{ position: "relative" }}></div>;
