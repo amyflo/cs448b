@@ -74,7 +74,9 @@ const EmbeddingGraph = ({ axis, points }) => {
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    const chart = d3.select(chartRef.current);
+    const chart = d3.select(chartRef.current)
+    
+
     const svg = chart
       .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -87,14 +89,15 @@ const EmbeddingGraph = ({ axis, points }) => {
     // function for generating x values
     const v_axis = diff(emb(axisWords[0]), emb(axisWords[1]));
     const x_val = (d) => {
-      return dot(v_axis, emb(d));
+        return dot(v_axis, emb(d));
     };
 
     // define x and y scale
     const xScale = d3
       .scaleLinear()
       .domain(d3.extent(axisWords, x_val))
-      .range([0, width]);
+      .range([0, width])
+      .clamp(true);
 
     const yScale = d3.scaleLinear().domain([0, pointsWords.length]).range([0, height]);
     // skip plotting word in the center of the graph 
@@ -159,6 +162,8 @@ const EmbeddingGraph = ({ axis, points }) => {
         .attr("dx", 5)
         .attr("fill", pointsColor)
         .text((d) => d);
+
+        //TODO: prevent clipping outside of viz bounds
 
         // TODO: add white background to points
 
