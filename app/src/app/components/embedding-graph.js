@@ -96,22 +96,18 @@ const EmbeddingGraph = ({ axis, points }) => {
       .domain(d3.extent(axisWords, x_val))
       .range([0, width]);
 
-    const yScale = d3.scaleLinear().domain([0, 1]).range([0, height]);
+    const yScale = d3.scaleLinear().domain([0, pointsWords.length]).range([0, height]);
+    // skip plotting word in the center of the graph 
+    // ensures words aren't drawn on top of the x axis
+    const y = (i) => {
+      if (i > (pointsWords.length - 1) / 2) {
+        return yScale(i + 1)
+      } else {
+        return yScale(i)
+      }
+    }
 
-    // plot points
-    svg
-      .append("g")
-      .attr("id", "pointsContainer")
-      .selectAll("text")
-      .data(pointsWords, (d) => d)
-      .join("text")
-      .attr("class", "points")
-      .attr("x", (d) => xScale(x_val(d)))
-      .attr("y", (_, i) => yScale(i / pointsWords.length))
-      .attr("fill", pointsColor)
-      .text((d) => d);
-
-    // draw axes and labels
+    // draw axes
     svg
       .append("line") // create horizontal line in the middle of the chart
       .attr("x1", 0)
@@ -129,6 +125,44 @@ const EmbeddingGraph = ({ axis, points }) => {
       .attr("stroke-dasharray", "5,5") // dotted
       .style("stroke", axisColor);
 
+    
+    // draw lines from points to x axis
+    svg
+      .append("g")
+      .attr("id", "pointsContainer")
+      .selectAll("line")
+      .data(pointsWords, d => d)
+      .join("line")
+        .attr("x1", (d) => xScale(x_val(d)))
+        .attr("y1", (_, i) => y(i))
+        .attr("x2", (d) => xScale(x_val(d)))
+        .attr("y2", height/2)
+        .style("stroke", axisColor);
+
+    // plot points
+    svg
+      .select("#pointsContainer")
+      .selectAll("text")
+      .data(pointsWords, (d) => d)
+      .join("text")
+        .attr("class", "points")
+        .attr("x", (d) => xScale(x_val(d)))
+        .attr("y", (_, i) => y(i))
+        .attr("dy", (_, i) => {
+          if (y(i) > height / 2) {
+            return 10
+          }
+          else {
+            return -5
+          }
+        })
+        .attr("dx", 5)
+        .attr("fill", pointsColor)
+        .text((d) => d);
+
+        // TODO: add white background to points
+
+
     svg // label the x-axis' endpoints
       .selectAll("text")
       .data(axisWords, (d) => d)
@@ -139,13 +173,11 @@ const EmbeddingGraph = ({ axis, points }) => {
             .attr("x", (d) => xScale(x_val(d)))
             .attr("y", () => height / 2 - 10)
             .attr("fill", axisColor)
+            .attr("text-anchor", "middle")
             .text((d) => d),
         (update) => update,
         (exit) => exit
       );
-
-    // center all text
-    svg.selectAll("text").attr("text-anchor", "middle");
   };
 
   return <div ref={chartRef} style={{ position: "relative" }}></div>;
