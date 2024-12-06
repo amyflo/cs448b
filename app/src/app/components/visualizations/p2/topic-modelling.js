@@ -3,13 +3,22 @@ import React from "react";
 import * as d3 from "d3";
 import "./topic-styling.css";
 
-const TSNEVisualization = () => {
+const TSNEVisualization = ({
+  activeTopics = [],
+  defaultDetailsPanelHTML = "<p>Click on a point to see more details here.</p>",
+  dataFiles = {
+    assignedTopics: "/data/topic-modeling/results/top_topics_with_weights.json",
+    topicsRef: "/data/topic-modeling/results/topics_NMF_15.json",
+    tsneReducedData: "/data/topic-modeling/results/tsne-reduced-data.json",
+    lettersData: "/data/consolidated_posts.json",
+  },
+}) => {
   // Load the topic assignments, topic reference file, TSNE reduced data, and consolidated posts info
   Promise.all([
-    d3.json("/data/topic-modeling/results/top_topics_with_weights.json"),
-    d3.json("/data/topic-modeling/results/topics_NMF_15.json"),
-    d3.json("/data/topic-modeling/results/tsne-reduced-data.json"),
-    d3.json("/data/consolidated_posts.json"),
+    d3.json(dataFiles.assignedTopics),
+    d3.json(dataFiles.topicsRef),
+    d3.json(dataFiles.tsneReducedData),
+    d3.json(dataFiles.lettersData),
   ]).then(([assignedTopicsData, topicsRefData, reducedData, lettersData]) => {
     // Set the canvas and chart dimensions
     const width = 800;
@@ -18,8 +27,6 @@ const TSNEVisualization = () => {
     const chartLeftMargin = 200;
     const chartContainerW = 1020;
     const chartContainerH = 750;
-    // const chartMidX = chartLeftMargin + width / 2;
-    // const chartMidY = height / 2;
 
     // define the color theme (15 colors for 15 topics)
     const colors = [
@@ -83,14 +90,8 @@ const TSNEVisualization = () => {
       const post = assignedTopicsData[i];
       const letter = lettersData[post.post_id];
       const topicWeights = assignedTopicsData[i]["all_weights"];
-
       const topTopic = post.topics.first.topic;
       const topLabel = topicsRefData[topTopic].label;
-      // const topWords = topicsRefData[topTopic].top_words;
-
-      // const secondTopic = post.topics.second.topic;
-      // const secondLabel = topicsRefData[secondTopic].label;
-
       const color = colors[topTopic];
 
       // Plot the data points as circles
@@ -107,9 +108,6 @@ const TSNEVisualization = () => {
           console.log(
             `Tooltip content: Dominant Topic: ${topLabel}, Letter Title: ${letter.title}`
           );
-          // console.log("Event: ", event);
-          // console.log("page x: ", event.pageX);
-          // console.log("page y: ", event.pageY);
           const [x, y] = d3.pointer(event);
 
           tooltip.transition().duration(200).style("opacity", 1);
@@ -175,6 +173,9 @@ const TSNEVisualization = () => {
                 .translate(zoomCenterX, zoomCenterY)
                 .scale(zoomedInScale)
             );
+
+          // render default detail panel html
+          d3.select("#details-content").html(defaultDetailsHTML);
 
           // update the details panel
           const sortedWeights = topicWeights
@@ -246,16 +247,9 @@ const TSNEVisualization = () => {
         }
       });
     }
-    // append a legend
-    // const legendWidth = 200;
-    // const legendHeight = 50;
-    // const legendMargin = 20;
-    // const blockSize = 18;
-    // const spacing = 10;
 
     const legendContainer = d3.select("#legend");
     legendContainer.selectAll("*").remove();
-    // const legendTooltip = d3.select(".legend-tooltip");
 
     // for each topic, get color and append to legend
     colors.forEach((color, index) => {
