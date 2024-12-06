@@ -7,9 +7,7 @@ import Sentiment2OverTime from "./components/visualizations/sentiment-over-time"
 import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
 import Length from "./components/visualizations/length-vs-sentiment";
 import EmbeddingGraph from "./components/visualizations/embedding-graph";
-import TSNE138 from "./components/visualizations/p2/1topic-modeling";
-import TSNE146 from "./components/visualizations/p2/2topic-modeling";
-import TSNE08 from "./components/visualizations/p2/3topic-modeling";
+import TopicVisualization from "./components/visualizations/p2/1topic-modeling";
 import PostLength from "./components/visualizations/p1/post-length";
 import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
 import SentimentOverTime from "./components/visualizations/p1/sentiment-over-time";
@@ -76,7 +74,8 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
             title="**The Wishful Thinker**"
             description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
           >
-            <TSNE138
+            <TopicVisualization
+              id="tsne138"
               key="tsne138"
               activeTopics={new Set([1, 3, 8])}
               defaultDetailsPanelHTML="<p>Authors who are wishful thinkers commonly use metaphors that relate to the word-usage in the topic Serenity and Beauty. </p><p>Some letters from Idealistic Soulmates also closely align with the word-usage from Vulnerability and Heartbreak</p><p>Shows how vulnerable emotional states may spur language similar to that of a wishful thinker.</p>"
@@ -87,7 +86,8 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
             title="**Idealistic Soulmates Subtopics**"
             description="Letters from Idealistic Soulmates have soft associations with other topics as well."
           >
-            <TSNE146
+            <TopicVisualization
+              id="tsne146"
               key="tsne146"
               activeTopics={new Set([1, 4, 6])}
               defaultDetailsPanelHTML="<p>Letters from Idealistic Soulmates are split between soft associations with two other topics: Playful Flirtation and Reflection on Life Journey</p><p>Half of the letters speak about physical and secual longing portrayed in casual language - similar to the language used in Playful Flirtation letters.</p><p>The other half of the letters use deeper language that reminisce on the past or dream of the future - similar to the word usage in letters that reflect on the overall life journey of a person.</p>"

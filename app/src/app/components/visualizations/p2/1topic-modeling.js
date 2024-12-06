@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import "./topic-styling.css";
 
 const TSNEVisualization = ({
+  id,
   activeTopics = new Set(),
   defaultDetailsPanelHTML = "<p>Click on a point to see more details here.</p>",
   dataFiles = {
@@ -24,12 +25,8 @@ const TSNEVisualization = ({
 
   // function for updating the opacity of points of active/selected topic filters
   function updatePointOpacities() {
-    console.log("update called");
-    d3.selectAll("circle").style("opacity", function () {
+    d3.selectAll(`#${id}-chart circle`).style("opacity", function () {
       const topic = +d3.select(this).attr("data-topic");
-      // console.log("active topics size: ", activeTopicsLocal.size);
-      // console.log("active topics: ", activeTopicsLocal);
-      // console.log(`has topic ${topic}: ${activeTopicsLocal.has(topic)}`);
       return activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic)
         ? 0.6
         : 0.025;
@@ -113,8 +110,8 @@ const TSNEVisualization = ({
       });
 
     // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
-    const chartSVG = d3.select("#chart");
-    const tooltip = d3.select("#tooltip");
+    const chartSVG = d3.select(`#${id}-chart`);
+    const tooltip = d3.select(`#${id}-tooltip`);
 
     // detail panel instructions for on-click
     const clickInMsg =
@@ -232,7 +229,7 @@ const TSNEVisualization = ({
             (item) =>
               `${topicsRefData[item.index].label}: ${item.weight.toFixed(5)}`
           );
-          d3.select("#details-content").html(
+          d3.select(`#${id}-details-content`).html(
             `<p>${clickOutMsg}</p>
               <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
                 <h3 style="margin: 0; font-size: 10; text-align: left;">${
@@ -269,13 +266,13 @@ const TSNEVisualization = ({
         });
 
       // set default if nothing is selected
-      d3.select("#details-content").html(
+      d3.select(`#${id}-details-content`).html(
         `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
       );
 
       // track click events throughout the entire body
       // (if user clicks outside, it'll reset point selection)
-      d3.select("#chart-container").on("click", (event) => {
+      d3.select(`#${id}-chart-container`).on("click", (event) => {
         if (selectedPt) {
           // check: click position is anywhere other than the currently selected point
           if (!selectedPt.node().contains(event.target)) {
@@ -284,7 +281,7 @@ const TSNEVisualization = ({
             updatePointOpacities();
 
             // reset the details box
-            d3.select("#details-content").html(
+            d3.select(`#${id}-details-content`).html(
               `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
             );
             // no points are selected anymore so val should be null
@@ -298,7 +295,7 @@ const TSNEVisualization = ({
       });
     }
 
-    const legendContainer = d3.select("#legend");
+    const legendContainer = d3.select(`#${id}-legend`);
     legendContainer.selectAll("*").remove();
 
     // for each topic, get color and append to legend
@@ -347,18 +344,18 @@ const TSNEVisualization = ({
   });
 
   return (
-    <div id="outer-container">
-      <div id="chart-container">
+    <div className="outer-container">
+      <div className="chart-container" id={`#${id}-chart-container`}>
         <h3>T-SNE Visualization of Topic Modeling</h3>
-        <svg id="chart"></svg>
-        <div id="legend">
+        <svg id={`${id}-chart`} className="chart"></svg>
+        <div id={`${id}-legend`} className="legend">
           <p>Select topic filters here:</p>
         </div>
-        <div id="tooltip" className="tooltip"></div>
+        <div id={`${id}-tooltip`} className="tooltip"></div>
       </div>
-      <div id="details-box">
+      <div id={`${id}-details-box`} className="details-box">
         <h2>Love Letter Details</h2>
-        <div id="details-content">
+        <div id={`${id}-details-content`} className="details-content">
           <p>Click on a point to see more details here.</p>
         </div>
       </div>
