@@ -3,20 +3,21 @@ import ReactMarkdown from "react-markdown";
 
 const Card = ({ children, title, description }) => {
   return (
-    <div className="flex flex-row gap-8 items-center justify-center">
+    <div className="flex flex-col p-4 items-center justify-center">
+      <div className="max-w-prose">
+        <ReactMarkdown className="font-serif text-2xl">{title}</ReactMarkdown>
+        <ReactMarkdown
+          className="font-serif text-md text-gray-800 leading-relaxed"
+          breaks
+        >
+          {description}
+        </ReactMarkdown>
+      </div>
       <div
-        className="bg-white w-full max-w-2/3 rounded-lg flex-1 flex items-center justify-center p-4"
+        className="bg-white w-3/4 rounded-lg flex-1 flex items-center justify-center"
         id="visualization-content"
       >
         {children}
-      </div>
-      <div className="w-1/3 max-w-sm">
-        <ReactMarkdown className="font-bold text-xl mb-2">
-          {title}
-        </ReactMarkdown>
-        <ReactMarkdown className="text-gray-600" breaks>
-          {description}
-        </ReactMarkdown>
       </div>
     </div>
   );

@@ -1,55 +1,59 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-const Slideshow = ({ children }) => {
+const ScrollSlideshow = ({ children }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Total slides
   const totalSlides = React.Children.count(children);
+  const containerRef = useRef(null);
 
-  // Navigate to the next slide
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+
+    const { scrollTop, clientHeight } = containerRef.current;
+    const newSlide = Math.round(scrollTop / clientHeight);
+
+    if (newSlide !== currentSlide && newSlide >= 0 && newSlide < totalSlides) {
+      setCurrentSlide(newSlide);
+    }
   };
 
-  // Navigate to the previous slide
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
-  };
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, [currentSlide]);
 
   return (
-    <div className="relative flex items-center justify-center h-full w-full">
-      {/* Slideshow Content */}
-      <div className="w-full h-screen p-20 bg-white">
-        {React.Children.toArray(children)[currentSlide]}
+    <div
+      ref={containerRef}
+      className="relative w-full h-screen overflow-y-scroll"
+      style={{ scrollSnapType: "y mandatory" }}
+    >
+      <div className="flex flex-col items-center justify-center">
+        {React.Children.map(children, (child, index) => (
+          <div
+            className={`w-full min-h-[95vh] p-10 bg-white shadow-lg rounded-lg overflow-hidden transition-opacity duration-500 ${
+              index === currentSlide
+                ? "opacity-100 translate-y-0 scale-100"
+                : "opacity-50 translate-y-5 scale-95"
+            }`}
+            style={{
+              scrollSnapAlign: "start",
+              transition: "opacity 0.5s, transform 0.5s ease-in-out",
+            }}
+          >
+            {child}
+          </div>
+        ))}
       </div>
-
-      {/* Previous Button */}
-      {currentSlide > 0 && (
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-          style={{ transform: "translateY(-50%)" }}
-          aria-label="Previous Slide"
-        >
-          &#8592; {/* Left arrow */}
-        </button>
-      )}
-
-      {/* Next Button */}
-      {currentSlide < totalSlides - 1 && (
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-          style={{ transform: "translateY(-50%)" }}
-          aria-label="Next Slide"
-        >
-          &#8594; {/* Right arrow */}
-        </button>
-      )}
     </div>
   );
 };
 
-export default Slideshow;
+export default ScrollSlideshow;
