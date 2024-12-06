@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import "./topic-styling.css";
 
@@ -15,7 +15,8 @@ const TSNEVisualization = ({
   },
 }) => {
   console.log("prop active topics ", activeTopics);
-  let selectedPt = useRef(null); // no point is selected initially
+  // let selectedPt = useRef(null); // no point is selected initially
+  const [selectedPt, setSelectedPt] = useState(null);
   console.log("initial selectedPt: ", selectedPt);
 
   useEffect(() => {
@@ -86,6 +87,10 @@ const TSNEVisualization = ({
       "#ffd8b1",
     ];
 
+    // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
+    const chartSVG = d3.select(`#${id}-chart`);
+    const tooltip = d3.select(`#${id}-tooltip`);
+
     // Define scales for the x and y axes so it fits within the canvas
     // matches the raw data coordinates (tsne first and second components) to pixels in svg
     // also used for cluster distribution and zooming on selection
@@ -110,11 +115,8 @@ const TSNEVisualization = ({
       .scaleExtent([1, 2]) // Set zoom limits (don't want to zoom in too far)
       .on("zoom", function (event) {
         chartSVG.attr("transform", event.transform);
+        // d3.select(`#${id}-chart`).attr("transform", event.transform)
       });
-
-    // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
-    const chartSVG = d3.select(`#${id}-chart`);
-    const tooltip = d3.select(`#${id}-tooltip`);
 
     // detail panel instructions for on-click
     const clickInMsg =
@@ -174,30 +176,31 @@ const TSNEVisualization = ({
           console.log("current selectedPt val: ", selectedPt);
 
           // if there were prev selected points, reset it so highlights don't persist
-          if (selectedPt.current) {
-            selectedPt.current.style("opacity", 0.8);
-            selectedPt.current.attr("stroke", "000");
+          if (selectedPt) {
+            selectedPt.style("opacity", 0.8);
+            selectedPt.attr("stroke", "000");
           }
 
-          selectedPt.current = d3.select(event.target);
-          console.log("new selected pt val ", selectedPt.current);
+          // reassign to new selected point value (user clicks from one point to another)
+          const newSelectedPt = d3.select(event.target);
+          setSelectedPt(newSelectedPt);
+
+          console.log("after setting new selectedPt ", selectedPt);
           // lower opacity for unfiltered posts
           if (activeTopicsLocal.size !== 0) {
             chartSVG.selectAll("circle").style("opacity", function () {
               const topic = +d3.select(this).attr("data-topic");
               const isFiltered =
                 activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic);
-              return selectedPt.current.node() === this || isFiltered
-                ? 0.8
-                : 0.025;
+              return newSelectedPt.node() === this || isFiltered ? 0.8 : 0.025;
             });
           } else {
             chartSVG.selectAll("circle").style("opacity", 0.1);
-            selectedPt.current.style("opacity", 0.8);
+            newSelectedPt.style("opacity", 0.8);
           }
 
           // increase opacity and put border for specific, selected point
-          selectedPt.current
+          newSelectedPt
             .style("opacity", 1)
             .attr("stroke", "black")
             .attr("stroke-width", "2.5");
@@ -280,25 +283,24 @@ const TSNEVisualization = ({
       // (if user clicks outside, it'll reset point selection)
       d3.select("body").on("click", (event) => {
         console.log("clicked element: ", event.target);
-        console.log(
-          "inside of zoom reset, selected pt is: ",
-          selectedPt.current
-        );
-        if (selectedPt.current) {
+        console.log("inside of zoom reset, selected pt is: ", selectedPt);
+        if (selectedPt) {
           // check: click position is anywhere other than the currently selected point
-          if (!selectedPt.current.node().contains(event.target)) {
+          if (!selectedPt.node().contains(event.target)) {
             console.log("click outside selected point");
             if (d3.select(`#${id}-chart`).node().contains(event.target)) {
               console.log("click within  chart area");
               chartSVG.selectAll(`#${id}-chart circle`).attr("stroke", "null"); // remove outline to be transparent
-              updatePointOpacities();
+
+              // zooming out is the same as unselecting so selectedPt should be reset to null
+              setSelectedPt(null);
+
+              updatePointOpacities(); // all unfiltered circles are lower opacity
+
               // reset the details box
               d3.select(`#${id}-details-content`).html(
                 `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
               );
-
-              // no points are selected anymore so val should be null
-              selectedPt.current = null;
 
               // reset the zoom
               chartSVG.transition().duration(750).call(
