@@ -18,7 +18,7 @@ const LoadingHearts = ({ children, title = "Analyzing love letters..." }) => {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-pink-50">
         {/* Title */}
-        <h1 className="text-2xl font-bold text-pink-700 mb-6 animate-pulse">
+        <h1 className="text-xl font-bold text-pink-700 mb-6 animate-pulse">
           {title}
         </h1>
         {/* Hearts Animation */}
@@ -62,7 +62,7 @@ const LoadingHearts = ({ children, title = "Analyzing love letters..." }) => {
   }
 
   // Display content once loading is complete
-  return <div className="p-8">{children}</div>;
+  return <div>{children}</div>;
 };
 
 export default LoadingHearts;
