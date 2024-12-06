@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import "./topic-styling.css";
 
@@ -14,7 +14,9 @@ const TSNEVisualization = ({
     lettersData: "/data/consolidated_posts.json",
   },
 }) => {
-  console.log("prop active topics for 138: ", activeTopics);
+  console.log("prop active topics ", activeTopics);
+  let selectedPt = useRef(null); // no point is selected initially
+  console.log("initial selectedPt: ", selectedPt);
 
   useEffect(() => {
     updatePointOpacities();
@@ -25,6 +27,7 @@ const TSNEVisualization = ({
 
   // function for updating the opacity of points of active/selected topic filters
   function updatePointOpacities() {
+    // only select the circles of that particular chart
     d3.selectAll(`#${id}-chart circle`).style("opacity", function () {
       const topic = +d3.select(this).attr("data-topic");
       return activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic)
@@ -122,7 +125,6 @@ const TSNEVisualization = ({
       "<h4>Key Takeaways about Selected Topics: </h4>";
 
     // point selection variables
-    let selectedPt = null; // no point is selected initially
     let zoomScale = 1;
     for (let i = 0; i < reducedData.length; i++) {
       const point = reducedData[i];
@@ -147,7 +149,7 @@ const TSNEVisualization = ({
           return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
         })
         .on("mouseover", (event) => {
-          console.log("Mouseover triggered for: ", post.post_id);
+          // console.log("Mouseover triggered for: ", post.post_id);
           // console.log(
           //   `Tooltip content: Dominant Topic: ${topLabel}, Letter Title: ${letter.title}`
           // );
@@ -169,29 +171,33 @@ const TSNEVisualization = ({
         })
         .on("click", (event) => {
           console.log("clicked on post: ", post.post_id);
+          console.log("current selectedPt val: ", selectedPt);
 
           // if there were prev selected points, reset it so highlights don't persist
-          if (selectedPt) {
-            selectedPt.style("opacity", 0.8);
-            selectedPt.attr("stroke", "000");
+          if (selectedPt.current) {
+            selectedPt.current.style("opacity", 0.8);
+            selectedPt.current.attr("stroke", "000");
           }
 
-          selectedPt = d3.select(event.target);
+          selectedPt.current = d3.select(event.target);
+          console.log("new selected pt val ", selectedPt.current);
           // lower opacity for unfiltered posts
           if (activeTopicsLocal.size !== 0) {
             chartSVG.selectAll("circle").style("opacity", function () {
               const topic = +d3.select(this).attr("data-topic");
               const isFiltered =
                 activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic);
-              return selectedPt.node() === this || isFiltered ? 0.8 : 0.025;
+              return selectedPt.current.node() === this || isFiltered
+                ? 0.8
+                : 0.025;
             });
           } else {
             chartSVG.selectAll("circle").style("opacity", 0.1);
-            selectedPt.style("opacity", 0.8);
+            selectedPt.current.style("opacity", 0.8);
           }
 
           // increase opacity and put border for specific, selected point
-          selectedPt
+          selectedPt.current
             .style("opacity", 1)
             .attr("stroke", "black")
             .attr("stroke-width", "2.5");
@@ -272,25 +278,41 @@ const TSNEVisualization = ({
 
       // track click events throughout the entire body
       // (if user clicks outside, it'll reset point selection)
-      d3.select(`#${id}-chart-container`).on("click", (event) => {
-        if (selectedPt) {
+      d3.select("body").on("click", (event) => {
+        console.log("clicked element: ", event.target);
+        console.log(
+          "inside of zoom reset, selected pt is: ",
+          selectedPt.current
+        );
+        if (selectedPt.current) {
           // check: click position is anywhere other than the currently selected point
-          if (!selectedPt.node().contains(event.target)) {
-            chartSVG.selectAll("circle").attr("stroke", "null"); // remove outline to be transparent
+          if (!selectedPt.current.node().contains(event.target)) {
+            console.log("click outside selected point");
+            if (d3.select(`#${id}-chart`).node().contains(event.target)) {
+              console.log("click within  chart area");
+              chartSVG.selectAll(`#${id}-chart circle`).attr("stroke", "null"); // remove outline to be transparent
+              updatePointOpacities();
+              // reset the details box
+              d3.select(`#${id}-details-content`).html(
+                `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
+              );
 
-            updatePointOpacities();
+              // no points are selected anymore so val should be null
+              selectedPt.current = null;
 
-            // reset the details box
-            d3.select(`#${id}-details-content`).html(
-              `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
-            );
-            // no points are selected anymore so val should be null
-            selectedPt = null;
-            chartSVG.transition().duration(750).call(
-              zoom.transform,
-              d3.zoomIdentity // Reset zoom and transition
-            );
+              // reset the zoom
+              chartSVG.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity // Reset zoom and transition
+              );
+            } else {
+              console.log("click outside chart area");
+            }
+          } else {
+            console.log("click on selected point");
           }
+        } else {
+          console.log("no selected point");
         }
       });
     }
@@ -348,9 +370,7 @@ const TSNEVisualization = ({
       <div className="chart-container" id={`#${id}-chart-container`}>
         <h3>T-SNE Visualization of Topic Modeling</h3>
         <svg id={`${id}-chart`} className="chart"></svg>
-        <div id={`${id}-legend`} className="legend">
-          <p>Select topic filters here:</p>
-        </div>
+        <div id={`${id}-legend`} className="legend"></div>
         <div id={`${id}-tooltip`} className="tooltip"></div>
       </div>
       <div id={`${id}-details-box`} className="details-box">
