@@ -191,6 +191,9 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           ]}
         />
         </Card>
+        <Card>
+          <InteractiveEmbeddingGraph/>
+        </Card>
         
         {/* // INSTRUCTIONS
 
