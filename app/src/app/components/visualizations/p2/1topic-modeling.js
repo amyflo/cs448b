@@ -13,7 +13,7 @@ const TSNEVisualization = ({
     lettersData: "/data/consolidated_posts.json",
   },
 }) => {
-  console.log("prop active topics: ", activeTopics);
+  console.log("prop active topics for 138: ", activeTopics);
 
   useEffect(() => {
     updatePointOpacities();
@@ -29,7 +29,7 @@ const TSNEVisualization = ({
       const topic = +d3.select(this).attr("data-topic");
       // console.log("active topics size: ", activeTopicsLocal.size);
       // console.log("active topics: ", activeTopicsLocal);
-      console.log(`has topic ${topic}: ${activeTopicsLocal.has(topic)}`);
+      // console.log(`has topic ${topic}: ${activeTopicsLocal.has(topic)}`);
       return activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic)
         ? 0.6
         : 0.025;
@@ -117,9 +117,12 @@ const TSNEVisualization = ({
     const tooltip = d3.select("#tooltip");
 
     // detail panel instructions for on-click
-    const clickInMsg = "Click on a point to see more details here.";
+    const clickInMsg =
+      "<p><i>Click on a point to see more details about the love letter.</i></p>";
     const clickOutMsg =
-      "Explore another point or click anywhere outside the point to unselect.";
+      "<p><i>Explore another point or click anywhere outside the point to unselect.</i></p>";
+    const topicExplanationHeader =
+      "<h4>Key Takeaways about Selected Topics: </h4>";
 
     // point selection variables
     let selectedPt = null; // no point is selected initially
@@ -183,7 +186,7 @@ const TSNEVisualization = ({
               const topic = +d3.select(this).attr("data-topic");
               const isFiltered =
                 activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic);
-              return selectedPt.node() === this || isFiltered ? 0.8 : 0.05;
+              return selectedPt.node() === this || isFiltered ? 0.8 : 0.025;
             });
           } else {
             chartSVG.selectAll("circle").style("opacity", 0.1);
@@ -216,9 +219,6 @@ const TSNEVisualization = ({
                 .translate(zoomCenterX, zoomCenterY)
                 .scale(zoomedInScale)
             );
-
-          // render default detail panel html
-          d3.select("#details-content").html(defaultDetailsHTML);
 
           // update the details panel
           const sortedWeights = topicWeights
@@ -269,7 +269,9 @@ const TSNEVisualization = ({
         });
 
       // set default if nothing is selected
-      d3.select("#details-content").html(defaultDetailsPanelHTML);
+      d3.select("#details-content").html(
+        `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
+      );
 
       // track click events throughout the entire body
       // (if user clicks outside, it'll reset point selection)
@@ -282,7 +284,9 @@ const TSNEVisualization = ({
             updatePointOpacities();
 
             // reset the details box
-            d3.select("#details-content").html(`<p>${clickInMsg}</p>`);
+            d3.select("#details-content").html(
+              `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
+            );
             // no points are selected anymore so val should be null
             selectedPt = null;
             chartSVG.transition().duration(750).call(
