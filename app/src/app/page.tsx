@@ -18,7 +18,7 @@ import TopicSentiment from "./components/visualizations/p2/topic-by-sentiment";
 import PostLengthTopic from "./components/visualizations/p2/post-length";
 import TopicSentimentBar from "./components/visualizations/p2/topic-by-sentiment-bar";
 import PostLengthTopicBar from "./components/visualizations/p2/post-length-bar";
-
+import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph"
 import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
 
@@ -109,7 +109,89 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         >
           <Length />
         </Card>
+        <Card
+          title="Gendered Language in the Love Letters"
+          description=
+          'Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
+        >
+          <EmbeddingGraph
+            axis={["boy", "girl"]}
+            points={[
+              "i",
+              "me",
+              "my",
+              "im",
+              "you",
+              "your",
+              "youre",
+              "yours",
+              "that",
+              "other",
+              "dream",
+            ]}
+          />
+        </Card>
+        <Card>
+        <EmbeddingGraph
+          axis={["man", "woman"]}
+          points={[
+            "angry",
+            "sad",
+            "happy",
+            "crazy",
+            "scared",
+            "stupid",
+            "emotional",
+          ]}
+        />
+        </Card>
+        <Card>
+        <EmbeddingGraph
+          axis={["boy", "girl"]}
+          points={[
+            "angry",
+            "sad",
+            "happy",
+            "crazy",
+            "scared",
+            "stupid",
+            "emotional",
+          ]}
+        />
+        </Card>
+        <Card>
+        <EmbeddingGraph
+          axis={["i", "you"]}
+          points={[
+            "regret",
+            "feel",
+            "wonder",
+            "know",
+            "cry",
+            "worry",
+            "fear",
+            "wish",
 
+          ]}
+        />
+        </Card>
+        <Card>
+        <EmbeddingGraph
+          axis={["im", "youre"]}
+          points={[
+            "angry",
+            "quiet",
+            "sad",
+            "happy",
+            "empty",
+            "emotional",
+            "nothing",
+            "everything",
+            "scared"
+          ]}
+        />
+        </Card>
+        
         {/* // INSTRUCTIONS
 
       Please just format your visualizations like this: <Card
