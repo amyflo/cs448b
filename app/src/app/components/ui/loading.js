@@ -62,7 +62,7 @@ const LoadingHearts = ({ children, title = "Analyzing love letters..." }) => {
   }
 
   // Display content once loading is complete
-  return <div>{children}</div>;
+  return { children };
 };
 
 export default LoadingHearts;
