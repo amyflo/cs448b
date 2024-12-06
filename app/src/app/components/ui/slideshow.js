@@ -4,46 +4,58 @@ import React, { useState, useEffect, useRef } from "react";
 
 const ScrollSlideshow = ({ children }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = React.Children.count(children);
   const containerRef = useRef(null);
-
-  const handleScroll = () => {
-    if (!containerRef.current) return;
-
-    const { scrollTop, clientHeight } = containerRef.current;
-    const newSlide = Math.round(scrollTop / clientHeight);
-
-    if (newSlide !== currentSlide && newSlide >= 0 && newSlide < totalSlides) {
-      setCurrentSlide(newSlide);
-    }
-  };
+  const slideRefs = useRef([]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
+    slideRefs.current = slideRefs.current.slice(
+      0,
+      React.Children.count(children)
+    );
 
-      return () => {
-        container.removeEventListener("scroll", handleScroll);
-      };
-    }
-  }, [currentSlide]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = slideRefs.current.indexOf(entry.target);
+            if (index !== -1) setCurrentSlide(index);
+          }
+        });
+      },
+      {
+        root: containerRef.current,
+        threshold: 0.5, // Adjust as needed to detect when 50% of a slide is visible
+      }
+    );
+
+    slideRefs.current.forEach((slide) => {
+      if (slide) observer.observe(slide);
+    });
+
+    return () => {
+      slideRefs.current.forEach((slide) => {
+        if (slide) observer.unobserve(slide);
+      });
+    };
+  }, [children]);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-screen overflow-y-scroll"
+      className="w-full h-screen overflow-y-scroll scrollbar-hide"
       style={{ scrollSnapType: "y mandatory" }}
     >
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center">
         {React.Children.map(children, (child, index) => (
           <div
-            className={`w-full min-h-[95vh] p-10 bg-white shadow-lg rounded-lg overflow-hidden transition-opacity duration-500 ${
+            ref={(el) => (slideRefs.current[index] = el)}
+            className={`w-full p-10 bg-white overflow-hidden transition-opacity duration-500 ${
               index === currentSlide
                 ? "opacity-100 translate-y-0 scale-100"
                 : "opacity-50 translate-y-5 scale-95"
             }`}
             style={{
+              minHeight: "50vh", // Adjust minimum height for smaller slides
               scrollSnapAlign: "start",
               transition: "opacity 0.5s, transform 0.5s ease-in-out",
             }}
