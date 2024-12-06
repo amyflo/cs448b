@@ -5,6 +5,7 @@ const PostFrequencyChart = ({
   showSpecificPoints = false,
   pointA = "",
   pointB = "",
+  title = "Post Frequency Over Time",
   editable = false,
 }) => {
   const chartRef = useRef(null);
@@ -63,9 +64,7 @@ const PostFrequencyChart = ({
   }, [pointA, pointB]);
 
   useEffect(() => {
-    if (!filteredData.length) return;
-
-    const margin = { top: 20, right: 30, bottom: 60, left: 50 };
+    const margin = { top: 60, right: 50, bottom: 80, left: 50 }; // Increased margins for labels and title
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
@@ -79,6 +78,16 @@ const PostFrequencyChart = ({
       )
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -10) // Position above the chart
+      .attr("text-anchor", "middle")
+      .attr("fill", "black")
+      .style("font-size", "12px")
+      .style("font-weight", "bold")
+      .text(title);
 
     const xScale = d3
       .scaleTime()
@@ -141,7 +150,7 @@ const PostFrequencyChart = ({
       .attr("text-anchor", "middle")
       .attr("transform", `rotate(-90)`)
       .attr("x", -height / 2)
-      .attr("y", -margin.left + 15)
+      .attr("y", -margin.left)
       .attr("fill", "black")
       .style("font-size", "12px")
       .text("Number of posts");
@@ -197,9 +206,8 @@ const PostFrequencyChart = ({
       .style("border-radius", "4px")
       .style("padding", "8px")
       .style("font-size", "12px")
-      .style("display", "none")
+      .style("display", "block") // Always visible
       .style("pointer-events", "none");
-
     svg
       .selectAll(".dot")
       .on("mouseover", (event, d) => {
@@ -220,9 +228,10 @@ const PostFrequencyChart = ({
     // Add specific points if enabled
     if (showSpecificPoints) {
       const specificPoints = [
+        { date: d3.timeParse("%Y-%m")("2023-01"), label: "Spike in posts" },
         { date: d3.timeParse("%Y-%m")("2023-04"), label: "Peak submissions" },
-        { date: d3.timeParse("%Y-%m")("2023-06"), label: "Maintenance" },
-        { date: d3.timeParse("%Y-%m")("2024-10"), label: "Reopened" },
+        { date: d3.timeParse("%Y-%m")("2023-06"), label: "Closed" },
+        { date: d3.timeParse("%Y-%m")("2024-11"), label: "Reopened" },
       ];
 
       specificPoints.forEach((point) => {
@@ -238,14 +247,32 @@ const PostFrequencyChart = ({
             .attr("cx", xScale(dataPoint.date))
             .attr("cy", yScale(dataPoint.frequency))
             .attr("r", 6)
-            .attr("fill", "lightblue");
+            .attr("fill", "lightblue")
+            .on("mouseover", (event) => {
+              tooltip.style("display", "block").html(
+                `<strong>${point.label}</strong><br/>
+                   <strong>Month:</strong> ${d3.timeFormat("%B %Y")(
+                     dataPoint.date
+                   )}<br/>
+                   <strong>Number of posts:</strong> ${dataPoint.frequency}`
+              );
+            })
+            .on("mousemove", (event) => {
+              tooltip
+                .style("left", `${event.pageX + 10}px`)
+                .style("top", `${event.pageY - 20}px`);
+            })
+            .on("mouseout", () => {
+              tooltip.style("display", "none");
+            });
 
           svg
             .append("text")
-            .attr("x", xScale(dataPoint.date) + 10)
+            .attr("x", xScale(dataPoint.date) - 10)
             .attr("y", yScale(dataPoint.frequency) - 10)
             .attr("fill", "black")
             .style("font-size", "9px")
+            .style("text-anchor", "end")
             .text(point.label);
         }
       });
@@ -258,10 +285,11 @@ const PostFrequencyChart = ({
 
   return (
     <>
+      <svg ref={chartRef} className="w-full h-auto mt-4"></svg>
       {editable && (
         <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow-md">
           <label className="flex flex-col text-sm font-medium text-gray-700">
-            Point A:
+            Start month:
             <select
               onChange={(e) =>
                 setFilteredData(
@@ -283,7 +311,7 @@ const PostFrequencyChart = ({
             </select>
           </label>
           <label className="flex flex-col text-sm font-medium text-gray-700">
-            Point B:
+            End month:
             <select
               onChange={(e) =>
                 setFilteredData(
@@ -294,7 +322,7 @@ const PostFrequencyChart = ({
                   )
                 )
               }
-              className="mt-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+              className="p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
             >
               <option value="">Select End Month</option>
               {availableMonths.map((month) => (
@@ -304,9 +332,14 @@ const PostFrequencyChart = ({
               ))}
             </select>
           </label>
+          <button
+            onClick={() => setFilteredData(data)} // Reset to original data
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium"
+          >
+            Reset
+          </button>
         </div>
       )}
-      <svg ref={chartRef} className="w-full h-auto mt-4"></svg>
     </>
   );
 };

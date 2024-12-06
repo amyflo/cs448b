@@ -1,7 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
-const VisualizationOne = ({ children, title, description }) => {
+const Card = ({ children, title, description }) => {
   return (
     <div className="flex flex-row gap-8 items-center justify-center">
       <div
@@ -11,13 +11,15 @@ const VisualizationOne = ({ children, title, description }) => {
         {children}
       </div>
       <div className="w-1/3 max-w-sm">
-        <ReactMarkdown className="font-bold text-lg mb-2">
+        <ReactMarkdown className="font-bold text-xl mb-2">
           {title}
         </ReactMarkdown>
-        <ReactMarkdown className="text-gray-600">{description}</ReactMarkdown>
+        <ReactMarkdown className="text-gray-600" breaks>
+          {description}
+        </ReactMarkdown>
       </div>
     </div>
   );
 };
 
-export default VisualizationOne;
+export default Card;

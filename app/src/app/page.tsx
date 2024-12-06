@@ -21,13 +21,17 @@ export default function Home() {
   return (
     <Slideshow>
       <Card
-        title="**Frequency of Posts**"
-        description="This visualization shows the number of posts over time."
+        title="**Slow Growth**"
+        description={`The graph depicts the number of posts over time, showing slow initial growth from **May 2021 to December 2022**, with minor spikes around early and mid-2022.
+
+A significant upward trend begins in **January 2023**, culminating in a sharp peak by **March 2023**.
+
+The sharp increase in posts during this time suggests heightened activity around the **Valentine’s Day season**, likely reflecting increased engagement on topics such as love, relationships, or related events.`}
       >
         <FrequencyOfPosts
           pointA=""
           pointB="2023-04"
-          showSpecificPoints={false}
+          showSpecificPoints={true}
           editable={false}
         />
       </Card>
@@ -36,8 +40,8 @@ export default function Home() {
         description="Explore how sentiment changes across different time periods."
       >
         <FrequencyOfPosts
-          pointA="2023-04"
-          showSpecificPoints={false}
+          pointA="2023-02"
+          showSpecificPoints={true}
           editable={false}
         />
       </Card>
