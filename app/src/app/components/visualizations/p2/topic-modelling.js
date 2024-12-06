@@ -1,10 +1,10 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import * as d3 from "d3";
 import "./topic-styling.css";
 
 const TSNEVisualization = ({
-  activeTopics = [],
+  activeTopics = new Set(),
   defaultDetailsPanelHTML = "<p>Click on a point to see more details here.</p>",
   dataFiles = {
     assignedTopics: "/data/topic-modeling/results/top_topics_with_weights.json",
@@ -13,6 +13,45 @@ const TSNEVisualization = ({
     lettersData: "/data/consolidated_posts.json",
   },
 }) => {
+  console.log("prop active topics: ", activeTopics);
+
+  useEffect(() => {
+    updatePointOpacities();
+  }, [activeTopics]);
+
+  let activeTopicsLocal = new Set(activeTopics);
+  console.log("local copy active topics: ", activeTopicsLocal);
+
+  // function for updating the opacity of points of active/selected topic filters
+  function updatePointOpacities() {
+    console.log("update called");
+    d3.selectAll("circle").style("opacity", function () {
+      const topic = +d3.select(this).attr("data-topic");
+      // console.log("active topics size: ", activeTopicsLocal.size);
+      // console.log("active topics: ", activeTopicsLocal);
+      console.log(`has topic ${topic}: ${activeTopicsLocal.has(topic)}`);
+      return activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic)
+        ? 0.6
+        : 0.025;
+    });
+  }
+
+  // function for keeping track of filter selections
+  function toggleTopicOpacity(topicIndex, legendItem) {
+    // Deactivate topic
+    if (activeTopicsLocal.has(topicIndex)) {
+      activeTopicsLocal.delete(topicIndex);
+      legendItem.classed("selected", false);
+      console.log("active topics: ", activeTopicsLocal);
+    } else {
+      // Activate topic
+      activeTopicsLocal.add(topicIndex);
+      legendItem.classed("selected", true);
+      console.log("active topics: ", activeTopicsLocal);
+    }
+    updatePointOpacities();
+  }
+
   // Load the topic assignments, topic reference file, TSNE reduced data, and consolidated posts info
   Promise.all([
     d3.json(dataFiles.assignedTopics),
@@ -101,13 +140,17 @@ const TSNEVisualization = ({
         .attr("cy", yScale(point.y)) // Set y pos as 2nd tsne component
         .attr("r", 5)
         .attr("fill", color)
-        .attr("opacity", 0.6)
         .attr("data-topic", topTopic) // associate with topic for filtering
+        .attr("opacity", function () {
+          // Check if the point's topic is in activeTopicsLocal (or else it would just all be same opacity initially)
+          const topic = +d3.select(this).attr("data-topic");
+          return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
+        })
         .on("mouseover", (event) => {
           console.log("Mouseover triggered for: ", post.post_id);
-          console.log(
-            `Tooltip content: Dominant Topic: ${topLabel}, Letter Title: ${letter.title}`
-          );
+          // console.log(
+          //   `Tooltip content: Dominant Topic: ${topLabel}, Letter Title: ${letter.title}`
+          // );
           const [x, y] = d3.pointer(event);
 
           tooltip.transition().duration(200).style("opacity", 1);
@@ -135,11 +178,11 @@ const TSNEVisualization = ({
 
           selectedPt = d3.select(event.target);
           // lower opacity for unfiltered posts
-          if (activeTopics.size !== 0) {
+          if (activeTopicsLocal.size !== 0) {
             chartSVG.selectAll("circle").style("opacity", function () {
               const topic = +d3.select(this).attr("data-topic");
               const isFiltered =
-                activeTopics.size === 0 || activeTopics.has(topic);
+                activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic);
               return selectedPt.node() === this || isFiltered ? 0.8 : 0.05;
             });
           } else {
@@ -225,6 +268,9 @@ const TSNEVisualization = ({
           event.stopPropagation(); // Prevent zoom click from propagating to the background
         });
 
+      // set default if nothing is selected
+      d3.select("#details-content").html(defaultDetailsPanelHTML);
+
       // track click events throughout the entire body
       // (if user clicks outside, it'll reset point selection)
       d3.select("#chart-container").on("click", (event) => {
@@ -253,10 +299,10 @@ const TSNEVisualization = ({
 
     // for each topic, get color and append to legend
     colors.forEach((color, index) => {
-      console.log("Legend item created for topic:", index); // Debugging log
+      // console.log("Legend item created for topic:", index); // Debugging log
       const topicLabel = topicsRefData[index].label;
       const topicDescription = topicsRefData[index].description;
-      console.log(topicDescription);
+      // console.log(topicDescription);
       const legendItem = legendContainer
         .append("div")
         .attr("class", "legend-item")
@@ -279,6 +325,12 @@ const TSNEVisualization = ({
           tooltip.transition().duration(200).style("opacity", 0);
         });
 
+      if (activeTopicsLocal.has(index)) {
+        legendItem.classed("selected", true); // Highlight as selected if topic is active
+      } else {
+        legendItem.classed("selected", false); // Remove highlight if not active
+      }
+
       legendItem
         .append("svg")
         .attr("width", 18)
@@ -288,35 +340,6 @@ const TSNEVisualization = ({
 
       legendItem.append("text").text(topicLabel).style("margin-left", "5px");
     });
-
-    let activeTopics = new Set();
-
-    // function for updating the opacity of points of active/selected topic filters
-    function updatePointOpacities() {
-      console.log("update called");
-      d3.selectAll("circle").style("opacity", function () {
-        const topic = +d3.select(this).attr("data-topic");
-        console.log("active topics size: ", activeTopics.size);
-        console.log("active topics: ", activeTopics);
-        return activeTopics.size === 0 || activeTopics.has(topic) ? 0.6 : 0.025;
-      });
-    }
-
-    // function for keeping track of filter selections
-    function toggleTopicOpacity(topicIndex, legendItem) {
-      // Deactivate topic
-      if (activeTopics.has(topicIndex)) {
-        activeTopics.delete(topicIndex);
-        legendItem.classed("selected", false);
-        console.log("active topics: ", activeTopics);
-      } else {
-        // Activate topic
-        activeTopics.add(topicIndex);
-        legendItem.classed("selected", true);
-        console.log("active topics: ", activeTopics);
-      }
-      updatePointOpacities();
-    }
   });
 
   return (

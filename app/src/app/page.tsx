@@ -70,6 +70,13 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
             <FrequencyOfPosts showSpecificPoints={true} editable={true} />
           </Card>
 
+          <Card
+            title="**The Wishful Thinker**"
+            description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
+          >
+            <TSNEVisualization activeTopics={new Set([1, 2])} />
+          </Card>
+
           {/* // INSTRUCTIONS
 
       Please just format your visualizations like this: <Card
