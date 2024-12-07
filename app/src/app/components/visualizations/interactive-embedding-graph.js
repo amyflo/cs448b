@@ -4,12 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 const InteractiveEmbeddingGraph = () => {
-  // const chartRef = useRef(null);
-  // const inputAx0Ref = useRef(null);
-  // const inputAx1Ref = useRef(null);
-  // const inputPointsRef = useRef(null);
 
-  const [axis0, setAxis0] = useState("i");
+  const [axis0, setAxis0] = useState("I");
   const [axis1, setAxis1] = useState("you");
   const [pointsWords, setPointsWords] = useState([
     "regret",
@@ -29,7 +25,7 @@ const InteractiveEmbeddingGraph = () => {
       //function for retrieving embeddings
       //throw error if word does not exist in corpus
       const emb = (w) => {
-        var e = embeddings[w];
+        var e = embeddings[w.toLowerCase().replace(/[^0-9a-z]/gi, '')];
         if (e === undefined) {
           throw ReferenceError(w + " does not exist in corpus");
         }
@@ -145,7 +141,8 @@ const InteractiveEmbeddingGraph = () => {
       .attr("id", "linesContainer")
       .selectAll("line")
       .data(pointsWords, (d) => d)
-      .join("line")
+      .enter()
+        .append("line")
         .attr("x1", (d) => xScale(x_val(d)))
         .attr("y1", (_, i) => y(i))
         .attr("x2", (d) => xScale(x_val(d)))
@@ -158,7 +155,8 @@ const InteractiveEmbeddingGraph = () => {
       .attr("id", "pointsContainer")
       .selectAll("text")
       .data(pointsWords, (d) => d)
-      .join("text")
+      .enter()
+        .append("text")
         .attr("class", "points")
         .attr("x", (d) => xScale(x_val(d)))
         .attr("y", (_, i) => y(i))
@@ -182,38 +180,48 @@ const InteractiveEmbeddingGraph = () => {
     svg.append("g")
       .attr("id", "axisLabelsContainer")
       .selectAll("text")
-      .data(axisWords, (d) => d)
-      .join("text")
+      .data(axisWords)
+      .enter()
+        .append("text")
         .attr("class", "axisLabels")
         .attr("x", (d) => xScale(x_val(d)))
         .attr("y", () => height / 2 - 10)
         .attr("fill", axisColor)
         .attr("text-anchor", "middle")
         .text((d) => d)
-    
+
+
+
+
     // bind update function to text inputs
-    d3.select("#inputAx0").on("change", (e)=>{
-      const newAx0 = e.target.value.toLowerCase().replace(/[^0-9a-z]/gi, '')
-      setAxis0(newAx0)
-      const axis = [newAx0, axis1]
-      update(emb, axis, pointsWords)
+    d3.select("#inputAx0").on("change", (e) => {
+      //lowercase input and remove all non-alphanumerics
+      const ax0 = e.target.value
+      const ax1 = d3.select("#inputAx1").attr("value")
+      const points = d3.select("#inputPoints").attr("value").split(",")
+      setAxis0(ax0)
+      renderUpdate(emb, [ax0, ax1], points)
     })
     d3.select("#inputAx1").on("change", (e) => {
-      const newAx1 = e.target.value.toLowerCase().replace(/[^0-9a-z]/gi, '')
-      setAxis1(newAx1)
-      const axis = [axis0, newAx1]
-      update(emb, axis, pointsWords)
+      //lowercase input and remove all non-alphanumerics
+      const ax0 = d3.select("#inputAx0").attr("value")
+      const ax1 = e.target.value
+      const points = d3.select("#inputPoints").attr("value").split(",")
+      setAxis1(ax1)
+      renderUpdate(emb, [ax0, ax1], points)
     })
     d3.select("#inputPoints").on("change", (e) => {
       //lowercase input and remove all non-alphanumerics
-      const newPoints = e.target.value.toLowerCase().replace(/[^0-9a-z,]/gi, '').split(",")
-      setPointsWords(newPoints)
-      update(emb, [axis0, axis1], newPoints)
+      const ax0 = d3.select("#inputAx0").attr("value")
+      const ax1 = d3.select("#inputAx1").attr("value")
+      const points = e.target.value.split(",")
+      setPointsWords(points)
+      renderUpdate(emb, [ax0, ax1], points)
     })
     
   };//end renderChart
 
-  function update(emb, axisWords, pointsWords) {
+  function renderUpdate(emb, axisWords, pointsWords) {
     const axisVector = diff(emb(axisWords[0]), emb(axisWords[1]));
     // function for generating x values
     const x_val = (d) => {
@@ -240,35 +248,90 @@ const InteractiveEmbeddingGraph = () => {
     // draw lines from points to x axis
     d3.select("#linesContainer").selectAll("line")
       .data(pointsWords, (d) => d)
-      .join("line")
-        .transition()
-        .duration(1000)
-        .attr("x1", (d) => xScale(x_val(d)))
-        .attr("y1", (_, i) => y(i))
-        .attr("x2", (d) => xScale(x_val(d)))
-        .attr("y2", height / 2)
-        .style("stroke", axisColor);
+      .join(
+        (enter) => {
+          enter.append("line")
+            .style("opacity", 0)
+            .style("stroke", axisColor)
+            .attr("x1", (d) => xScale(x_val(d)))
+            .attr("y1", (_, i) => y(i))
+            .attr("x2", (d) => xScale(x_val(d)))
+            .attr("y2", height / 2)
+          .transition()
+            .duration(1000)
+            .style("opacity", 1)
+          
+        }, 
+        (update) => {update
+          .transition()
+          .duration(1000)
+          .attr("x1", (d) => xScale(x_val(d)))
+          .attr("y1", (_, i) => y(i))
+          .attr("x2", (d) => xScale(x_val(d)))
+          .attr("y2", height / 2)
+          .style("stroke", axisColor)},
+          (exit) => {
+            exit
+              .transition()
+              .duration(1000)
+              .style("opacity", 0)
+              .remove()
+          }
+      )
 
     // plot points
     d3.select("#pointsContainer").selectAll("text")
       .data(pointsWords, (d) => d)
-      .join("text")
-        .transition()
-        .duration(1000)
-        .attr("class", "points")
-        .attr("x", (d) => xScale(x_val(d)))
-        .attr("y", (_, i) => y(i))
-        .attr("dy", (_, i) => {
-          if (y(i) > height / 2) {
-            return 10
-          }
-          else {
-            return -5
-          }
-        })
-        .attr("dx", 5)
-        .attr("fill", pointsColor)
-        .text((d) => d);
+      .join(
+        (enter) => {
+          enter.append("text")
+            .style("opacity", 0)
+            .attr("fill", pointsColor)
+            .attr("class", "points")
+            .attr("x", (d) => xScale(x_val(d)))
+            .attr("y", (_, i) => y(i))
+            .attr("dy", (_, i) => {
+              if (y(i) > height / 2) {
+                return 10
+              }
+              else {
+                return -5
+              }
+            })
+            .attr("dx", 5)
+            .text((d) => d)
+          .transition()
+          .duration(1000)
+            .style("opacity", 1)
+
+
+        },
+        (update) => {
+          update
+            .transition()
+            .duration(1000)
+            .attr("x", (d) => xScale(x_val(d)))
+            .attr("y", (_, i) => y(i))
+            .attr("dy", (_, i) => {
+              if (y(i) > height / 2) {
+                return 10
+              }
+              else {
+                return -5
+              }
+            })
+            .attr("dx", 5)
+        }, 
+        (exit) => {
+          exit
+          .transition()
+          .duration(1000)
+          .style("opacity", 0)
+          .remove()
+        }
+      )
+        
+        
 
     //TODO: prevent clipping outside of viz bounds
 
@@ -277,8 +340,8 @@ const InteractiveEmbeddingGraph = () => {
 
     // label the x-axis' endpoints
     d3.select("#axisLabelsContainer").selectAll("text")
-      .data(axisWords, (d) => d)
-      .join("text")
+      .data(axisWords)
+      .join()
         .attr("x", (d) => xScale(x_val(d)))
         .attr("y", () => height / 2 - 10)
         .attr("fill", axisColor)
