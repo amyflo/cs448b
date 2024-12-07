@@ -18,8 +18,8 @@ h3 {
 
 .chart-container {
   position: relative;
-  width: 1020px;
-  height: 750px;
+  width: 925px;
+  height: 600px;
   border: 1px solid #ddd;
   border-radius: 5px;
   z-index: 1;
