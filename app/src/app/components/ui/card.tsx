@@ -20,7 +20,7 @@ const Card: React.FC<CardProps> = ({ children, title, description }) => {
       </div>
       {children && (
         <div
-          className="bg-white w-3/4 rounded-lg flex-1 flex items-center justify-center"
+          className="bg-white w-screen rounded-lg flex-1 flex items-center justify-center"
           id="visualization-content"
         >
           {children}

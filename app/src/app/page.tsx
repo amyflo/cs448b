@@ -1,5 +1,6 @@
 "use client";
 import LoadingHearts from "./components/ui/loading";
+
 import React from "react";
 
 import Sentiment2OverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
@@ -149,7 +150,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
         <Card>
           <InteractiveEmbeddingGraph
-            id="boy-girl-2"
+            id="boy-girl"
             axis={["boy", "girl"]}
             points={[
               "angry",

@@ -24,7 +24,7 @@ const ScrollSlideshow = ({ children }) => {
       },
       {
         root: containerRef.current,
-        threshold: 0.5, // Adjust to fine-tune visibility detection
+        threshold: 0.5,
       }
     );
 

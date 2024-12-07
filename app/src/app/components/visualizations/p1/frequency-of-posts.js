@@ -182,6 +182,7 @@ const PostFrequencyChart = ({
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
       // Dots Animation
+
       svg
         .selectAll(".dot")
         .data(filteredData)
@@ -192,54 +193,24 @@ const PostFrequencyChart = ({
         .attr("cy", (d) => yScale(d.frequency))
         .attr("r", 0) // Start with radius 0
         .attr("fill", "steelblue")
+        .on("mouseover", (event, d) => {
+          showTooltip(event, d);
+        })
+        .on("mouseout", () => {
+          hideTooltip();
+        })
         .transition()
         .delay((_, i) => i * 100) // Stagger animation
         .duration(500)
         .attr("r", 4); // Final radius
 
-      // Tooltip Setup
-      const tooltip = d3
-        .select("body")
-        .append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("background-color", "white")
-        .style("border", "1px solid #ccc")
-        .style("border-radius", "4px")
-        .style("padding", "8px")
-        .style("font-size", "12px")
-        .style("display", "block") // Always visible
-        .style("pointer-events", "none");
-      svg
-        .selectAll(".dot")
-        .on("mouseover", (event, d) => {
-          tooltip.style("display", "block").html(
-            `<strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
-           <strong>Number of posts:</strong> ${d.frequency}`
-          );
-        })
-        .on("mousemove", (event) => {
-          tooltip
-            .style("left", `${event.pageX + 10}px`)
-            .style("top", `${event.pageY - 20}px`);
-        })
-        .on("mouseout", () => {
-          tooltip.style("display", "none");
-        });
-
       // Add specific points if enabled
       if (showSpecificPoints) {
         const specificPoints = [
-          {
-            date: d3.timeParse("%Y-%m")("2023-01"),
-            label: "Spike in posts begins",
-          },
+          { date: d3.timeParse("%Y-%m")("2023-01"), label: "Spike in posts" },
           { date: d3.timeParse("%Y-%m")("2023-04"), label: "Peak submissions" },
-          { date: d3.timeParse("%Y-%m")("2023-06"), label: "Subreddit closed" },
-          {
-            date: d3.timeParse("%Y-%m")("2024-11"),
-            label: "Subreddit reopened",
-          },
+          { date: d3.timeParse("%Y-%m")("2023-06"), label: "Closed" },
+          { date: d3.timeParse("%Y-%m")("2024-11"), label: "Reopened" },
         ];
 
         specificPoints.forEach((point) => {
@@ -256,23 +227,16 @@ const PostFrequencyChart = ({
               .attr("cy", yScale(dataPoint.frequency))
               .attr("r", 6)
               .attr("fill", "lightblue")
-              .on("mouseover", (event) => {
-                tooltip.style("display", "block").html(
-                  `<strong>${point.label}</strong><br/>
-                   <strong>Month:</strong> ${d3.timeFormat("%B %Y")(
-                     dataPoint.date
-                   )}<br/>
-                   <strong>Number of posts:</strong> ${dataPoint.frequency}`
-                );
-              })
+              .style("cursor", "pointer") // Optional: pointer cursor for hover effect
+              .on("mouseover", (event) =>
+                showTooltip(event, { ...dataPoint, label: point.label })
+              )
               .on("mousemove", (event) => {
                 tooltip
                   .style("left", `${event.pageX + 10}px`)
                   .style("top", `${event.pageY - 20}px`);
               })
-              .on("mouseout", () => {
-                tooltip.style("display", "none");
-              });
+              .on("mouseout", hideTooltip);
 
             svg
               .append("text")
@@ -284,6 +248,44 @@ const PostFrequencyChart = ({
               .text(point.label);
           }
         });
+      }
+
+      // Tooltip
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("background", "rgba(0, 0, 0, 0.8)")
+        .style("color", "#fff")
+        .style("padding", "10px")
+        .style("border-radius", "5px")
+        .style("opacity", 0)
+        .style("pointer-events", "none");
+
+      function showTooltip(event, d) {
+        const [x, y] = [event.clientX, event.clientY];
+        const tooltipWidth = 250;
+        const tooltipHeight = 100;
+
+        const tooltipX =
+          x + tooltipWidth > window.innerWidth ? x - tooltipWidth - 10 : x + 10;
+        const tooltipY =
+          y + tooltipHeight > window.innerHeight
+            ? y - tooltipHeight - 10
+            : y + 10;
+
+        tooltip.transition().duration(200).style("opacity", 1);
+        tooltip
+          .html(
+            ` <strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
+           <strong>Number of posts:</strong> ${d.frequency}`
+          )
+          .style("left", `${tooltipX}px`)
+          .style("top", `${tooltipY}px`);
+      }
+
+      function hideTooltip() {
+        tooltip.transition().duration(200).style("opacity", 0);
       }
 
       return () => {
