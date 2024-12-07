@@ -16,7 +16,7 @@ body {
   background: var(--background);
 
   /* Set the default font family */
-  font-family: "Arial", Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 
   /* Add Tailwind’s utility for smooth transitions */
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -103,7 +103,7 @@ textarea {
 /* General Text Styling */
 body {
   @apply text-base leading-relaxed tracking-normal text-gray-800; /* Smooth text with good readability */
-  font-family: "Arial", Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6; /* Optimized line-height for readability */
   color: var(--foreground);
   background-color: var(--background);

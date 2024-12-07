@@ -33,83 +33,85 @@ export default function Home() {
         <Hero />
         <div>
           <Card
-            title="About r/LoveLetters"
+            title="Discover r/LoveLetters"
             description={`With 9.4k members as of November 2024, it ranks in the top 7% of subreddits by size. The community is moderated, requiring users to submit posts for approval to ensure content aligns with the subreddit’s focus.`}
           />
           <Card
             title="Dataset Overview"
             description={`
-For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning posts from **2021 to November 2024**, totaling **741 posts**. Due to Reddit's scraping limitations, this timeframe constrained our dataset's scope. However, we successfully collected a comprehensive set of posts and comments, organizing them into structured **JSON files**. Each file grouped posts by unique IDs, nesting associated comments under their corresponding posts. This structure streamlined the process of linking posts and comments for analysis.
+For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning posts from **2021 to November 2024**, totaling **741** posts**. Due to Reddit's scraping limitations, this timeframe constrained our dataset's scope. However, we successfully collected a comprehensive set of posts and comments, organizing them into structured **JSON files**. Each file grouped posts by unique IDs, nesting associated comments under their corresponding posts. This structure streamlined the process of linking posts and comments for analysis.
   `}
           />
         </div>
+
+        {/* ********************************* POSTING CARDS START HERE ********************************* */}
         <TransitionScreen
-          title="How has r/LoveLetters changed over time?"
-          description="This is a description that transitions as you scroll"
+          title="How has r/LoveLetters evolved over time?"
+          description="This section examines the subreddit’s growth, stagnation, and resurgence through the lens of posting frequency."
         />
+        <Card
+          title="Growth Reflecting Cultural Rhythms"
+          description={`From **May 2021 to December 2022**, posting frequency grew steadily, punctuated by occasional spikes likely tied to significant events or community-driven discussions. 
 
-        {/* Post Frequency */}
+A turning point emerges in **January 2023**, coinciding with the lead-up to Valentine’s Day. A subsequent peak in **April 2023** suggests that the subreddit serves as an emotional outlet during culturally significant moments centered on love and relationships. This seasonality mirrors broader cultural patterns, where holidays and anniversaries often amplify emotional reflection.`}
+        >
+          <FrequencyOfPosts pointA="" pointB="2023-04" showSpecificPoints />
+        </Card>
         <Card
-          title="Slow growth at the start"
-          description={`The graph shows the number of posts over time, revealing slow initial growth from **May 2021 to December 2022**. Minor spikes can be seen in early and mid-2022, likely driven by specific events or discussions.
+          title="Adapting to Growth: A Pause and Rebirth"
+          description={`Following the April 2023 peak, r/LoveLetters experienced a self-imposed hiatus in **June 2023**, citing challenges in maintaining quality amid increasing activity. This reflects a common tension in online spaces: balancing growth with the preservation of core values.
 
-However, a significant upward trend begins in **January 2023**, peaking sharply by **April 2023**. This surge suggests heightened engagement during the **Valentine’s Day season**, when topics of love, relationships, and emotions likely drove a wave of activity.`}
+The subreddit reopened in **November 2024**, signaling a renewed commitment to its mission. Activity levels rebounded, though at a moderated pace, suggesting that the community successfully weathered this period of transformation. This resilience underscores the importance of moderation in sustaining trust and focus in online communities.`}
         >
-          <FrequencyOfPosts
-            pointA=""
-            pointB="2023-04"
-            showSpecificPoints={true}
-            editable={false}
-          />
+          <FrequencyOfPosts pointA="2023-02" showSpecificPoints />
         </Card>
         <Card
-          title="A break in submissions"
-          description={`Following the sharp peak in **April 2023**, the subreddit paused submissions in **June 2023**, citing challenges with managing the growing pace of activity. 
-By **November 2024**, the subreddit [reopened](https://www.reddit.com/r/LoveLetters/comments/1gej65u/rloveletters_has_been_reopened_welcome_back/), welcoming Redditors back to sharing their stories. Shortly after, activity began to pick up again, reflecting a renewed interest from the community.`}
+          title="Interactive Exploration"
+          description="Use the interactive timeline to uncover correlations between posting trends and external events or cultural shifts."
         >
-          <FrequencyOfPosts
-            pointA="2023-02"
-            showSpecificPoints={true}
-            editable={false}
-          />
+          <FrequencyOfPosts showSpecificPoints editable />
         </Card>
-        <Card
-          title="Explore the patterns yourself"
-          description="Dive deeper into post activity trends over time. Use the start and end month selectors to focus on specific periods, and hover over data points for detailed insights into post frequency."
-        >
-          <FrequencyOfPosts showSpecificPoints={true} editable={true} />
-        </Card>
+
+        {/* ********************************* EMOTION CARDS START HERE ********************************* */}
 
         {/* Transition Screen */}
         <TransitionScreen
           title="What is the emotional breakdown?"
-          description="Scroll to reveal how emotions unfold in the shared content. This dynamic visualization uncovers the sentiment trends and emotional nuances expressed in the posts."
+          description="Sentiment analysis assigns numerical values to text, translating emotional tone into data. Using a predefined lexicon, positive words like love or happy receive positive scores, while negative words like regret or sad score negatively. Context is also considered to refine results. 
+
+Scores range from negative to positive, with the magnitude of the score indicating the intensity of the emotion expressed."
         />
 
         <Card
-          title="Sentiment Analysis Overview"
-          description={`When grouping posts by sentiment polarity, we find that **571 posts are positive**, while **170 are negative**. 
+          title="An Emotional Landscape: The Prevalence of Positivity"
+          description={`Of the posts analyzed, **77% exhibit positive sentiment**, while **23% are negative**. This skew towards positivity reflects both the subreddit’s moderation policies and its focus on uplifting, heartfelt content. However, the presence of negative sentiment—particularly in posts about heartbreak or regret—reveals that vulnerability is equally welcome.
 
-However, sentiment analysis tools have inherent limitations. They often rely on lexical approaches, which analyze words or phrases in isolation and struggle with **context, sarcasm, and negations**. For example, "I don't love this" might be incorrectly classified as positive due to the word "love."`}
+These findings highlight r/LoveLetters as a dual-purpose space: one for sharing joy and hope, and another for processing pain and grief. This balance is central to its identity as a sanctuary for emotional honesty.`}
         >
           <SentimentPosts />
         </Card>
         <Card
-          title="Sentiment Over Time"
-          description={`As time progresses, **positive sentiment** (red) becomes more dominant, but instances of **negative sentiment** (blue) remain, highlighting a mix of emotions within the shared posts.
+          title="Temporal Shifts in Sentiment"
+          description={`Sentiment trends reveal that positivity (red) has become increasingly dominant over time, particularly following the subreddit’s reopening in late 2024. Yet, negative sentiment (blue) persists, reflecting the universality of heartbreak and regret in discussions of love.
 
-Given that r/LoveLetters is a moderated subreddit, approved posts might lean towards **positive or heartfelt content**. This explains the prevalence of positive sentiment in later periods, even as some emotionally negative posts (e.g., heartbreak, loss) are still shared.`}
+These findings align with psychological theories of emotional regulation, suggesting that the subreddit offers both catharsis for negative emotions and reinforcement for positive experiences.`}
         >
           <Sentiment2OverTime />
         </Card>
         <Card
-          title="Do longer posts express stronger emotions?"
-          description={`Short posts tend to cluster around neutral sentiment (colored white and light red or blue), with fewer extreme values. The cluster near neutral sentiment for short posts might also suggest that shorter posts lack sufficient text to produce extreme sentiment scores.
+          title="Narrative Depth and Emotional Intensity"
+          description={`Post length correlates strongly with emotional intensity. Short posts cluster around neutrality, likely due to limited narrative detail. In contrast, longer posts frequently display extreme sentiment values, both positive and negative.
 
-On the other hand, longer posts often convey a wider range of emotions, with many leaning towards **positive sentiment** (red). Longer posts may convey stronger emotions, leading to higher sentiment scores (both positive and negative).`}
+This supports the idea that longer narratives enable more nuanced emotional expression and greater range in emotional expression.`}
         >
           <Length />
         </Card>
+
+        {/* ********************************* Language modelling CARDS START HERE ********************************* */}
+        <TransitionScreen
+          title="What does language reveal about love letters?"
+          description="Analyzing language usage uncovers subtle societal dynamics and emotional patterns."
+        />
         <Card
           title="Gendered Language in the Love Letters"
           description='Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
@@ -199,21 +201,12 @@ On the other hand, longer posts often convey a wider range of emotions, with man
             ]}
           />
         </Card>
+
         {/* ********************************* TOPIC MODELING CARDS START HERE ********************************* */}
         <TransitionScreen
           title="What themes emerge across love letters shared in online communities?"
-          description="Scroll to walk through how we identified the key themes in the love letters."
-        />
-
-        <Card
-          title="Step 1: Text Processing"
-          description=" Our data cleaning process involved normalizing the text by converting it to lowercase to avoid duplicate counts, tokenizing the text into individual words or tokens for analysis, converting words to their root forms to better scale the number of unique words,  and removing common stop words such as 'the,' 'and,' and 'is' to focus on meaningful content."
-        ></Card>
-
-        <Card
-          title="Step 2: Assign Topics to each Letter"
           description="We analyzed the love letters by turning them into numerical representations based on the words they contain, comparing terms that appear frequently in each letter but less often across all letters (TF-IDF). Then, we grouped similar letters together using a topic-modeling algorithm called NMF and labeled these groups with themes based on the most common words in each group."
-        ></Card>
+        />
 
         <ThemesTransition
           themes={[
@@ -239,11 +232,6 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           title="Letters aligned with language from multiple personas and emotional states."
           description={`Letters did not strictly cluster with a single primary topic, but instead showed **overlapping associations** with other topics as well. They often reflected multiple *personas* and *emotional states* like the **'wishful thinker'** or the **'romantic idealist'**. Nodes positioned near those from different topics are letters that share **similar word-usage**, indicating that **multiple themes** were prominent.
 `}
-        ></Card>
-
-        <Card
-          title="The Wishful Thinker"
-          description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
         >
           <TopicVisualization
             id="tsne138"
@@ -264,12 +252,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
 
         <Card
           title="Division within the Same Topic"
-          description="Letters within the same topic can be divided due to strong associations with other topics. The distinct language and tone of the author create variations within the primary topic, revealing **how different personas can emerge from the same theme.** For example, in the 'Idealistic Soulmates' topic, **we observe two contrasting personas**: one that expresses playful physical longing, and another that portrays a more serious, reflective tone."
-        ></Card>
-
-        <Card
-          title="The Split in Idealistic Soulmates"
-          description="Letters from Idealistic Soulmates divided between Playful Flirtation and Reflection on Life Journey"
+          description="Letters within the same topic can be divided due to strong associations with other topics. The distinct language and tone of the author create variations within the primary topic, revealing **how different personas can emerge from the same theme.** For example, in the 'Idealistic Soulmates' topic, **we observe two contrasting personas**: one that expresses playful physical longing, and another that portrays a more serious, reflective tone. Letters from Idealistic Soulmates divided between Playful Flirtation and Reflection on Life Journey"
         >
           <TopicVisualization
             id="tsne146"
@@ -294,12 +277,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
         <Card
           title="Time as a Lens for Vulnerability: Reflecting on the Past and Dreaming of the Future"
-          description="Letters reflecting on moments in time, particularly the past and future, are closely linked to themes of vulnerability and heartbreak. Authors often **compare their present selves to their past,** reminiscing about previous experiences and **envisioning missed opportunities** or irreversible moments. They also **dream or wonder about the future**, imagining how things might have been different. In their most vulnerable moments, these authors revisit past memories or imagine future possibilities, contemplating what could have been."
-        ></Card>
-
-        <Card
-          title="Close Associations between Vulnerability and Heartbreak, and Reflections on Moments of Time"
-          description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
+          description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time. Letters reflecting on moments in time, particularly the past and future, are closely linked to themes of vulnerability and heartbreak. Authors often **compare their present selves to their past,** reminiscing about previous experiences and **envisioning missed opportunities** or irreversible moments. They also **dream or wonder about the future**, imagining how things might have been different. In their most vulnerable moments, these authors revisit past memories or imagine future possibilities, contemplating what could have been. "
         >
           <TopicVisualization
             id="tsne08"
