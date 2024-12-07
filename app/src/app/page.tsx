@@ -6,26 +6,19 @@ import React, { useState } from "react";
 import Sentiment2OverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
 import SentimentPosts from "./components/visualizations/sentiment/sentiment-posts";
 import Length from "./components/visualizations/sentiment/length-vs-sentiment";
-import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
 import TransitionScreen from "./components/ui/transition";
-
 import SentimentBarChart from "./components/visualizations/sentiment/sentiment-posts";
 import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
 import EmbeddingGraph from "./components/visualizations/embedding-graph";
-<<<<<<< HEAD
 import TopicVisualization from "./components/visualizations/p2/topic-modeling";
-import PostLength from "./components/visualizations/p1/post-length";
 import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
 import SentimentOverTime from "./components/visualizations/p1/sentiment-over-time";
-=======
-import TSNEVisualization from "./components/visualizations/p2/topic-modelling";
 import PostLength from "./components/visualizations/deprecated/post-length";
->>>>>>> main
 import TopicSentiment from "./components/visualizations/p2/topic-by-sentiment";
 import PostLengthTopic from "./components/visualizations/p2/post-length";
 import TopicSentimentBar from "./components/visualizations/p2/topic-by-sentiment-bar";
 import PostLengthTopicBar from "./components/visualizations/p2/post-length-bar";
-import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph"
+import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph";
 import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
 
@@ -117,8 +110,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
         <Card
           title="Gendered Language in the Love Letters"
-          description=
-          'Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
+          description='Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
         >
           <EmbeddingGraph
             axis={["boy", "girl"]}
@@ -138,78 +130,82 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           />
         </Card>
         <Card>
-        <EmbeddingGraph
-          axis={["man", "woman"]}
-          points={[
-            "angry",
-            "sad",
-            "happy",
-            "crazy",
-            "scared",
-            "stupid",
-            "emotional",
-          ]}
-        />
+          <EmbeddingGraph
+            axis={["man", "woman"]}
+            points={[
+              "angry",
+              "sad",
+              "happy",
+              "crazy",
+              "scared",
+              "stupid",
+              "emotional",
+            ]}
+          />
         </Card>
         <Card>
-        <EmbeddingGraph
-          axis={["boy", "girl"]}
-          points={[
-            "angry",
-            "sad",
-            "happy",
-            "crazy",
-            "scared",
-            "stupid",
-            "emotional",
-          ]}
-        />
+          <EmbeddingGraph
+            axis={["boy", "girl"]}
+            points={[
+              "angry",
+              "sad",
+              "happy",
+              "crazy",
+              "scared",
+              "stupid",
+              "emotional",
+            ]}
+          />
         </Card>
         <Card>
-        <EmbeddingGraph
-          axis={["i", "you"]}
-          points={[
-            "regret",
-            "feel",
-            "wonder",
-            "know",
-            "cry",
-            "worry",
-            "fear",
-            "wish",
+          <EmbeddingGraph
+            axis={["i", "you"]}
+            points={[
+              "regret",
+              "feel",
+              "wonder",
+              "know",
+              "cry",
+              "worry",
+              "fear",
+              "wish",
+            ]}
+          />
+        </Card>
+        <Card>
+          <EmbeddingGraph
+            axis={["im", "youre"]}
+            points={[
+              "angry",
+              "quiet",
+              "sad",
+              "happy",
+              "empty",
+              "emotional",
+              "nothing",
+              "everything",
+              "scared",
+            ]}
+          />
+        </Card>
+        <Card>
+          <InteractiveEmbeddingGraph />
+        </Card>
 
-          ]}
+        <TransitionScreen
+          title="What themes emerge across love letters shared in online communities?"
+          description="Scroll to explore how the love letters span across 15 primary themes."
         />
-        </Card>
-        <Card>
-        <EmbeddingGraph
-          axis={["im", "youre"]}
-          points={[
-            "angry",
-            "quiet",
-            "sad",
-            "happy",
-            "empty",
-            "emotional",
-            "nothing",
-            "everything",
-            "scared"
-          ]}
-        />
-        </Card>
-        <Card>
-          <InteractiveEmbeddingGraph/>
-        </Card>
-        
+
         <Card
-            title="**The Wishful Thinker**"
-            description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
-          >
-            <TopicVisualization
-              id="tsne138"
-              key="tsne138"
-              activeTopics={new Set([1, 3, 8])}
-              defaultDetailsPanelHTML="
+          title="**The Wishful Thinker**"
+          description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
+        >
+          <TopicVisualization
+            id="tsne138"
+            key="tsne138"
+            activeTopics={new Set([1, 3, 8])}
+            defaultDetailsPanelHTML="
               <strong>Key Takeaways about Selected Topics: </strong><br>
               <ul> 
                 <li> 
@@ -219,18 +215,18 @@ On the other hand, longer posts often convey a wider range of emotions, with man
                 <li> This shows how vulnerable emotional states may spur language similar to that of a wishful thinker.
                 </li>
               </ul>"
-            />
-          </Card>
+          />
+        </Card>
 
-          <Card
-            title="**Idealistic Soulmates Subtopics**"
-            description="Letters from Idealistic Soulmates have soft associations with other topics as well."
-          >
-            <TopicVisualization
-              id="tsne146"
-              key="tsne146"
-              activeTopics={new Set([1, 4, 6])}
-              defaultDetailsPanelHTML="
+        <Card
+          title="**Idealistic Soulmates Subtopics**"
+          description="Letters from Idealistic Soulmates have soft associations with other topics as well."
+        >
+          <TopicVisualization
+            id="tsne146"
+            key="tsne146"
+            activeTopics={new Set([1, 4, 6])}
+            defaultDetailsPanelHTML="
               <strong>Key Takeaways about Selected Topics: </strong><br>
               <ul>
                 The letters from Idealistic Soulmates are influenced by two main themes which show a split within the topic itself:
@@ -245,31 +241,31 @@ On the other hand, longer posts often convey a wider range of emotions, with man
                   </ul>
                 </li>
               </ul>"
-            />
-          </Card>
+          />
+        </Card>
 
-          <Card
-            title="**Connections between Vulnerability and Reflecting on Moments of Time**"
-            description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
-          >
-            <TopicVisualization
-              id="tsne08"
-              key="tsne08"
-              activeTopics={new Set([0, 8])}
-              defaultDetailsPanelHTML="
+        <Card
+          title="**Connections between Vulnerability and Reflecting on Moments of Time**"
+          description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
+        >
+          <TopicVisualization
+            id="tsne08"
+            key="tsne08"
+            activeTopics={new Set([0, 8])}
+            defaultDetailsPanelHTML="
               <strong>Key Takeaways about Selected Topics: </strong><br>
               <ul>
                 Authors who write about Heartbreak and Vulnerability commonly reminisce or recall the happier moments of the past. In some letters, they look towards the past with regret and guilt, sharing their vulnerability in the love letter.
               </ul>"
-            />
-          </Card>
+          />
+        </Card>
 
-          <Card
-            title="**Your turn to explore!**"
-            description="Hover over the topics in the legend to learn more about each topic. Filter by topic and click on individual points to further explore each letter."
-          >
-            <TopicVisualization id="tsneExplore" key="tsneExplore" />
-          </Card>
+        <Card
+          title="**Your turn to explore!**"
+          description="Hover over the topics in the legend to learn more about each topic. Filter by topic and click on individual points to further explore each letter."
+        >
+          <TopicVisualization id="tsneExplore" key="tsneExplore" />
+        </Card>
 
         {/* // INSTRUCTIONS
 

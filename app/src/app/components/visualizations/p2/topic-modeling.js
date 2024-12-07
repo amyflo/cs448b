@@ -163,14 +163,26 @@ const TSNEVisualization = ({
           return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
         })
         .on("mouseover", (event) => {
-          // console.log("Mouseover triggered for: ", post.post_id);
+          const [x, y] = [event.clientX, event.clientY];
+          const tooltipWidth = 250;
+          const tooltipHeight = 100;
+
+          const tooltipX =
+            x + tooltipWidth > window.innerWidth
+              ? x - tooltipWidth - 10
+              : x + 10;
+          const tooltipY =
+            y + tooltipHeight > window.innerHeight
+              ? y - tooltipHeight - 10
+              : y + 10;
+
           tooltip.transition().duration(200).style("opacity", 1);
           tooltip
             .html(
               `<strong style="font-size: 12px">${topLabel}</strong><br><p style="font-style: italic; font-size: 12px; color: #fff; margin: 0;">"${letter.title}"</p></h3>`
             )
-            .style("left", `${event.pageX - 350}px`)
-            .style("top", `${event.pageY - 100}px`);
+            .style("left", `${tooltipX - 140}px`)
+            .style("top", `${tooltipY - 120}px`);
         })
         .on("mouseout", () => {
           tooltip.transition().duration(200).style("opacity", 0);
