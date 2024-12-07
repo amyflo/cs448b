@@ -24,12 +24,19 @@ const TSNEVisualization = ({
   let activeTopicsLocal = new Set(activeTopics);
 
   function updatePointOpacities() {
-    // set opacity for each circle is filtered/unfiltered
+    // Check if there are no active topics selected
+    const isTopicsArrEmpty = activeTopicsLocal.size === 0;
+
     d3.selectAll(`#${id}-chart circle`).style("opacity", function () {
       const topic = +d3.select(this).attr("data-topic");
       const isActiveTopic = activeTopicsLocal.has(topic);
 
-      // opacity stays at 0.025 if not active and 0.8 if active
+      // If no topics are active, set all points to opacity 0.8
+      if (isTopicsArrEmpty) {
+        return 0.8;
+      }
+
+      // Otherwise, apply opacity based on active topics
       return isActiveTopic ? 0.8 : 0.025;
     });
   }
