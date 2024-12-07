@@ -9,16 +9,6 @@
   --foreground: #171717; /* Light mode text color */
 }
 
-/* Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #ffffff;
-    /* Light mode background */
-    --foreground: #171717;
-    /* Light mode text color */
-  }
-}
-
 /* Global Styles */
 body {
   /* Use the custom properties for background and text color */

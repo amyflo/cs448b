@@ -3,7 +3,13 @@
 import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
 
-const InteractiveEmbeddingGraph = ({ id, axis, points }) => {
+const InteractiveEmbeddingGraph = ({
+  id,
+  axis,
+  points,
+  axisEditable = true,
+  pointsEditable = true,
+}) => {
   const [axis0, setAxis0] = useState(axis[0]);
   const [axis1, setAxis1] = useState(axis[1]);
   const [pointsWords, setPointsWords] = useState(points);
@@ -134,34 +140,47 @@ const InteractiveEmbeddingGraph = ({ id, axis, points }) => {
 
   return (
     <div>
-      <div>
-        Axis:{" "}
-        <input
-          id={`${id}inputAx0`}
-          defaultValue={axis0}
-          onBlur={(e) => setAxis0(e.target.value)}
-        />{" "}
-        to{" "}
-        <input
-          id={`${id}inputAx1`}
-          defaultValue={axis1}
-          onBlur={(e) => setAxis1(e.target.value)}
-        />
-      </div>
+      {axisEditable && (
+        <div>
+          Axis:{" "}
+          <input
+            id={`${id}inputAx0`}
+            defaultValue={axis0}
+            onBlur={(e) => setAxis0(e.target.value)}
+          />{" "}
+          to{" "}
+          <input
+            id={`${id}inputAx1`}
+            defaultValue={axis1}
+            onBlur={(e) => setAxis1(e.target.value)}
+          />
+        </div>
+      )}
       {error && (
         <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
       )}
-      <label>
-        Plot these words:{" "}
-        <input
-          className="w-full"
-          id={`${id}inputPoints`}
-          defaultValue={pointsWords.join(", ")}
-          onBlur={(e) =>
-            setPointsWords(e.target.value.split(",").map((w) => w.trim()))
-          }
-        />
-      </label>
+      {pointsEditable && (
+        <label>
+          Plot these words:{" "}
+          <input
+            className="w-full"
+            id={`${id}inputPoints`}
+            defaultValue={pointsWords.join(", ")}
+            onBlur={(e) =>
+              setPointsWords(e.target.value.split(",").map((w) => w.trim()))
+            }
+          />
+        </label>
+      )}
+      <button
+        onClick={() => {
+          setAxis0(axis[0]);
+          setAxis1(axis[1]);
+          setPointsWords(points);
+        }}
+      >
+        Reset
+      </button>
       <div id={`${id}chart`} style={{ position: "relative" }}></div>
     </div>
   );

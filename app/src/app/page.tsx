@@ -13,6 +13,7 @@ import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts"
 import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph";
 import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
+import Hero from "./components/ui/hero";
 
 // unused for now
 import SentimentOverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
@@ -29,21 +30,19 @@ export default function Home() {
   return (
     <LoadingHearts>
       <Slideshow>
-        <Card
-          title="Welcome to r/LoveLetters"
-          description={`
-**Background**
-
-r/LoveLetters is a subreddit where users share heartfelt stories of **love**, **gratitude**, and **heartbreak** through letters and poems. With **9.4k members** as of November 2024, it ranks in the **top 7%** of subreddits by size. The community is moderated, requiring users to submit posts for approval to ensure content aligns with the subreddit’s focus. 
-
-We chose the r/LoveLetters dataset to explore how **love is expressed through language** in an online community.
-
-**Guiding Questions**
-- How has **r/LoveLetters** changed over time?
-- What topics characterize **r/LoveLetters**?
-- What patterns are present in **r/LoveLetters**?
+        <Hero />
+        <div>
+          <Card
+            title="About r/LoveLetters"
+            description={`With 9.4k members as of November 2024, it ranks in the top 7% of subreddits by size. The community is moderated, requiring users to submit posts for approval to ensure content aligns with the subreddit’s focus.`}
+          />
+          <Card
+            title="Dataset Overview"
+            description={`
+For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning posts from **2021 to November 2024**, totaling **741 posts**. Due to Reddit's scraping limitations, this timeframe constrained our dataset's scope. However, we successfully collected a comprehensive set of posts and comments, organizing them into structured **JSON files**. Each file grouped posts by unique IDs, nesting associated comments under their corresponding posts. This structure streamlined the process of linking posts and comments for analysis.
   `}
-        ></Card>
+          />
+        </div>
         <TransitionScreen
           title="How has r/LoveLetters changed over time?"
           description="This is a description that transitions as you scroll"
@@ -118,6 +117,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           <InteractiveEmbeddingGraph
             id="boy-girl"
             axis={["boy", "girl"]}
+            axisEditable={false}
             points={[
               "i",
               "me",
@@ -137,6 +137,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           <InteractiveEmbeddingGraph
             id="man-woman"
             axis={["man", "woman"]}
+            axisEditable={false}
             points={[
               "angry",
               "sad",
@@ -150,8 +151,9 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
         <Card>
           <InteractiveEmbeddingGraph
-            id="boy-girl"
+            id="boy-girl-2"
             axis={["boy", "girl"]}
+            axisEditable={false}
             points={[
               "angry",
               "sad",
@@ -167,6 +169,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           <InteractiveEmbeddingGraph
             id="me-you"
             axis={["i", "you"]}
+            axisEditable={false}
             points={[
               "regret",
               "feel",
@@ -179,10 +182,10 @@ On the other hand, longer posts often convey a wider range of emotions, with man
             ]}
           />
         </Card>
-        <Card>
+        <Card title="diy">
           <InteractiveEmbeddingGraph
-            id="im-youre"
-            axis={["im", "youre"]}
+            id="diy"
+            axis={["love", "hate"]}
             points={[
               "angry",
               "quiet",
