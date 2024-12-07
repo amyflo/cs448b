@@ -55,7 +55,12 @@ For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning
 
 A turning point emerges in **January 2023**, coinciding with the lead-up to Valentine’s Day. A subsequent peak in **April 2023** suggests that the subreddit serves as an emotional outlet during culturally significant moments centered on love and relationships. This seasonality mirrors broader cultural patterns, where holidays and anniversaries often amplify emotional reflection.`}
         >
-          <FrequencyOfPosts pointA="" pointB="2023-04" showSpecificPoints />
+          <FrequencyOfPosts
+            title="Total Posts Over Time in r/LoveLetters (April 2021–April 2023)"
+            pointA=""
+            pointB="2023-04"
+            showSpecificPoints
+          />
         </Card>
         <Card
           title="Adapting to Growth: A Pause and Rebirth"
@@ -63,13 +68,21 @@ A turning point emerges in **January 2023**, coinciding with the lead-up to Vale
 
 The subreddit reopened in **November 2024**, signaling a renewed commitment to its mission. Activity levels rebounded, though at a moderated pace, suggesting that the community successfully weathered this period of transformation. This resilience underscores the importance of moderation in sustaining trust and focus in online communities.`}
         >
-          <FrequencyOfPosts pointA="2023-02" showSpecificPoints />
+          <FrequencyOfPosts
+            title="Total Posts Over Time in r/LoveLetters (February 2023–November 2024)"
+            pointA="2023-02"
+            showSpecificPoints
+          />
         </Card>
         <Card
-          title="Interactive Exploration"
+          title="Explore the timeline"
           description="Use the interactive timeline to uncover correlations between posting trends and external events or cultural shifts."
         >
-          <FrequencyOfPosts showSpecificPoints editable />
+          <FrequencyOfPosts
+            title="Total Posts Over Time in r/LoveLetters (April 2021–November 2024)"
+            showSpecificPoints
+            editable
+          />
         </Card>
 
         {/* ********************************* EMOTION CARDS START HERE ********************************* */}
@@ -236,6 +249,7 @@ This supports the idea that longer narratives enable more nuanced emotional expr
           <TopicVisualization
             id="tsne138"
             key="tsne138"
+            title="Title of visualization"
             activeTopics={new Set([1, 3, 8])}
             defaultDetailsPanelHTML="
               <strong>Key Takeaways about Selected Topics: </strong><br>
@@ -257,6 +271,7 @@ This supports the idea that longer narratives enable more nuanced emotional expr
           <TopicVisualization
             id="tsne146"
             key="tsne146"
+            title="Title of visualization"
             activeTopics={new Set([1, 4, 6])}
             defaultDetailsPanelHTML="
               <strong>Key Takeaways about Selected Topics: </strong><br>
@@ -282,6 +297,7 @@ This supports the idea that longer narratives enable more nuanced emotional expr
           <TopicVisualization
             id="tsne08"
             key="tsne08"
+            title="Title of visualization"
             activeTopics={new Set([0, 8])}
             defaultDetailsPanelHTML="
               <strong>Key Takeaways about Selected Topics: </strong><br>
@@ -294,11 +310,31 @@ This supports the idea that longer narratives enable more nuanced emotional expr
         <Card
           title="Now, it's your turn to explore!"
           description="Hover over the legend to learn more about each topic. Select and filter by topics to discover how closely related or distinct the letters are from each other. Click on specific points to zoom in and view a snippet of the love letter, a link to the full post, and the topic weight assignments for that letter."
-        ></Card>
-
-        <Card>
-          <TopicVisualization id="tsneExplore" key="tsneExplore" />
+        >
+          <TopicVisualization
+            title="Title of visualization"
+            id="tsneExplore"
+            key="tsneExplore"
+          />
         </Card>
+
+        <Card
+          title="Conclusion"
+          description={`The r/LoveLetters subreddit provides a unique space where people share their deepest emotions—love, gratitude, heartbreak, and hope. 
+            
+This analysis of the community reveals its growth over time, emotional patterns in posts, and the powerful language used to express universal experiences. 
+
+The subreddit has grown steadily since 2021, with activity peaks tied to culturally significant moments like Valentine’s Day. In June 2023, r/LoveLetters paused to maintain its core values in the face of rapid growth but successfully reopened in November 2024. 
+
+Sentiment analysis shows that 77% of posts are positive, reflecting themes of love, joy, and gratitude. However, 23% of posts carry negative emotions such as heartbreak and regret, showing the subreddit’s dual role as a space for celebrating love and processing pain. This balance between positivity and vulnerability is central to its identity.
+
+
+The analysis of language reveals societal patterns in how love is expressed. For example, words like "dream" are often associated with "boy," while words like "that" and "other" are linked to "girl," suggesting cultural narratives embedded in personal stories. Thematic modeling uncovered key topics such as "Vulnerability and Heartbreak," "Playful Flirtation," and "Reflections on Time," showing how love letters often reflect a mix of emotions and perspectives.
+
+    
+Through its evolution, r/LoveLetters has proven to be a meaningful space where people can connect and express themselves. The stories shared within this community highlight the timeless nature of love and the universal need to share and process our emotions. Whether uplifting or heartbreaking, these letters remind us of the power of human connection in both joy and vulnerability.
+  `}
+        />
       </Slideshow>
     </LoadingHearts>
   );

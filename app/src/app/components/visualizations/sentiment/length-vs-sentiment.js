@@ -237,6 +237,15 @@ const PostLengthVsSentiment = () => {
                 </p>
                 <p
                   style={{
+                    fontSize: "0.9em",
+                    color: "#777",
+                    margin: "0 0 15px 0",
+                  }}
+                >
+                  Word count: {selectedPost.postLength}
+                </p>
+                <p
+                  style={{
                     fontSize: "1em",
                     color: "#555",
                     lineHeight: "1.5",

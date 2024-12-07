@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-const SentimentBoxChart = () => {
+const SentimentBarChartHorizontal = () => {
   const chartRef = useRef();
   const [data, setData] = useState([]);
-  const [sortMethod, setSortMethod] = useState("bodyScore"); // Default sorting by bodyScore
+  const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -12,18 +12,14 @@ const SentimentBoxChart = () => {
         const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
-        // Process the data
+        // Process data into categories by sentiment
         const processedData = Object.entries(json).map(([postId, post]) => ({
           postId,
           title: post.title,
-          titleScore: post.titleSentiment.score,
           bodyScore: post.bodySentiment.score,
-          averageCommentScore: post.averageCommentScore,
-          createdAt: new Date(post.createdAt), // Parse date for sorting
         }));
 
         setData(processedData);
-        renderChart(processedData, "bodyScore"); // Initial render
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -32,142 +28,144 @@ const SentimentBoxChart = () => {
     fetchData();
   }, []);
 
-  const renderChart = (data, sortKey) => {
-    const width = 1000;
-    const boxSize = 20;
-    const padding = 5;
-    const sectionPadding = 50;
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        } else {
+          setIsInView(false);
+        }
+      },
+      { threshold: 0.1 } // Trigger when 10% of the chart is visible
+    );
 
-    const colorScale = d3
-      .scaleLinear()
-      .domain([
-        d3.min(data, (d) => d.bodyScore),
-        0,
-        d3.max(data, (d) => d.bodyScore),
-      ])
-      .range(["blue", "white", "red"]);
+    if (chartRef.current) {
+      observer.observe(chartRef.current);
+    }
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
+
+  const renderChart = (data) => {
+    const svgWidth = 800;
+    const svgHeight = 450; // Increased height to accommodate the title
+    const margin = { top: 70, right: 50, bottom: 50, left: 100 };
+    const chartWidth = svgWidth - margin.left - margin.right;
+    const chartHeight = svgHeight - margin.top - margin.bottom;
 
     const svg = d3
       .select(chartRef.current)
-      .attr("width", width)
-      .attr("height", 600)
-      .style("position", "relative");
+      .attr("width", svgWidth)
+      .attr("height", svgHeight);
 
-    svg.selectAll("*").remove(); // Clear previous elements
+    svg.selectAll("*").remove(); // Clear previous content
 
-    const tooltipEl = d3.select(chartRef.current.parentNode).select(".tooltip");
+    // Add title
+    svg
+      .append("text")
+      .attr("x", svgWidth / 2)
+      .attr("y", margin.top / 3)
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Sentiment Analysis of Posts in r/LoveLetters");
 
-    // Ensure tooltip exists
-    if (tooltipEl.empty()) {
-      d3.select(chartRef.current.parentNode)
-        .append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("background-color", "rgba(0, 0, 0, 0.8)")
-        .style("color", "#fff")
-        .style("padding", "8px")
-        .style("border-radius", "4px")
-        .style("pointer-events", "none")
-        .style("box-shadow", "0px 4px 8px rgba(0,0,0,0.3)")
-        .style("visibility", "hidden")
-        .style("font-size", "12px");
+    // Aggregate data into sentiment categories
+    const sentimentCounts = {
+      negative: data.filter((d) => d.bodyScore < 0).length,
+      neutral: data.filter((d) => d.bodyScore === 0).length,
+      positive: data.filter((d) => d.bodyScore > 0).length,
+    };
+
+    const chartData = [
+      { category: "negative", count: sentimentCounts.negative },
+      { category: "neutral", count: sentimentCounts.neutral },
+      { category: "positive", count: sentimentCounts.positive },
+    ];
+
+    const yScale = d3
+      .scaleBand()
+      .domain(chartData.map((d) => d.category))
+      .range([0, chartHeight])
+      .padding(0.2);
+
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(chartData, (d) => d.count)])
+      .range([0, chartWidth]);
+
+    const chartGroup = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Y-Axis
+    chartGroup.append("g").call(d3.axisLeft(yScale));
+
+    // X-Axis
+    chartGroup
+      .append("g")
+      .attr("transform", `translate(0, ${chartHeight})`)
+      .call(d3.axisBottom(xScale).ticks(5));
+
+    // Bars with animation
+    const bars = chartGroup
+      .selectAll(".bar")
+      .data(chartData)
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("y", (d) => yScale(d.category))
+      .attr("x", 0)
+      .attr("width", 0) // Start width at 0 for animation
+      .attr("height", yScale.bandwidth())
+      .attr("fill", (d) =>
+        d.category === "negative"
+          ? "blue"
+          : d.category === "neutral"
+          ? "gray"
+          : "red"
+      );
+
+    // Labels on bars
+    const labels = chartGroup
+      .selectAll(".label")
+      .data(chartData)
+      .enter()
+      .append("text")
+      .attr("x", 0) // Start labels at 0 for animation
+      .attr("y", (d) => yScale(d.category) + yScale.bandwidth() / 2)
+      .attr("text-anchor", "start")
+      .attr("alignment-baseline", "middle")
+      .attr("fill", "#333")
+      .style("font-size", "12px");
+
+    // Trigger animation when in view
+    bars
+      .transition()
+      .duration(1000)
+      .ease(d3.easeCubicOut)
+      .attr("width", (d) => xScale(d.count));
+
+    labels
+      .transition()
+      .duration(1000)
+      .ease(d3.easeCubicOut)
+      .attr("x", (d) => xScale(d.count) + 5)
+      .text((d) => d.count);
+  };
+
+  useEffect(() => {
+    if (isInView && data.length) {
+      renderChart(data);
     }
+  }, [isInView, data]);
 
-    // Sort data based on sortKey
-    const sortedData = [...data].sort((a, b) =>
-      sortKey === "createdAt"
-        ? d3.ascending(a.createdAt, b.createdAt)
-        : d3.ascending(a.bodyScore, b.bodyScore)
-    );
-
-    // Separate data by categories
-    const categories = {
-      negative: sortedData.filter((d) => d.bodyScore < 0),
-      neutral: sortedData.filter((d) => d.bodyScore === 0),
-      positive: sortedData.filter((d) => d.bodyScore > 0),
-    };
-
-    const categoryLabels = {
-      negative: "Negative",
-      neutral: "Neutral",
-      positive: "Positive",
-    };
-
-    let currentYOffset = 0;
-
-    Object.entries(categories).forEach(([category, categoryData]) => {
-      // Add category label
-      svg
-        .append("text")
-        .attr("x", 10)
-        .attr("y", currentYOffset + 20)
-        .attr("font-size", "16px")
-        .attr("fill", "#333")
-        .text(`${categoryLabels[category]} (${categoryData.length})`);
-
-      // Add boxes for the category
-      const numPerRow = Math.floor(width / (boxSize + padding));
-
-      svg
-        .selectAll(`.rect-${category}`)
-        .data(categoryData)
-        .enter()
-        .append("rect")
-        .attr("class", `rect-${category}`)
-        .attr("x", (_, i) => (i % numPerRow) * (boxSize + padding))
-        .attr(
-          "y",
-          (_, i) =>
-            Math.floor(i / numPerRow) * (boxSize + padding) +
-            currentYOffset +
-            30
-        )
-        .attr("width", boxSize)
-        .attr("height", boxSize)
-        .attr("fill", (d) => colorScale(d.bodyScore))
-        .attr("stroke", "#ccc")
-        .style("cursor", "pointer")
-        .on("mouseover", (event, d) => {
-          tooltipEl.style("visibility", "visible").html(
-            `<strong>Post ID:</strong> ${d.postId}<br>
-              <strong>Title:</strong> ${d.title}<br>
-              <strong>Date:</strong> ${d.createdAt.toDateString()}<br>
-              <strong>Body Score:</strong> ${d.bodyScore.toFixed(2)}<br>
-              <strong>Title Score:</strong> ${d.titleScore.toFixed(2)}<br>
-              <strong>Avg. Comment Score:</strong> ${d.averageCommentScore.toFixed(
-                2
-              )}`
-          );
-        })
-        .on("mousemove", (event) => {
-          tooltipEl
-            .style("left", `${event.pageX}px`)
-            .style("top", `${event.pageY}px`);
-        })
-        .on("mouseout", () => {
-          tooltipEl.style("visibility", "hidden");
-        });
-
-      // Adjust Y offset for the next category
-      const numRows = Math.ceil(categoryData.length / numPerRow);
-      currentYOffset += numRows * (boxSize + padding) + sectionPadding;
-    });
-
-    // Adjust overall height based on the content
-    svg.attr("height", currentYOffset);
-  };
-
-  // Handle sorting change
-  const handleSortChange = (sortKey) => {
-    setSortMethod(sortKey);
-    renderChart(data, sortKey); // Re-render with the new sorting method
-  };
-
-  return (
-    <div>
-      <svg ref={chartRef} />
-    </div>
-  );
+  return <svg ref={chartRef}></svg>;
 };
 
-export default SentimentBoxChart;
+export default SentimentBarChartHorizontal;

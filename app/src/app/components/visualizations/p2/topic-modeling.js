@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import "./topic-styling.css";
 
 const TSNEVisualization = ({
+  title,
   id,
   activeTopics = new Set(),
   defaultDetailsPanelHTML = "",
@@ -384,7 +385,7 @@ const TSNEVisualization = ({
   return (
     <div className="outer-container">
       <div className="chart-container" id={`#${id}-chart-container`}>
-        <h3>T-SNE Visualization of Topic Modeling</h3>
+        <h4>{title}</h4>
         <svg id={`${id}-chart`} className="chart"></svg>
         <div id={`${id}-legend`} className="legend"></div>
         <div id={`${id}-tooltip`} className="tooltip"></div>

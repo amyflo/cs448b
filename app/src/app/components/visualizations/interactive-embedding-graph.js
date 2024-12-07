@@ -63,7 +63,7 @@ const InteractiveEmbeddingGraph = ({
     const chart = d3.select(`#${id}chart`);
     chart.selectAll("*").remove(); // Clear previous content
 
-    const margin = { top: 60, right: 50, bottom: 80, left: 80 };
+    const margin = { top: 80, right: 50, bottom: 80, left: 80 }; // Increased top margin for more space
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
@@ -75,6 +75,16 @@ const InteractiveEmbeddingGraph = ({
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Add title with adjusted spacing
+    svg
+      .append("text")
+      .attr("x", width / 2) // Center horizontally
+      .attr("y", -margin.top / 2) // Add space between the title and chart content
+      .attr("text-anchor", "middle") // Center the text
+      .style("font-size", "18px") // Larger font size for emphasis
+      .style("font-weight", "bold") // Bold text for visibility
+      .text("Sentiment Analysis of Posts in r/LoveLetters");
 
     // Draw axes
     svg
@@ -176,49 +186,71 @@ const InteractiveEmbeddingGraph = ({
   };
 
   return (
-    <div>
-      {axisEditable && (
-        <div>
-          Axis:{" "}
-          <input
-            id={`${id}inputAx0`}
-            defaultValue={axis0}
-            onBlur={(e) => setAxis0(e.target.value)}
-          />{" "}
-          to{" "}
-          <input
-            id={`${id}inputAx1`}
-            defaultValue={axis1}
-            onBlur={(e) => setAxis1(e.target.value)}
-          />
-        </div>
-      )}
+    <div className="flex flex-col gap-2">
       {error && (
         <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
       )}
-      {pointsEditable && (
-        <label>
-          Plot these words:{" "}
-          <input
-            className="w-full"
-            id={`${id}inputPoints`}
-            defaultValue={pointsWords.join(", ")}
-            onBlur={(e) =>
-              setPointsWords(e.target.value.split(",").map((w) => w.trim()))
-            }
-          />
-        </label>
+      <div id={`${id}chart`}></div>
+      {axisEditable && (
+        <div className="flex flex-row items-center gap-4 w-full p-2 border rounded-lg shadow-sm bg-gray-50">
+          <label
+            htmlFor={`${id}inputAx0`}
+            className="text-sm font-semibold text-gray-700"
+          >
+            Customize your axes labels (e.g., "love" to "hate"):
+          </label>
+          <div className="flex flex-row items-center gap-2">
+            <input
+              type="text"
+              id={`${id}inputAx0`}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
+              defaultValue={axis0}
+              onBlur={(e) => setAxis0(e.target.value)}
+              placeholder="Axis 0"
+            />
+            <span className="text-sm font-semibold text-gray-600">to</span>
+            <input
+              type="text"
+              id={`${id}inputAx1`}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
+              defaultValue={axis1}
+              onBlur={(e) => setAxis1(e.target.value)}
+              placeholder="Axis 1"
+            />
+          </div>
+        </div>
       )}
-      <button
-        onClick={() => {
-          setAxis0(axis[0]);
-          setAxis1(axis[1]);
-          setPointsWords(points);
-        }}
-      >
-        Reset
-      </button>
-      <div id={`${id}chart`} style={{ position: "relative" }}></div>
+      <div className="flex flex-row w-full gap-4">
+        {pointsEditable && (
+          <div className="flex flex-row items-center gap-4 w-full p-2 border rounded-lg shadow-sm bg-gray-50">
+            <label
+              htmlFor={`${id}inputPoints`}
+              className="text-sm font-semibold text-gray-700"
+            >
+              Words Plotted:
+            </label>
+            <input
+              type="text"
+              id={`${id}inputPoints`}
+              className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
+              defaultValue={pointsWords.join(", ")}
+              onBlur={(e) =>
+                setPointsWords(e.target.value.split(",").map((w) => w.trim()))
+              }
+            />
+          </div>
+        )}
+        <button
+          className=""
+          onClick={() => {
+            setAxis0(axis[0]);
+            setAxis1(axis[1]);
+            setPointsWords(points);
+          }}
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 };
