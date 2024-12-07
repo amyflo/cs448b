@@ -192,7 +192,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         <Card>
           <InteractiveEmbeddingGraph />
         </Card>
-
+        {/* ********************************* TOPIC MODELING CARDS START HERE ********************************* */}
         <TransitionScreen
           title="What themes emerge across love letters shared in online communities?"
           description="Scroll to walk through how we identified the key themes in the love letters."
@@ -314,6 +314,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         <Card>
           <TopicVisualization id="tsneExplore" key="tsneExplore" />
         </Card>
+        {/* ********************************* TOPIC MODELING CARDS END HERE ********************************* */}
 
         {/* // INSTRUCTIONS
 
