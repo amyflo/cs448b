@@ -7,6 +7,7 @@ import Sentiment2OverTime from "./components/visualizations/sentiment/sentiment-
 import SentimentPosts from "./components/visualizations/sentiment/sentiment-posts";
 import Length from "./components/visualizations/sentiment/length-vs-sentiment";
 import TransitionScreen from "./components/ui/transition";
+import ThemesTransition from "./components/ui/themesTransition";
 import SentimentBarChart from "./components/visualizations/sentiment/sentiment-posts";
 import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
 import EmbeddingGraph from "./components/visualizations/embedding-graph";
@@ -194,11 +195,31 @@ On the other hand, longer posts often convey a wider range of emotions, with man
 
         <TransitionScreen
           title="What themes emerge across love letters shared in online communities?"
-          description="Scroll to explore how the love letters span across 15 primary themes."
+          description="The text from the love letters was processed, transformed into word vectors, and then assigned weights to represent the prominence of each of the 15 identified themes."
         />
 
+        <ThemesTransition
+          themes={[
+            "Reflections on Moments of Time",
+            "Idealistic Soulmates",
+            "Enduring Relationship Struggles",
+            "Serenity and Beauty",
+            "Playful Flirtation",
+            "Hopeful Goodbyes",
+            "Reflection on Life Journey",
+            "Empathy, Forgiveness, and Apology",
+            "Vulnerability and Heartbreak",
+            "Playful Longing",
+            "Uncertainty in Relationships",
+            "Substance Use and Escapism",
+            "Spirituality and Music",
+            "Sexuality, Longing, and Confusion",
+            "Family Dynamics",
+          ]}
+        ></ThemesTransition>
+
         <Card
-          title="**The Wishful Thinker**"
+          title="The Wishful Thinker"
           description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
         >
           <TopicVisualization
@@ -219,7 +240,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
 
         <Card
-          title="**Idealistic Soulmates Subtopics**"
+          title="Idealistic Soulmates Subtopics"
           description="Letters from Idealistic Soulmates have soft associations with other topics as well."
         >
           <TopicVisualization
@@ -245,7 +266,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
 
         <Card
-          title="**Connections between Vulnerability and Reflecting on Moments of Time**"
+          title="Connections between Vulnerability and Reflecting on Moments of Time"
           description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
         >
           <TopicVisualization
@@ -261,7 +282,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
 
         <Card
-          title="**Your turn to explore!**"
+          title="Your turn to explore!"
           description="Hover over the topics in the legend to learn more about each topic. Filter by topic and click on individual points to further explore each letter."
         >
           <TopicVisualization id="tsneExplore" key="tsneExplore" />
