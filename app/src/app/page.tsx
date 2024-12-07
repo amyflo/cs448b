@@ -1,27 +1,28 @@
 "use client";
 import LoadingHearts from "./components/ui/loading";
-
-import React, { useState } from "react";
+import React from "react";
 
 import Sentiment2OverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
 import SentimentPosts from "./components/visualizations/sentiment/sentiment-posts";
 import Length from "./components/visualizations/sentiment/length-vs-sentiment";
 import TransitionScreen from "./components/ui/transition";
 import ThemesTransition from "./components/ui/themesTransition";
-import SentimentBarChart from "./components/visualizations/sentiment/sentiment-posts";
-import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
-import EmbeddingGraph from "./components/visualizations/embedding-graph";
 import TopicVisualization from "./components/visualizations/p2/topic-modeling";
 import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
+import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph";
+import Card from "./components/ui/card";
+import Slideshow from "./components/ui/slideshow";
+
+// unused for now
 import SentimentOverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
 import PostLength from "./components/visualizations/deprecated/post-length";
 import TopicSentiment from "./components/visualizations/p2/topic-by-sentiment";
 import PostLengthTopic from "./components/visualizations/p2/post-length";
 import TopicSentimentBar from "./components/visualizations/p2/topic-by-sentiment-bar";
 import PostLengthTopicBar from "./components/visualizations/p2/post-length-bar";
-import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph";
-import Card from "./components/ui/card";
-import Slideshow from "./components/ui/slideshow";
+import SentimentBarChart from "./components/visualizations/sentiment/sentiment-posts";
+import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
+import EmbeddingGraph from "./components/visualizations/deprecated/embedding-graph";
 
 export default function Home() {
   return (
@@ -113,7 +114,8 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           title="Gendered Language in the Love Letters"
           description='Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
         >
-          <EmbeddingGraph
+          <InteractiveEmbeddingGraph
+            id="boy-girl"
             axis={["boy", "girl"]}
             points={[
               "i",
@@ -131,7 +133,8 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           />
         </Card>
         <Card>
-          <EmbeddingGraph
+          <InteractiveEmbeddingGraph
+            id="man-woman"
             axis={["man", "woman"]}
             points={[
               "angry",
@@ -145,7 +148,8 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           />
         </Card>
         <Card>
-          <EmbeddingGraph
+          <InteractiveEmbeddingGraph
+            id="boy-girl-2"
             axis={["boy", "girl"]}
             points={[
               "angry",
@@ -159,7 +163,8 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           />
         </Card>
         <Card>
-          <EmbeddingGraph
+          <InteractiveEmbeddingGraph
+            id="me-you"
             axis={["i", "you"]}
             points={[
               "regret",
@@ -174,7 +179,8 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           />
         </Card>
         <Card>
-          <EmbeddingGraph
+          <InteractiveEmbeddingGraph
+            id="im-youre"
             axis={["im", "youre"]}
             points={[
               "angry",
@@ -188,9 +194,6 @@ On the other hand, longer posts often convey a wider range of emotions, with man
               "scared",
             ]}
           />
-        </Card>
-        <Card>
-          <InteractiveEmbeddingGraph />
         </Card>
         {/* ********************************* TOPIC MODELING CARDS START HERE ********************************* */}
         <TransitionScreen
@@ -314,18 +317,6 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         <Card>
           <TopicVisualization id="tsneExplore" key="tsneExplore" />
         </Card>
-        {/* ********************************* TOPIC MODELING CARDS END HERE ********************************* */}
-
-        {/* // INSTRUCTIONS
-
-      Please just format your visualizations like this: <Card
-        title="Sentiment Over Time"
-        description="Explore how sentiment changes across different time periods."
-      >
-        <Your Visualization Component/>
-      </Card>
-
-where the title and description can both be written using markdown for easy rich text formatting!! */}
       </Slideshow>
     </LoadingHearts>
   );

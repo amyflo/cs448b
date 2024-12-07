@@ -230,10 +230,16 @@ const PostFrequencyChart = ({
       // Add specific points if enabled
       if (showSpecificPoints) {
         const specificPoints = [
-          { date: d3.timeParse("%Y-%m")("2023-01"), label: "Spike in posts" },
+          {
+            date: d3.timeParse("%Y-%m")("2023-01"),
+            label: "Spike in posts begins",
+          },
           { date: d3.timeParse("%Y-%m")("2023-04"), label: "Peak submissions" },
-          { date: d3.timeParse("%Y-%m")("2023-06"), label: "Closed" },
-          { date: d3.timeParse("%Y-%m")("2024-11"), label: "Reopened" },
+          { date: d3.timeParse("%Y-%m")("2023-06"), label: "Subreddit closed" },
+          {
+            date: d3.timeParse("%Y-%m")("2024-11"),
+            label: "Subreddit reopened",
+          },
         ];
 
         specificPoints.forEach((point) => {

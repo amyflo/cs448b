@@ -24,7 +24,7 @@ const ScrollSlideshow = ({ children }) => {
       },
       {
         root: containerRef.current,
-        threshold: 0.5, // Adjust as needed to detect when 50% of a slide is visible
+        threshold: 0.5, // Adjust to fine-tune visibility detection
       }
     );
 
@@ -43,27 +43,27 @@ const ScrollSlideshow = ({ children }) => {
     <div
       ref={containerRef}
       className="w-full h-screen overflow-y-scroll scrollbar-hide"
-      style={{ scrollSnapType: "y mandatory" }}
+      style={{
+        scrollSnapType: "y mandatory",
+      }}
     >
-      <div className="flex flex-col items-center">
-        {React.Children.map(children, (child, index) => (
-          <div
-            ref={(el) => (slideRefs.current[index] = el)}
-            className={`w-full bg-white overflow-hidden transition-opacity duration-500 ${
-              index === currentSlide
-                ? "opacity-100 translate-y-0 scale-100"
-                : "opacity-50 translate-y-5 scale-95"
-            }`}
-            style={{
-              minHeight: "50vh", // Adjust minimum height for smaller slides
-              scrollSnapAlign: "start",
-              transition: "opacity 0.5s, transform 0.5s ease-in-out",
-            }}
-          >
-            {child}
-          </div>
-        ))}
-      </div>
+      {React.Children.map(children, (child, index) => (
+        <div
+          ref={(el) => (slideRefs.current[index] = el)}
+          className={`w-full flex items-center justify-center bg-white overflow-hidden transition-opacity duration-500 ${
+            index === currentSlide
+              ? "opacity-100 translate-y-0 scale-100"
+              : "opacity-50 translate-y-5 scale-95"
+          }`}
+          style={{
+            minHeight: "100vh", // Ensures each slide fills the viewport
+            scrollSnapAlign: "start", // Aligns the slide with the start of the container
+            transition: "opacity 0.5s, transform 0.2s ease-in-out",
+          }}
+        >
+          {child}
+        </div>
+      ))}
     </div>
   );
 };
