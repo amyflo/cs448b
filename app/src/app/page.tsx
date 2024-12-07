@@ -78,7 +78,15 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
               id="tsne138"
               key="tsne138"
               activeTopics={new Set([1, 3, 8])}
-              defaultDetailsPanelHTML="<p>Authors who are wishful thinkers commonly use metaphors that relate to the word-usage in the topic Serenity and Beauty. </p><p>Some letters from Idealistic Soulmates also closely align with the word-usage from Vulnerability and Heartbreak</p><p>Shows how vulnerable emotional states may spur language similar to that of a wishful thinker.</p>"
+              defaultDetailsPanelHTML="
+              <ul> 
+                <li> 
+                  Wishful thinkers commonly use metaphors that align with the word-usage in the topic <strong>Serenity and Beauty</strong>.
+                </li> 
+                <li> Some letters from <strong>Idealistic Soulmates</strong> also closely align with the word-usage from <strong>Vulnerability and Heartbreak</strong>. </li>
+                <li> This shows how vulnerable emotional states may spur language similar to that of a wishful thinker.
+                </li>
+              </ul>"
             />
           </Card>
 
@@ -90,7 +98,20 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
               id="tsne146"
               key="tsne146"
               activeTopics={new Set([1, 4, 6])}
-              defaultDetailsPanelHTML="<p>Letters from Idealistic Soulmates are split between soft associations with two other topics: Playful Flirtation and Reflection on Life Journey</p><p>Half of the letters speak about physical and secual longing portrayed in casual language - similar to the language used in Playful Flirtation letters.</p><p>The other half of the letters use deeper language that reminisce on the past or dream of the future - similar to the word usage in letters that reflect on the overall life journey of a person.</p>"
+              defaultDetailsPanelHTML="
+              <ul>
+                The letters from Idealistic Soulmates are influenced by two main themes which show a split within the topic itself:
+                <li><strong>Playful Flirtation</strong>
+                  <ul>
+                    <li>Half of the letters express physical and sexual longing using casual language, similar to the tone found in Playful Flirtation letters.</li>
+                  </ul>
+                </li>
+                <li><strong>Reflection on Life Journey</strong>
+                  <ul>
+                    <li>The other half reflect on the past or dream about the future, using deeper language reminiscent of letters that focus on life journeys.</li>
+                  </ul>
+                </li>
+              </ul>"
             />
           </Card>
 

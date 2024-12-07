@@ -7,7 +7,7 @@ import "./topic-styling.css";
 const TSNEVisualization = ({
   id,
   activeTopics = new Set(),
-  defaultDetailsPanelHTML = "<p>Click on a point to see more details here.</p>",
+  defaultDetailsPanelHTML = `<p>Click on a point to see more details here.</p>`,
   dataFiles = {
     assignedTopics: "/data/topic-modeling/results/top_topics_with_weights.json",
     topicsRef: "/data/topic-modeling/results/topics_NMF_15.json",
@@ -66,7 +66,7 @@ const TSNEVisualization = ({
     const width = 700;
     const height = 500;
     const margin = 40;
-    const chartLeftMargin = 200;
+    const chartLeftMargin = 160;
     const chartContainerW = 925;
     const chartContainerH = 600;
     const tooltipWidth = 250;
@@ -124,12 +124,9 @@ const TSNEVisualization = ({
       });
 
     // detail panel instructions for on-click
-    const clickInMsg =
-      "<p><i>Click on a point to see more details about the love letter.</i></p>";
-    const clickOutMsg =
-      "<p><i>Explore another point or click anywhere outside the point to unselect.</i></p>";
-    const topicExplanationHeader =
-      "<h4>Key Takeaways about Selected Topics: </h4>";
+    const clickInMsg = `<p style="font-size: 12px; color: #333;"><i>Click on a point to see more details about the love letter.</i></p>`;
+    const clickOutMsg = `<p style="font-size: 12px; color: #333;"><i>Explore another point or click anywhere outside the point to unselect.</i></p>`;
+    const topicExplanationHeader = `<strong style="font-size: 16px; color: #333;">Key Takeaways about Selected Topics: </strong>`;
 
     // point selection variables
     let zoomScale = 1;
