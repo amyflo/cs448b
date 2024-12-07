@@ -39,7 +39,7 @@ export default function Home() {
           <Card
             title="Dataset Overview"
             description={`
-For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning posts from **2021 to November 2024**, totaling **741** posts**. Due to Reddit's scraping limitations, this timeframe constrained our dataset's scope. However, we successfully collected a comprehensive set of posts and comments, organizing them into structured **JSON files**. Each file grouped posts by unique IDs, nesting associated comments under their corresponding posts. This structure streamlined the process of linking posts and comments for analysis.
+For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning posts from **2021 to November 2024**, totaling **843** posts. Due to Reddit's scraping limitations, this timeframe constrained our dataset's scope. However, we successfully collected a comprehensive set of posts and comments, organizing them into structured **JSON files**. Each file grouped posts by unique IDs, nesting associated comments under their corresponding posts. This structure streamlined the process of linking posts and comments for analysis.
   `}
           />
         </div>

@@ -20,6 +20,7 @@ const PostFrequencyChart = ({
         const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
+        // Parse dates and prepare data
         const parsedData = Object.entries(json).map(([postId, post]) => ({
           date: d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")(post.createdAt),
         }));
@@ -31,25 +32,28 @@ const PostFrequencyChart = ({
           (d) => d3.timeMonth.floor(d.date)
         );
 
-        let frequencyData = groupedData.map(([date, count]) => ({
-          date,
-          frequency: count,
-        }));
+        let totalPostsData = groupedData
+          .map(([date, count]) => ({ date, totalPosts: count }))
+          .sort((a, b) => a.date - b.date); // Sort data by date
 
-        // Sort data by date (ascending)
-        frequencyData = frequencyData.sort((a, b) => a.date - b.date);
+        // Calculate accumulated total
+        let accumulatedTotal = 0;
+        totalPostsData = totalPostsData.map((d) => {
+          accumulatedTotal += d.totalPosts;
+          return { ...d, accumulatedTotal }; // Include the running total
+        });
 
-        setData(frequencyData);
+        setData(totalPostsData);
 
-        // Extract unique months
+        // Extract unique months for dropdown
         const months = Array.from(
-          new Set(frequencyData.map((d) => d3.timeFormat("%Y-%m")(d.date)))
+          new Set(totalPostsData.map((d) => d3.timeFormat("%Y-%m")(d.date)))
         ).sort();
 
         setAvailableMonths(months);
 
-        // Filter data by pointA and pointB if provided
-        const filteredByRange = frequencyData.filter(
+        // Filter data for initial display
+        const filteredByRange = totalPostsData.filter(
           (d) =>
             (!pointA || d.date >= d3.timeParse("%Y-%m")(pointA)) &&
             (!pointB || d.date <= d3.timeParse("%Y-%m")(pointB))
@@ -98,7 +102,7 @@ const PostFrequencyChart = ({
 
       const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(filteredData, (d) => d.frequency)])
+        .domain([0, d3.max(filteredData, (d) => d.accumulatedTotal)])
         .nice()
         .range([height, 0]);
 
@@ -161,7 +165,7 @@ const PostFrequencyChart = ({
       const lineGenerator = d3
         .line()
         .x((d) => xScale(d.date))
-        .y((d) => yScale(d.frequency))
+        .y((d) => yScale(d.accumulatedTotal))
         .curve(d3.curveMonotoneX);
 
       const path = svg
@@ -190,7 +194,7 @@ const PostFrequencyChart = ({
         .append("circle")
         .attr("class", "dot")
         .attr("cx", (d) => xScale(d.date))
-        .attr("cy", (d) => yScale(d.frequency))
+        .attr("cy", (d) => yScale(d.accumulatedTotal))
         .attr("r", 0) // Start with radius 0
         .attr("fill", "steelblue")
         .on("mouseover", (event, d) => {
@@ -224,7 +228,7 @@ const PostFrequencyChart = ({
             svg
               .append("circle")
               .attr("cx", xScale(dataPoint.date))
-              .attr("cy", yScale(dataPoint.frequency))
+              .attr("cy", yScale(dataPoint.accumulatedTotal))
               .attr("r", 6)
               .attr("fill", "lightblue")
               .style("cursor", "pointer") // Optional: pointer cursor for hover effect
@@ -241,7 +245,7 @@ const PostFrequencyChart = ({
             svg
               .append("text")
               .attr("x", xScale(dataPoint.date) - 10)
-              .attr("y", yScale(dataPoint.frequency) - 10)
+              .attr("y", yScale(dataPoint.accumulatedTotal) - 10)
               .attr("fill", "black")
               .style("font-size", "9px")
               .style("text-anchor", "end")
@@ -278,7 +282,8 @@ const PostFrequencyChart = ({
         tooltip
           .html(
             ` <strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
-           <strong>Number of posts:</strong> ${d.frequency}`
+           <strong>Number of posts:</strong> ${d.totalPosts}<br/>
+            <strong>Total posts so far:</strong> ${d.accumulatedTotal}`
           )
           .style("left", `${tooltipX}px`)
           .style("top", `${tooltipY}px`);

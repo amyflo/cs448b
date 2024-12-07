@@ -27,6 +27,8 @@ const PostLengthVsSentiment = () => {
           postUrl: `https://www.reddit.com/r/LoveLetters/comments/${postId}`,
           postTitle: post.title,
           postBody: post.body,
+          username: post.username,
+          createdAt: post.createdAt,
         }));
 
         renderChart(parsedData);
@@ -194,20 +196,63 @@ const PostLengthVsSentiment = () => {
           <h2>Post Details</h2>
           {selectedPost ? (
             <>
-              <p>Sentiment Score: {selectedPost.bodyScore}</p>
-              <a
-                href={selectedPost.postUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "#0077cc" }}
+              <div
+                style={{
+                  padding: "15px",
+                  borderRadius: "8px",
+                  backgroundColor: "#fff",
+                  width: "100%",
+                  maxWidth: "600px",
+                  margin: "0 auto",
+                }}
               >
-                View on Reddit
-              </a>
-              <hr />
-
-              <div style={{ overflowY: "auto", maxHeight: "80vh" }}>
-                <p>{selectedPost.postTitle}</p>
-                <p>{selectedPost.postBody}</p>
+                <strong
+                  style={{
+                    fontSize: "1.2em",
+                    margin: "0 0 10px 0",
+                    color: "#333",
+                    textAlign: "left",
+                  }}
+                >
+                  {selectedPost.postTitle}
+                </strong>
+                <p
+                  style={{
+                    fontSize: "0.9em",
+                    color: "#777",
+                    margin: "0 0 15px 0",
+                  }}
+                >
+                  <strong>{selectedPost.username}</strong> on{" "}
+                  {new Date(selectedPost.createdAt).toLocaleDateString()}
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.9em",
+                    color: "#777",
+                    margin: "0 0 15px 0",
+                  }}
+                >
+                  Sentiment Score: {selectedPost.bodyScore}
+                </p>
+                <p
+                  style={{
+                    fontSize: "1em",
+                    color: "#555",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {selectedPost.postLength > 300
+                    ? (selectedPost?.postBody || "").substring(0, 300) + "..."
+                    : selectedPost.postBody}
+                </p>
+                <a
+                  href={selectedPost.postUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  See the original post.
+                </a>
               </div>
             </>
           ) : (

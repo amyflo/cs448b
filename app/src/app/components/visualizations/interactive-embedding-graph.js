@@ -67,8 +67,7 @@ const InteractiveEmbeddingGraph = ({
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    const axisColor = "crimson";
-    const pointsColor = "black";
+    const axisColor = "black";
 
     const svg = chart
       .append("svg")
@@ -87,13 +86,11 @@ const InteractiveEmbeddingGraph = ({
       .style("stroke", axisColor);
 
     svg
-      .append("line")
-      .attr("x1", width / 2)
-      .attr("x2", width / 2)
-      .attr("y1", 0)
-      .attr("y2", height)
-      .style("stroke", axisColor)
-      .style("stroke-dasharray", "5,5");
+      .append("circle")
+      .attr("cx", width / 2) // Center horizontally
+      .attr("cy", height / 2) // Center vertically
+      .attr("r", 5) // Radius of the dot
+      .attr("fill", axisColor); // Use the same color as the axes
 
     const axisVector = diff(emb(axis0), emb(axis1));
     const x_val = (d) => dot(axisVector, emb(d));
@@ -105,10 +102,22 @@ const InteractiveEmbeddingGraph = ({
 
     const yScale = d3
       .scaleLinear()
+      .domain(d3.extent(pointsWords, x_val))
       .domain([0, pointsWords.length - 1])
       .range([0, height]);
 
     const y = (i) => yScale(i);
+
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "rgba(0, 0, 0, 0.7)")
+      .style("color", "#fff")
+      .style("padding", "8px")
+      .style("border-radius", "4px")
+      .style("opacity", 0) // Initially hidden
+      .style("pointer-events", "none");
 
     // Draw points
     svg
@@ -120,7 +129,35 @@ const InteractiveEmbeddingGraph = ({
       .attr("x", (d) => xScale(x_val(d)))
       .attr("y", (_, i) => y(i))
       .text((d) => d)
-      .attr("fill", pointsColor);
+      .attr("fill", "black")
+      .on("mouseover", (event, d) => {
+        // Show the tooltip with word details
+        const distanceToAxis0 = Math.abs(x_val(d) - xScale.range()[1]);
+        const distanceToAxis1 = Math.abs(x_val(d) - xScale.range()[0]);
+        tooltip
+          .style("opacity", 1)
+          .html(
+            `<strong>Word:</strong> ${d}<br/>
+             <strong>Distance to ${axis0}:</strong> ${distanceToAxis0.toFixed(
+              2
+            )}<br/>
+             <strong>Distance to ${axis1}:</strong> ${distanceToAxis1.toFixed(
+              2
+            )}`
+          )
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 20}px`);
+      })
+      .on("mousemove", (event) => {
+        // Move the tooltip with the mouse
+        tooltip
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 20}px`);
+      })
+      .on("mouseout", () => {
+        // Hide the tooltip
+        tooltip.style("opacity", 0);
+      });
 
     // Label axes
     const axisWords = [axis0, axis1];
@@ -133,7 +170,7 @@ const InteractiveEmbeddingGraph = ({
       .attr("x", (d, i) => (i === 0 ? 0 : width)) // Position at start and end of x-axis
       .attr("y", height / 2 - 10)
       .text((d) => d)
-      .attr("fill", axisColor)
+      .attr("fill", (d, i) => (i === 0 ? "blue" : "red"))
       .attr("text-anchor", (d, i) => (i === 0 ? "start" : "end")) // Align labels
       .style("font-size", "14px");
   };
