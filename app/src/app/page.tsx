@@ -79,6 +79,7 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
               key="tsne138"
               activeTopics={new Set([1, 3, 8])}
               defaultDetailsPanelHTML="
+              <strong>Key Takeaways about Selected Topics: </strong><br>
               <ul> 
                 <li> 
                   Wishful thinkers commonly use metaphors that align with the word-usage in the topic <strong>Serenity and Beauty</strong>.
@@ -99,6 +100,7 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
               key="tsne146"
               activeTopics={new Set([1, 4, 6])}
               defaultDetailsPanelHTML="
+              <strong>Key Takeaways about Selected Topics: </strong><br>
               <ul>
                 The letters from Idealistic Soulmates are influenced by two main themes which show a split within the topic itself:
                 <li><strong>Playful Flirtation</strong>
@@ -113,6 +115,29 @@ A significant upward trend begins in **January 2023**, culminating in a sharp pe
                 </li>
               </ul>"
             />
+          </Card>
+
+          <Card
+            title="**Connections between Vulnerability and Reflecting on Moments of Time**"
+            description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
+          >
+            <TopicVisualization
+              id="tsne08"
+              key="tsne08"
+              activeTopics={new Set([0, 8])}
+              defaultDetailsPanelHTML="
+              <strong>Key Takeaways about Selected Topics: </strong><br>
+              <ul>
+                Authors who write about Heartbreak and Vulnerability commonly reminisce or recall the happier moments of the past. In some letters, they look towards the past with regret and guilt, sharing their vulnerability in the love letter.
+              </ul>"
+            />
+          </Card>
+
+          <Card
+            title="**Your turn to explore!**"
+            description="Hover over the topics in the legend to learn more about each topic. Filter by topic and click on individual points to further explore each letter."
+          >
+            <TopicVisualization id="tsneExplore" key="tsneExplore" />
           </Card>
 
           {/* // INSTRUCTIONS

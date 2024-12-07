@@ -7,7 +7,7 @@ import "./topic-styling.css";
 const TSNEVisualization = ({
   id,
   activeTopics = new Set(),
-  defaultDetailsPanelHTML = `<p>Click on a point to see more details here.</p>`,
+  defaultDetailsPanelHTML = "",
   dataFiles = {
     assignedTopics: "/data/topic-modeling/results/top_topics_with_weights.json",
     topicsRef: "/data/topic-modeling/results/topics_NMF_15.json",
@@ -19,7 +19,7 @@ const TSNEVisualization = ({
 
   useEffect(() => {
     updatePointOpacities();
-  }, [activeTopics]);
+  }, []);
 
   let activeTopicsLocal = new Set(activeTopics);
 
@@ -31,12 +31,17 @@ const TSNEVisualization = ({
       const topic = +d3.select(this).attr("data-topic");
       const isActiveTopic = activeTopicsLocal.has(topic);
 
-      // If no topics are active, set all points to opacity 0.8
+      // if there is a point selected, always give the selected point high opacity
+      if (selectedPt && d3.select(this).node() === selectedPt.node()) {
+        return 0.8;
+      }
+
+      // if no topics are filtered, give high opacity to all points
       if (isTopicsArrEmpty) {
         return 0.8;
       }
 
-      // Otherwise, apply opacity based on active topics
+      // if there are topics filtered, give high opacity ONLY to the points in those topics
       return isActiveTopic ? 0.8 : 0.025;
     });
   }
@@ -127,7 +132,6 @@ const TSNEVisualization = ({
     // detail panel instructions for on-click
     const clickInMsg = `<p style="font-size: 12px; color: #333;"><i>Click on a point to see more details about the love letter.</i></p>`;
     const clickOutMsg = `<p style="font-size: 12px; color: #333;"><i>Explore another point or click anywhere outside the point to unselect.</i></p>`;
-    const topicExplanationHeader = `<strong style="font-size: 16px; color: #333;">Key Takeaways about Selected Topics: </strong>`;
 
     // point selection variables
     let zoomScale = 1;
@@ -150,6 +154,10 @@ const TSNEVisualization = ({
         .attr("fill", color)
         .attr("data-topic", topTopic) // associate with topic for filtering
         .attr("opacity", function () {
+          // if there are no selected topics, just make all the same high opacity
+          if (activeTopicsLocal.size === 0) {
+            return 0.8;
+          }
           // Check if the point's topic is in activeTopicsLocal (or else it would just all be same opacity initially)
           const topic = +d3.select(this).attr("data-topic");
           return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
@@ -161,7 +169,7 @@ const TSNEVisualization = ({
             .html(
               `<strong style="font-size: 12px">${topLabel}</strong><br><p style="font-style: italic; font-size: 12px; color: #fff; margin: 0;">"${letter.title}"</p></h3>`
             )
-            .style("left", `${event.pageX - 300}px`)
+            .style("left", `${event.pageX - 350}px`)
             .style("top", `${event.pageY - 100}px`);
         })
         .on("mouseout", () => {
@@ -175,6 +183,12 @@ const TSNEVisualization = ({
           if (selectedPt) {
             const prevPtTopic = selectedPt.attr("data-topic");
             const isSelectedTopic = activeTopicsLocal.has(prevPtTopic);
+
+            console.log("Resetting previous point:", {
+              topic: prevPtTopic,
+              isActive: isSelectedTopic,
+            });
+
             selectedPt
               .attr("stroke", null)
               .attr("opacity", isSelectedTopic ? 0.8 : 0.025);
@@ -188,6 +202,11 @@ const TSNEVisualization = ({
             .attr("opacity", 0.8)
             .attr("stroke", "black")
             .attr("stroke-width", 2.5);
+
+          console.log("New selected point:", {
+            topic: selectedPt.attr("data-topic"),
+            opacity: selectedPt.attr("opacity"),
+          });
 
           // zoom into selected point area
           const pointX = xScale(point.x) + chartLeftMargin; // account for the legend padding
@@ -260,7 +279,7 @@ const TSNEVisualization = ({
 
       // set default if nothing is selected
       d3.select(`#${id}-details-content`).html(
-        `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
+        `${clickInMsg}${defaultDetailsPanelHTML}`
       );
 
       // track click events throughout the entire body
@@ -282,7 +301,7 @@ const TSNEVisualization = ({
 
             // reset the details box
             d3.select(`#${id}-details-content`).html(
-              `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
+              `${clickInMsg}${defaultDetailsPanelHTML}`
             );
 
             // reset the zoom
@@ -319,9 +338,12 @@ const TSNEVisualization = ({
           tooltip.transition().duration(200).style("opacity", 1);
           tooltip
             .html(
-              `<strong>${topicLabel}</strong><br><br>${topicDescription}<br><br><strong>Top Words: </strong>${topicsRefData[
-                index
-              ].top_words.join(", ")}`
+              `<ul style="list-style: none; padding: 0; font-size: 10px; color: #ffff;">
+                <li><strong>${topicLabel}</strong></li>
+                <li>${topicDescription}</li>
+                <li><strong>Top Words:</strong></li>
+                <li>${topicsRefData[index].top_words.join(", ")}</li>
+              </ul>`
             )
             .style("left", `${10}px`)
             .style("top", `${375}px`);
