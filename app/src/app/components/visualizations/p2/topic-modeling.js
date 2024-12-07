@@ -15,10 +15,6 @@ const TSNEVisualization = ({
     lettersData: "/data/consolidated_posts.json",
   },
 }) => {
-  // console.log("prop active topics ", activeTopics);
-  // const [selectedPt, setSelectedPt] = useState(null);
-  // console.log("initial selectedPt: ", selectedPt);
-
   let selectedPt = null;
 
   useEffect(() => {
@@ -26,7 +22,6 @@ const TSNEVisualization = ({
   }, [activeTopics]);
 
   let activeTopicsLocal = new Set(activeTopics);
-  // console.log("local copy active topics: ", activeTopicsLocal);
 
   function updatePointOpacities() {
     // set opacity for each circle is filtered/unfiltered
@@ -120,7 +115,6 @@ const TSNEVisualization = ({
       .on("zoom", function (event) {
         chartSVG.attr("transform", event.transform);
         // d3.select(`#${id}-chart`).attr("transform", event.transform)
-        updatePointOpacities();
       });
 
     // detail panel instructions for on-click
@@ -158,10 +152,10 @@ const TSNEVisualization = ({
           tooltip.transition().duration(200).style("opacity", 1);
           tooltip
             .html(
-              `<strong>${topLabel}</strong><br><span style=" display: block; font-style: italic;">"${letter.title}"</span></h3>`
+              `<strong style="font-size: 12px">${topLabel}</strong><br><p style="font-style: italic; font-size: 12px; color: #fff; margin: 0;">"${letter.title}"</p></h3>`
             )
-            .style("left", `${event.pageX}px`)
-            .style("top", `${event.pageY}px`);
+            .style("left", `${event.pageX - 300}px`)
+            .style("top", `${event.pageY - 100}px`);
         })
         .on("mouseout", () => {
           tooltip.transition().duration(200).style("opacity", 0);
@@ -169,24 +163,24 @@ const TSNEVisualization = ({
         .on("click", (event) => {
           console.log("clicked on post: ", post.post_id);
           console.log("SELECTED ON CLICK: ", selectedPt);
-          updatePointOpacities();
 
           // if there were prev selected points, reset it so highlights don't persist
           if (selectedPt) {
-            selectedPt.attr("stroke", null);
+            const prevPtTopic = selectedPt.attr("data-topic");
+            const isSelectedTopic = activeTopicsLocal.has(prevPtTopic);
+            selectedPt
+              .attr("stroke", null)
+              .attr("opacity", isSelectedTopic ? 0.8 : 0.025);
           }
-
-          // reassign to new selected point value (user clicks from one point to another)
-          // const newSelectedPt = d3.select(event.target);
-          // setSelectedPt(newSelectedPt);
-          // console.log("AFTER UPDATING NEW SELECTION ", newSelectedPt);
 
           selectedPt = d3.select(event.target);
           console.log(selectedPt);
 
-          // increase border around selected point
-          // newSelectedPt.attr("stroke", "black").attr("stroke-width", "2.5");
-          selectedPt.attr("stroke", "black").attr("stroke-width", 2.5);
+          // increase border and opacity around selected point
+          selectedPt
+            .attr("opacity", 0.8)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2.5);
 
           // zoom into selected point area
           const pointX = xScale(point.x) + chartLeftMargin; // account for the legend padding
@@ -226,29 +220,26 @@ const TSNEVisualization = ({
           // update the details panel
           d3.select(`#${id}-details-content`).html(
             `<p>${clickOutMsg}</p>
-              <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
-                <h3 style="margin: 0; font-size: 10; text-align: left;">${
-                  letter.title
-                }</h3>
-                <p style="font-size: 1; color: #555;">By <strong>${
-                  letter.username
+             <div style="padding: 15px; border-radius: 8px; background-color: #ffff; width: 100%; max-width: 600px; margin: 0 auto;">
+              <strong style="font-size: 1.2em; margin: 0 0 10px 0; color: #333; text-align: left;">${
+                letter.title
+              }</strong>
+              <p style="font-size: 0.9em; color: #777; margin: 0 0 15px 0;">
+                <strong>${letter.username}</strong> on ${new Date(
+              letter.createdAt
+            ).toLocaleDateString()}
+              </p>
+              <p style="font-size: 1em; color: #555; line-height: 1.5;">
+                ${
+                  letter.body.length > 300
+                    ? letter.body.substring(0, 300) + "..."
+                    : letter.body
                 }
-                  </strong> on ${new Date(
-                    letter.createdAt
-                  ).toLocaleDateString()}
-                </p>
-                <p style="margin-top: 10px; font-size: 0.3; color: #333;">
-                  ${
-                    letter.body.length > 300
-                      ? letter.body.substring(0, 300) + "..."
-                      : letter.body
-                  }
-                </p>
-                <a href="${
-                  letter.url
-                }" target="_blank">See the original post.</a>
+              </p>
+              <a href="${letter.url}" target="_blank">See the original post.</a>
               </div>
-              <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff;">
+              <p></p>
+              <div style="padding: 10px; border-radius: 5px; background-color: #ffff;">
                 <strong style="margin: 0; font-size: 3; text-align: left;">Topic Weights Distribution</strong>
                 <ol>
                   ${formattedWeights
