@@ -13,7 +13,7 @@ import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
 import EmbeddingGraph from "./components/visualizations/embedding-graph";
 import TopicVisualization from "./components/visualizations/p2/topic-modeling";
 import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
-import SentimentOverTime from "./components/visualizations/p1/sentiment-over-time";
+import SentimentOverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
 import PostLength from "./components/visualizations/deprecated/post-length";
 import TopicSentiment from "./components/visualizations/p2/topic-by-sentiment";
 import PostLengthTopic from "./components/visualizations/p2/post-length";
