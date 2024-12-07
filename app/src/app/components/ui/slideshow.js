@@ -49,7 +49,7 @@ const ScrollSlideshow = ({ children }) => {
         {React.Children.map(children, (child, index) => (
           <div
             ref={(el) => (slideRefs.current[index] = el)}
-            className={`w-full p-10 bg-white overflow-hidden transition-opacity duration-500 ${
+            className={`w-full bg-white overflow-hidden transition-opacity duration-500 ${
               index === currentSlide
                 ? "opacity-100 translate-y-0 scale-100"
                 : "opacity-50 translate-y-5 scale-95"

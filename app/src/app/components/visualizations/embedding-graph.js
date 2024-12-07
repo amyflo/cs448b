@@ -15,7 +15,7 @@ const EmbeddingGraph = ({ axis, points }) => {
         //function for retrieving embeddings
         //throw error if word does not exist in corpus
         const emb = (w) => {
-          var e = embeddings[w];
+          var e = embeddings[w.toLowerCase().replace(/[^0-9a-z]/gi, '')];
           if (e === undefined) {
             console.log(embeddings);
             throw ReferenceError(w + " does not exist in corpus");
