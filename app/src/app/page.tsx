@@ -195,8 +195,18 @@ On the other hand, longer posts often convey a wider range of emotions, with man
 
         <TransitionScreen
           title="What themes emerge across love letters shared in online communities?"
-          description="The text from the love letters was processed, transformed into word vectors, and then assigned weights to represent the prominence of each of the 15 identified themes."
+          description="Scroll to walk through how we identified the key themes in the love letters."
         />
+
+        <Card
+          title="Step 1: Text Processing"
+          description=" Our data cleaning process involved normalizing the text by converting it to lowercase to avoid duplicate counts, tokenizing the text into individual words or tokens for analysis, converting words to their root forms to better scale the number of unique words,  and removing common stop words such as 'the,' 'and,' and 'is' to focus on meaningful content."
+        ></Card>
+
+        <Card
+          title="Step 2: Assign Topics to each Letter"
+          description="We analyzed the love letters by turning them into numerical representations based on the words they contain, comparing terms that appear frequently in each letter but less often across all letters (TF-IDF). Then, we grouped similar letters together using a topic-modeling algorithm called NMF and labeled these groups with themes based on the most common words in each group."
+        ></Card>
 
         <ThemesTransition
           themes={[
@@ -217,6 +227,12 @@ On the other hand, longer posts often convey a wider range of emotions, with man
             "Family Dynamics",
           ]}
         ></ThemesTransition>
+
+        <Card
+          title="Letters aligned with language from multiple personas and emotional states."
+          description={`Letters did not strictly cluster with a single primary topic, but instead showed **overlapping associations** with other topics as well. They often reflected multiple *personas* and *emotional states* like the **'wishful thinker'** or the **'romantic idealist'**. Nodes positioned near those from different topics are letters that share **similar word-usage**, indicating that **multiple themes** were prominent.
+`}
+        ></Card>
 
         <Card
           title="The Wishful Thinker"
@@ -240,8 +256,13 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
 
         <Card
-          title="Idealistic Soulmates Subtopics"
-          description="Letters from Idealistic Soulmates have soft associations with other topics as well."
+          title="Division within the Same Topic"
+          description="Letters within the same topic can be divided due to strong associations with other topics. The distinct language and tone of the author create variations within the primary topic, revealing **how different personas can emerge from the same theme.** For example, in the 'Idealistic Soulmates' topic, **we observe two contrasting personas**: one that expresses playful physical longing, and another that portrays a more serious, reflective tone."
+        ></Card>
+
+        <Card
+          title="The Split in Idealistic Soulmates"
+          description="Letters from Idealistic Soulmates divided between Playful Flirtation and Reflection on Life Journey"
         >
           <TopicVisualization
             id="tsne146"
@@ -264,9 +285,13 @@ On the other hand, longer posts often convey a wider range of emotions, with man
               </ul>"
           />
         </Card>
+        <Card
+          title="Time as a Lens for Vulnerability: Reflecting on the Past and Dreaming of the Future"
+          description="Letters reflecting on moments in time, particularly the past and future, are closely linked to themes of vulnerability and heartbreak. Authors often **compare their present selves to their past,** reminiscing about previous experiences and **envisioning missed opportunities** or irreversible moments. They also **dream or wonder about the future**, imagining how things might have been different. In their most vulnerable moments, these authors revisit past memories or imagine future possibilities, contemplating what could have been."
+        ></Card>
 
         <Card
-          title="Connections between Vulnerability and Reflecting on Moments of Time"
+          title="Close Associations between Vulnerability and Heartbreak, and Reflections on Moments of Time"
           description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
         >
           <TopicVisualization
@@ -282,9 +307,11 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
 
         <Card
-          title="Your turn to explore!"
-          description="Hover over the topics in the legend to learn more about each topic. Filter by topic and click on individual points to further explore each letter."
-        >
+          title="Now, it's your turn to explore!"
+          description="Hover over the legend to learn more about each topic. Select and filter by topics to discover how closely related or distinct the letters are from each other. Click on specific points to zoom in and view a snippet of the love letter, a link to the full post, and the topic weight assignments for that letter."
+        ></Card>
+
+        <Card>
           <TopicVisualization id="tsneExplore" key="tsneExplore" />
         </Card>
 
