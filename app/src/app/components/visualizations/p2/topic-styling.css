@@ -13,7 +13,7 @@ h3 {
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 10px;
+  gap: 2%;
 }
 
 .chart-container {
@@ -101,7 +101,8 @@ circle {
 
 .details-box {
   flex: 1;
-  max-width: 400px;
+  max-width: 700px;
+  height: 60vh;
   padding: 10px;
   border: 1px solid #ddd;
   background-color: #f9f9f9;
@@ -113,9 +114,11 @@ circle {
 .details-box h2 {
   font-size: 18px;
   margin-bottom: 10px;
+  z-index: 2;
 }
 
 .details-content {
   font-size: 14px;
   line-height: 1.5;
+  z-index: 2;
 }

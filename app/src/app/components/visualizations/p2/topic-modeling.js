@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
 import "./topic-styling.css";
 
@@ -15,7 +15,6 @@ const TSNEVisualization = ({
   },
 }) => {
   console.log("prop active topics ", activeTopics);
-  // let selectedPt = useRef(null); // no point is selected initially
   const [selectedPt, setSelectedPt] = useState(null);
   console.log("initial selectedPt: ", selectedPt);
 
@@ -27,13 +26,23 @@ const TSNEVisualization = ({
   console.log("local copy active topics: ", activeTopicsLocal);
 
   // function for updating the opacity of points of active/selected topic filters
+  // function updatePointOpacities() {
+  //   // only select the circles of that particular chart
+  //   d3.selectAll(`#${id}-chart circle`).style("opacity", function () {
+  //     const topic = +d3.select(this).attr("data-topic");
+  //     return activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic)
+  //       ? 0.8
+  //       : 0.025;
+  //   });
+  // }
+
   function updatePointOpacities() {
-    // only select the circles of that particular chart
     d3.selectAll(`#${id}-chart circle`).style("opacity", function () {
       const topic = +d3.select(this).attr("data-topic");
-      return activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic)
-        ? 0.6
-        : 0.025;
+      const isActiveTopic = activeTopicsLocal.has(topic);
+
+      // opacity stays at 0.025 if not active and 0.8 if active
+      return isActiveTopic ? 0.8 : 0.025;
     });
   }
 
@@ -67,6 +76,7 @@ const TSNEVisualization = ({
     const chartLeftMargin = 200;
     const chartContainerW = 1020;
     const chartContainerH = 750;
+    const tooltipWidth = 250;
 
     // define the color theme (15 colors for 15 topics)
     const colors = [
@@ -116,6 +126,7 @@ const TSNEVisualization = ({
       .on("zoom", function (event) {
         chartSVG.attr("transform", event.transform);
         // d3.select(`#${id}-chart`).attr("transform", event.transform)
+        updatePointOpacities();
       });
 
     // detail panel instructions for on-click
@@ -138,6 +149,7 @@ const TSNEVisualization = ({
       const color = colors[topTopic];
 
       // Plot the data points as circles
+
       chartSVG
         .append("circle")
         .attr("cx", xScale(point.x) + chartLeftMargin) // Set x pos as 1st tsne component
@@ -152,21 +164,21 @@ const TSNEVisualization = ({
         })
         .on("mouseover", (event) => {
           // console.log("Mouseover triggered for: ", post.post_id);
-          // console.log(
-          //   `Tooltip content: Dominant Topic: ${topLabel}, Letter Title: ${letter.title}`
-          // );
-          const [x, y] = d3.pointer(event);
 
+          const viewportWidth = window.innerWidth; // Viewport width
+          console.log("view width:", viewportWidth);
+
+          // const xStyling =
+          //   viewportWidth > event.pageX - 250
+          //     ? event.pageX - 500
+          //     : event.pageX - 250;
           tooltip.transition().duration(200).style("opacity", 1);
           tooltip
             .html(
-              // `Dominant Topic: ${topLabel}<br>X: ${point.x.toFixed(
-              //   2
-              // )}<br>Y: ${point.y.toFixed(2)}`
               `<strong>${topLabel}</strong><br><span style=" display: block; font-style: italic;">"${letter.title}"</span></h3>`
             )
-            .style("left", `${x + 15}px`)
-            .style("top", `${y + 50}px`);
+            .style("left", `${event.pageX}px`)
+            .style("top", `${event.pageY}px`);
         })
         .on("mouseout", () => {
           tooltip.transition().duration(200).style("opacity", 0);
@@ -174,11 +186,11 @@ const TSNEVisualization = ({
         .on("click", (event) => {
           console.log("clicked on post: ", post.post_id);
           console.log("current selectedPt val: ", selectedPt);
+          updatePointOpacities();
 
           // if there were prev selected points, reset it so highlights don't persist
           if (selectedPt) {
-            selectedPt.style("opacity", 0.8);
-            selectedPt.attr("stroke", "000");
+            selectedPt.attr("stroke", null);
           }
 
           // reassign to new selected point value (user clicks from one point to another)
@@ -187,23 +199,21 @@ const TSNEVisualization = ({
 
           console.log("after setting new selectedPt ", selectedPt);
           // lower opacity for unfiltered posts
-          if (activeTopicsLocal.size !== 0) {
-            chartSVG.selectAll("circle").style("opacity", function () {
-              const topic = +d3.select(this).attr("data-topic");
-              const isFiltered =
-                activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic);
-              return newSelectedPt.node() === this || isFiltered ? 0.8 : 0.025;
-            });
-          } else {
-            chartSVG.selectAll("circle").style("opacity", 0.1);
-            newSelectedPt.style("opacity", 0.8);
-          }
+          // if (activeTopicsLocal.size !== 0) {
+          //   // chartSVG.selectAll("circle").style("opacity", function () {
+          //   //   const topic = +d3.select(this).attr("data-topic");
+          //   //   const isFiltered =
+          //   //     activeTopicsLocal.size === 0 || activeTopicsLocal.has(topic);
+          //   //   return newSelectedPt.node() === this || isFiltered ? 0.8 : 0.025;
+          //   // });
+          //   updatePointOpacities();
+          // } else {
+          //   chartSVG.selectAll("circle").style("opacity", 0.8);
+          //   // newSelectedPt.style("stroke", "black").attr("stroke-width", 2.5);
+          // }
 
           // increase opacity and put border for specific, selected point
-          newSelectedPt
-            .style("opacity", 1)
-            .attr("stroke", "black")
-            .attr("stroke-width", "2.5");
+          newSelectedPt.attr("stroke", "black").attr("stroke-width", "2.5");
 
           // zoom into selected point area
           const pointX = xScale(point.x) + chartLeftMargin; // account for the legend padding
@@ -281,35 +291,30 @@ const TSNEVisualization = ({
 
       // track click events throughout the entire body
       // (if user clicks outside, it'll reset point selection)
-      d3.select("body").on("click", (event) => {
+      d3.select(`#${id}-chart`).on("click", (event) => {
         console.log("clicked element: ", event.target);
         console.log("inside of zoom reset, selected pt is: ", selectedPt);
         if (selectedPt) {
           // check: click position is anywhere other than the currently selected point
           if (!selectedPt.node().contains(event.target)) {
             console.log("click outside selected point");
-            if (d3.select(`#${id}-chart`).node().contains(event.target)) {
-              console.log("click within  chart area");
-              chartSVG.selectAll(`#${id}-chart circle`).attr("stroke", "null"); // remove outline to be transparent
+            chartSVG.selectAll(`#${id}-chart circle`).attr("stroke-width", 0); // remove outlines
 
-              // zooming out is the same as unselecting so selectedPt should be reset to null
-              setSelectedPt(null);
+            // zooming out is the same as unselecting so selectedPt should be reset to null
+            setSelectedPt(null);
 
-              updatePointOpacities(); // all unfiltered circles are lower opacity
+            updatePointOpacities(); // all unfiltered circles are lower opacity
 
-              // reset the details box
-              d3.select(`#${id}-details-content`).html(
-                `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
-              );
+            // reset the details box
+            d3.select(`#${id}-details-content`).html(
+              `${clickInMsg}${topicExplanationHeader}${defaultDetailsPanelHTML}`
+            );
 
-              // reset the zoom
-              chartSVG.transition().duration(750).call(
-                zoom.transform,
-                d3.zoomIdentity // Reset zoom and transition
-              );
-            } else {
-              console.log("click outside chart area");
-            }
+            // reset the zoom
+            chartSVG.transition().duration(750).call(
+              zoom.transform,
+              d3.zoomIdentity // Reset zoom and transition
+            );
           } else {
             console.log("click on selected point");
           }
