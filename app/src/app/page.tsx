@@ -6,19 +6,20 @@ import React, { useState } from "react";
 import Sentiment2OverTime from "./components/visualizations/sentiment/sentiment-over-time-scatterplot";
 import SentimentPosts from "./components/visualizations/sentiment/sentiment-posts";
 import Length from "./components/visualizations/sentiment/length-vs-sentiment";
-import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
 import TransitionScreen from "./components/ui/transition";
-
+import ThemesTransition from "./components/ui/themesTransition";
 import SentimentBarChart from "./components/visualizations/sentiment/sentiment-posts";
 import SentimentHeatMap from "./components/visualizations/sentiment-heatmap";
 import EmbeddingGraph from "./components/visualizations/embedding-graph";
-import TSNEVisualization from "./components/visualizations/p2/topic-modelling";
+import TopicVisualization from "./components/visualizations/p2/topic-modeling";
+import FrequencyOfPosts from "./components/visualizations/p1/frequency-of-posts";
+import SentimentOverTime from "./components/visualizations/p1/sentiment-over-time";
 import PostLength from "./components/visualizations/deprecated/post-length";
 import TopicSentiment from "./components/visualizations/p2/topic-by-sentiment";
 import PostLengthTopic from "./components/visualizations/p2/post-length";
 import TopicSentimentBar from "./components/visualizations/p2/topic-by-sentiment-bar";
 import PostLengthTopicBar from "./components/visualizations/p2/post-length-bar";
-import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph"
+import InteractiveEmbeddingGraph from "./components/visualizations/interactive-embedding-graph";
 import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
 
@@ -63,7 +64,6 @@ However, a significant upward trend begins in **January 2023**, peaking sharply 
         <Card
           title="A break in submissions"
           description={`Following the sharp peak in **April 2023**, the subreddit paused submissions in **June 2023**, citing challenges with managing the growing pace of activity. 
-
 By **November 2024**, the subreddit [reopened](https://www.reddit.com/r/LoveLetters/comments/1gej65u/rloveletters_has_been_reopened_welcome_back/), welcoming Redditors back to sharing their stories. Shortly after, activity began to pick up again, reflecting a renewed interest from the community.`}
         >
           <FrequencyOfPosts
@@ -111,8 +111,7 @@ On the other hand, longer posts often convey a wider range of emotions, with man
         </Card>
         <Card
           title="Gendered Language in the Love Letters"
-          description=
-          'Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
+          description='Letters with gendered language tend to be written from the perspective of straight women. First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our Love Letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that Love Letter authors are writing about men."'
         >
           <EmbeddingGraph
             axis={["boy", "girl"]}
@@ -132,69 +131,163 @@ On the other hand, longer posts often convey a wider range of emotions, with man
           />
         </Card>
         <Card>
-        <EmbeddingGraph
-          axis={["man", "woman"]}
-          points={[
-            "angry",
-            "sad",
-            "happy",
-            "crazy",
-            "scared",
-            "stupid",
-            "emotional",
-          ]}
-        />
+          <EmbeddingGraph
+            axis={["man", "woman"]}
+            points={[
+              "angry",
+              "sad",
+              "happy",
+              "crazy",
+              "scared",
+              "stupid",
+              "emotional",
+            ]}
+          />
         </Card>
         <Card>
-        <EmbeddingGraph
-          axis={["boy", "girl"]}
-          points={[
-            "angry",
-            "sad",
-            "happy",
-            "crazy",
-            "scared",
-            "stupid",
-            "emotional",
-          ]}
-        />
+          <EmbeddingGraph
+            axis={["boy", "girl"]}
+            points={[
+              "angry",
+              "sad",
+              "happy",
+              "crazy",
+              "scared",
+              "stupid",
+              "emotional",
+            ]}
+          />
         </Card>
         <Card>
-        <EmbeddingGraph
-          axis={["i", "you"]}
-          points={[
-            "regret",
-            "feel",
-            "wonder",
-            "know",
-            "cry",
-            "worry",
-            "fear",
-            "wish",
+          <EmbeddingGraph
+            axis={["i", "you"]}
+            points={[
+              "regret",
+              "feel",
+              "wonder",
+              "know",
+              "cry",
+              "worry",
+              "fear",
+              "wish",
+            ]}
+          />
+        </Card>
+        <Card>
+          <EmbeddingGraph
+            axis={["im", "youre"]}
+            points={[
+              "angry",
+              "quiet",
+              "sad",
+              "happy",
+              "empty",
+              "emotional",
+              "nothing",
+              "everything",
+              "scared",
+            ]}
+          />
+        </Card>
+        <Card>
+          <InteractiveEmbeddingGraph />
+        </Card>
 
-          ]}
+        <TransitionScreen
+          title="What themes emerge across love letters shared in online communities?"
+          description="The text from the love letters was processed, transformed into word vectors, and then assigned weights to represent the prominence of each of the 15 identified themes."
         />
-        </Card>
-        <Card>
-        <EmbeddingGraph
-          axis={["im", "youre"]}
-          points={[
-            "angry",
-            "quiet",
-            "sad",
-            "happy",
-            "empty",
-            "emotional",
-            "nothing",
-            "everything",
-            "scared"
+
+        <ThemesTransition
+          themes={[
+            "Reflections on Moments of Time",
+            "Idealistic Soulmates",
+            "Enduring Relationship Struggles",
+            "Serenity and Beauty",
+            "Playful Flirtation",
+            "Hopeful Goodbyes",
+            "Reflection on Life Journey",
+            "Empathy, Forgiveness, and Apology",
+            "Vulnerability and Heartbreak",
+            "Playful Longing",
+            "Uncertainty in Relationships",
+            "Substance Use and Escapism",
+            "Spirituality and Music",
+            "Sexuality, Longing, and Confusion",
+            "Family Dynamics",
           ]}
-        />
+        ></ThemesTransition>
+
+        <Card
+          title="The Wishful Thinker"
+          description="Letters from Idealistic Soulmates, Serenity and Beauty, and Vulnerability and Heartbreak"
+        >
+          <TopicVisualization
+            id="tsne138"
+            key="tsne138"
+            activeTopics={new Set([1, 3, 8])}
+            defaultDetailsPanelHTML="
+              <strong>Key Takeaways about Selected Topics: </strong><br>
+              <ul> 
+                <li> 
+                  Wishful thinkers commonly use metaphors that align with the word-usage in the topic <strong>Serenity and Beauty</strong>.
+                </li> 
+                <li> Some letters from <strong>Idealistic Soulmates</strong> also closely align with the word-usage from <strong>Vulnerability and Heartbreak</strong>. </li>
+                <li> This shows how vulnerable emotional states may spur language similar to that of a wishful thinker.
+                </li>
+              </ul>"
+          />
         </Card>
-        <Card>
-          <InteractiveEmbeddingGraph/>
+
+        <Card
+          title="Idealistic Soulmates Subtopics"
+          description="Letters from Idealistic Soulmates have soft associations with other topics as well."
+        >
+          <TopicVisualization
+            id="tsne146"
+            key="tsne146"
+            activeTopics={new Set([1, 4, 6])}
+            defaultDetailsPanelHTML="
+              <strong>Key Takeaways about Selected Topics: </strong><br>
+              <ul>
+                The letters from Idealistic Soulmates are influenced by two main themes which show a split within the topic itself:
+                <li><strong>Playful Flirtation</strong>
+                  <ul>
+                    <li>Half of the letters express physical and sexual longing using casual language, similar to the tone found in Playful Flirtation letters.</li>
+                  </ul>
+                </li>
+                <li><strong>Reflection on Life Journey</strong>
+                  <ul>
+                    <li>The other half reflect on the past or dream about the future, using deeper language reminiscent of letters that focus on life journeys.</li>
+                  </ul>
+                </li>
+              </ul>"
+          />
         </Card>
-        
+
+        <Card
+          title="Connections between Vulnerability and Reflecting on Moments of Time"
+          description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time"
+        >
+          <TopicVisualization
+            id="tsne08"
+            key="tsne08"
+            activeTopics={new Set([0, 8])}
+            defaultDetailsPanelHTML="
+              <strong>Key Takeaways about Selected Topics: </strong><br>
+              <ul>
+                Authors who write about Heartbreak and Vulnerability commonly reminisce or recall the happier moments of the past. In some letters, they look towards the past with regret and guilt, sharing their vulnerability in the love letter.
+              </ul>"
+          />
+        </Card>
+
+        <Card
+          title="Your turn to explore!"
+          description="Hover over the topics in the legend to learn more about each topic. Filter by topic and click on individual points to further explore each letter."
+        >
+          <TopicVisualization id="tsneExplore" key="tsneExplore" />
+        </Card>
+
         {/* // INSTRUCTIONS
 
       Please just format your visualizations like this: <Card
