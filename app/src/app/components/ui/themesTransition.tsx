@@ -16,7 +16,7 @@ const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
       className={`w-full h-screen flex flex-col items-center justify-center ${gradient} text-center`}
     >
       <h1 className="text-5xl font-serif font-extrabold text-pink-600 mb-6 drop-shadow-lg">
-        The love letters were assigned to 15 topics:
+        15 Key Topics were Identified:
       </h1>
       <div className="text-lg text-gray-800 font-serif font-light leading-relaxed max-w-2xl">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -27,6 +27,9 @@ const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
           ))}
         </div>
       </div>
+      <p className="mb-2 text-xl">
+        As a result of our topic-modeling, there were 3 key observations:
+      </p>
     </div>
   );
 };
