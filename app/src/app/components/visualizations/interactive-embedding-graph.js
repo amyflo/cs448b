@@ -32,7 +32,8 @@ const InteractiveEmbeddingGraph = () => {
         return e;
       };
 
-      renderChart(emb);
+      const chart = renderChart(emb);
+      return () => {chart.remove()};
     };
 
     fetchData();
@@ -80,9 +81,10 @@ const InteractiveEmbeddingGraph = () => {
 
     const chart = d3.select("#chart")
     
+    //clear svg before drawing current chart
+    chart.select("svg").selectAll("*").remove()
 
-    const svg = chart
-      .append("svg")
+    const svg = chart.select("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .style("border", "1px solid black")
@@ -219,6 +221,7 @@ const InteractiveEmbeddingGraph = () => {
       renderUpdate(emb, [ax0, ax1], points)
     })
     
+    return chart;
   };//end renderChart
 
   function renderUpdate(emb, axisWords, pointsWords) {
@@ -245,8 +248,10 @@ const InteractiveEmbeddingGraph = () => {
       }
     }
 
+    const chart = d3.select("#chart")
+
     // draw lines from points to x axis
-    d3.select("#linesContainer").selectAll("line")
+    chart.select("#linesContainer").selectAll("line")
       .data(pointsWords, (d) => d)
       .join(
         (enter) => {
@@ -280,7 +285,7 @@ const InteractiveEmbeddingGraph = () => {
       )
 
     // plot points
-    d3.select("#pointsContainer").selectAll("text")
+    chart.select("#pointsContainer").selectAll("text")
       .data(pointsWords, (d) => d)
       .join(
         (enter) => {
@@ -339,7 +344,7 @@ const InteractiveEmbeddingGraph = () => {
 
 
     // label the x-axis' endpoints
-    d3.select("#axisLabelsContainer").selectAll("text")
+    chart.select("#axisLabelsContainer").selectAll("text")
       .data(axisWords)
       .join()
         .attr("x", (d) => xScale(x_val(d)))
@@ -357,7 +362,9 @@ const InteractiveEmbeddingGraph = () => {
       <label>
         Plot these words: <input id="inputPoints" defaultValue={pointsWords}/>
       </label>
-      <div id="chart" style={{ position: "relative" }} />      
+      <div id="chart" style={{ position: "relative" }}>
+        <svg/>
+      </div>      
     </div>
   );
 };

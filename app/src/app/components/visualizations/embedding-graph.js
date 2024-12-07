@@ -75,6 +75,10 @@ const EmbeddingGraph = ({ axis, points }) => {
     const height = 500 - margin.top - margin.bottom;
 
     const chart = d3.select(chartRef.current)
+
+
+    //clear svg before drawing current chart
+    chart.select("svg").remove()
     
 
     const svg = chart
