@@ -168,13 +168,19 @@ const TSNEVisualization = ({
         .attr("fill", color)
         .attr("data-topic", topTopic) // associate with topic for filtering
         .attr("opacity", function () {
-          // if there are no selected topics, just make all the same high opacity
-          if (activeTopicsLocal.size === 0) {
-            return 0.8;
-          }
-          // Check if the point's topic is in activeTopicsLocal (or else it would just all be same opacity initially)
-          const topic = +d3.select(this).attr("data-topic");
-          return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
+          // // if there are no selected topics, just make all the same high opacity
+          // if (activeTopicsLocal.size === 0) {
+          //   return 0.8;
+          // }
+          // // Check if the point's topic is in activeTopicsLocal (or else it would just all be same opacity initially)
+          // const topic = +d3.select(this).attr("data-topic");
+          // return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
+
+          return activeTopicsLocal.size === 0
+            ? 0.8
+            : activeTopicsLocal.has(+d3.select(this).attr("data-topic"))
+            ? 0.8
+            : 0.025;
         })
         .on("mouseover", (event) => {
           // Show the tooltip with word details
@@ -198,7 +204,8 @@ const TSNEVisualization = ({
         })
         .on("click", (event) => {
           console.log("clicked on post: ", post.post_id);
-          console.log("SELECTED ON CLICK: ", selectedPt);
+          // console.log("SELECTED ON CLICK: ", selectedPt);
+          console.log("Current selected topics: ", activeTopicsLocal);
 
           // if there were prev selected points, reset it so highlights don't persist
           if (selectedPt) {
