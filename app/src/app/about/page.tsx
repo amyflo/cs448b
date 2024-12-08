@@ -18,7 +18,7 @@ export default function Home() {
       />
       <Card
         title="About our dataset"
-        description={`For our analysis, we scraped data from the r/LoveLetters subreddit spanning **2021 to November 2024**, resulting in a dataset of 843 posts and their associated comments. Due to [Reddit API scraping limits](https://www.reddit.com/dev/api/), the timeframe constrained the scope of our dataset. We carefully collected posts and comments and organized them into JSON files grouped by unique post IDs and comment IDs. This structured dataset enabled efficient association between posts and their corresponding comments, making it suitable for sentiment and topic analysis. `}
+        description={`For our analysis, we scraped data from the r/LoveLetters subreddit spanning **April 2021 to November 2024**, resulting in a dataset of 843 posts and their associated comments. Due to [Reddit API scraping limits](https://www.reddit.com/dev/api/), the timeframe constrained the scope of our dataset. We carefully collected posts and comments and organized them into JSON files grouped by unique post IDs and comment IDs. This structured dataset enabled efficient association between posts and their corresponding comments, making it suitable for sentiment and topic analysis. `}
       />
       <Card
         title="Data Cleaning and Sentiment Analysis"

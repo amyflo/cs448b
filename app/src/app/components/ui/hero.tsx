@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -80,7 +81,7 @@ export default function Hero() {
       ))}
 
       {/* Content */}
-      <div className="relative z-10 max-w-4xl px-6 backdrop-blur-sm rounded-lg">
+      <div className="relative z-10 max-w-4xl px-6 backdrop-blur-sm rounded-xl">
         <h1 className="text-4xl font-serif md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in">
           Exploring how love is expressed in{" "}
           <span className="text-pink-400">r/LoveLetters</span>
@@ -109,6 +110,11 @@ export default function Hero() {
           </span>
           .
         </p>
+        <Link className="text-pink-600 hover:text-pink-700" href="/about">
+          Explore how we process the data
+        </Link>
+
+        <p className="text-5xl mt-8 animate-pulse">↓</p>
       </div>
 
       {/* Floating Heart Animations */}
