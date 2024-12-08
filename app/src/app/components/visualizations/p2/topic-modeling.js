@@ -80,26 +80,6 @@ const TSNEVisualization = ({
     const chartLeftMargin = 160;
     const chartContainerW = 925;
     const chartContainerH = 600;
-    const tooltipWidth = 250;
-
-    // define the color theme (15 colors for 15 topics)
-    const colors = [
-      "#e6194B",
-      "#f58231",
-      "#FFDB58",
-      "#bfef45",
-      "#3cb44b",
-      "#4363d8",
-      "#42d4f4",
-      "#911eb4",
-      "#f032e6",
-      "#808000",
-      "#8a9edb",
-      "#9A6324",
-      "#000075",
-      "#a9a9a9",
-      "#ffd8b1",
-    ];
 
     // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
     const chartSVG = d3.select(`#${id}-chart`);
@@ -157,7 +137,7 @@ const TSNEVisualization = ({
       const topicWeights = assignedTopicsData[i]["all_weights"];
       const topTopic = post.topics.first.topic;
       const topLabel = topicsRefData[topTopic].label;
-      const color = colors[topTopic];
+      const color = topicsRefData[topTopic].color;
 
       // Plot the data points as circles
 
@@ -177,7 +157,7 @@ const TSNEVisualization = ({
           const topic = +d3.select(this).attr("data-topic");
           return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
         })
-        .on("mouseover", (event, d) => {
+        .on("mouseover", (event) => {
           // Show the tooltip with word details
           tooltip
             .style("opacity", 1)
@@ -350,17 +330,18 @@ const TSNEVisualization = ({
       .style("font-weight", "bold");
 
     // for each topic, get color and append to legend
-    colors.forEach((color, index) => {
+    Object.keys(topicsRefData).forEach((topicIndex) => {
       // console.log("Legend item created for topic:", index); // Debugging log
-      const topicLabel = topicsRefData[index].label;
-      const topicDescription = topicsRefData[index].description;
+      const topicLabel = topicsRefData[topicIndex].label;
+      const topicDescription = topicsRefData[topicIndex].description;
+      const color = topicsRefData[topicIndex].color;
       // console.log(topicDescription);
       const legendItem = legendContainer
         .append("div")
         .attr("class", "legend-item")
         .on("click", () => {
           toggleTopicOpacity(index, legendItem);
-          console.log(`${topicsRefData[index].label} selected`);
+          console.log(`${topicsRefData[topicIndex].label} selected`);
         })
         .on("mouseover", () => {
           tooltipTopic.transition().duration(200).style("opacity", 1);
@@ -370,7 +351,7 @@ const TSNEVisualization = ({
                 <li><strong>${topicLabel}</strong></li>
                 <li>${topicDescription}</li>
                 <li><strong>Top Words:</strong></li>
-                <li>${topicsRefData[index].top_words.join(", ")}</li>
+                <li>${topicsRefData[topicIndex].top_words.join(", ")}</li>
               </ul>`
             )
             .style("left", `${10}px`)
@@ -380,7 +361,7 @@ const TSNEVisualization = ({
           tooltipTopic.transition().duration(200).style("opacity", 0);
         });
 
-      if (activeTopicsLocal.has(index)) {
+      if (activeTopicsLocal.has(topicIndex)) {
         legendItem.classed("selected", true); // Highlight as selected if topic is active
       } else {
         legendItem.classed("selected", false); // Remove highlight if not active

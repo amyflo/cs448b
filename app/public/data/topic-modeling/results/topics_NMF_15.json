@@ -25,7 +25,8 @@
     ],
     "num_letters_assigned": 45,
     "label": "Reflections on Moments of Time",
-    "description": "The authors in this topic contemplate on how moments and feelings evolve over time, reflecting on the impact of each experience."
+    "description": "The authors in this topic contemplate on how moments and feelings evolve over time, reflecting on the impact of each experience.",
+    "color": "#e6194B"
   },
   {
     "topic": 1,
@@ -53,7 +54,8 @@
     ],
     "num_letters_assigned": 96,
     "label": "Idealistic Soulmates",
-    "description": "Letters describing a romantic, fantasy vision of soulmates as perfect and eternal connections. These connections are idealized as flawless, overlooking complexities and imperfection."
+    "description": "Letters describing a romantic, fantasy vision of soulmates as perfect and eternal connections. These connections are idealized as flawless, overlooking complexities and imperfection.",
+    "color": "#f58231"
   },
   {
     "topic": 2,
@@ -81,7 +83,8 @@
     ],
     "num_letters_assigned": 63,
     "label": "Enduring Relationship Struggles",
-    "description": "Letters on challenges in relationships where love and care are tested by conflict and personal growth."
+    "description": "Letters on challenges in relationships where love and care are tested by conflict and personal growth.",
+    "color": "#FFDB58"
   },
   {
     "topic": 3,
@@ -109,7 +112,8 @@
     ],
     "num_letters_assigned": 95,
     "label": "Serenity and Beauty",
-    "description": "Letters that use metaphors to describe love and romantic partners using nature, serenity, light, and dream-like imagery."
+    "description": "Letters that use metaphors to describe love and romantic partners using nature, serenity, light, and dream-like imagery.",
+    "color": "#bfef45"
   },
   {
     "topic": 4,
@@ -137,7 +141,8 @@
     ],
     "num_letters_assigned": 53,
     "label": "Playful Flirtation",
-    "description": "Letters describing a flirtatious exchange with casual slang and bold expressions."
+    "description": "Letters describing a flirtatious exchange with casual slang and bold expressions.",
+    "color": "#3cb44b"
   },
   {
     "topic": 5,
@@ -165,7 +170,8 @@
     ],
     "num_letters_assigned": 40,
     "label": "Hopeful Goodbyes",
-    "description": "Farewells and goodbye letters with hope and anticipation, looking towards better days and new opportunities."
+    "description": "Farewells and goodbye letters with hope and anticipation, looking towards better days and new opportunities.",
+    "color": "#4363d8"
   },
   {
     "topic": 6,
@@ -193,7 +199,8 @@
     ],
     "num_letters_assigned": 83,
     "label": "Reflection on Life Journey",
-    "description": "Letters reflecting on life’s journey, embracing change, learning from experiences, and growing through failures."
+    "description": "Letters reflecting on life’s journey, embracing change, learning from experiences, and growing through failures.",
+    "color": "#42d4f4"
   },
   {
     "topic": 7,
@@ -221,7 +228,8 @@
     ],
     "num_letters_assigned": 49,
     "label": "Empathy, Forgiveness, Apology",
-    "description": "Letters about heartfelt empathy, seeking understanding, and offering apologies to heal emotional wounds and broken trust."
+    "description": "Letters about heartfelt empathy, seeking understanding, and offering apologies to heal emotional wounds and broken trust.",
+    "color": "#911eb4"
   },
   {
     "topic": 8,
@@ -249,7 +257,8 @@
     ],
     "num_letters_assigned": 35,
     "label": "Vulnerability and Heartbreak",
-    "description": "Emotional journeys through heartbreak, vulnerability, loss, and the feeling of unworthiness."
+    "description": "Emotional journeys through heartbreak, vulnerability, loss, and the feeling of unworthiness.",
+    "color": "#f032e6"
   },
   {
     "topic": 9,
@@ -277,7 +286,8 @@
     ],
     "num_letters_assigned": 24,
     "label": "Playful Longing",
-    "description": "Mix of playful and affectionate longing that is communicated through lighthearted dialogue."
+    "description": "Mix of playful and affectionate longing that is communicated through lighthearted dialogue.",
+    "color": "#808000"
   },
   {
     "topic": 10,
@@ -305,7 +315,8 @@
     ],
     "num_letters_assigned": 51,
     "label": "Uncertainty in Relationships",
-    "description": "These authors write about the sense of uncertainty in relationships where there is confusion and unspoken feelings."
+    "description": "These authors write about the sense of uncertainty in relationships where there is confusion and unspoken feelings.",
+    "color": "#8a9edb"
   },
   {
     "topic": 11,
@@ -333,7 +344,8 @@
     ],
     "num_letters_assigned": 35,
     "label": "Substance Use and Escapism",
-    "description": "These letters describe the author’s experience in coping with fear, stress, and emotions through the temporary relief of substance use."
+    "description": "These letters describe the author’s experience in coping with fear, stress, and emotions through the temporary relief of substance use.",
+    "color": "#9A6324"
   },
   {
     "topic": 12,
@@ -361,7 +373,8 @@
     ],
     "num_letters_assigned": 43,
     "label": "Spirituality and Music",
-    "description": "These letters speak on soulful connections, divinity, power of song, and the healing and uplifting of spirits."
+    "description": "These letters speak on soulful connections, divinity, power of song, and the healing and uplifting of spirits.",
+    "color": "#000075"
   },
   {
     "topic": 13,
@@ -389,7 +402,8 @@
     ],
     "num_letters_assigned": 25,
     "label": "Sexuality, Longing, and Confusion",
-    "description": "Love, fear, and uncertainty in the author’s personal relationship with their sexuality, longing, and identity."
+    "description": "Love, fear, and uncertainty in the author’s personal relationship with their sexuality, longing, and identity.",
+    "color": "#a9a9a9"
   },
   {
     "topic": 14,
@@ -417,6 +431,7 @@
     ],
     "num_letters_assigned": 19,
     "label": "Family Dynamics",
-    "description": "These letters speak on the roles and labels of both conventional and unconventional family dynamics or romantic relationships."
+    "description": "These letters speak on the roles and labels of both conventional and unconventional family dynamics or romantic relationships.",
+    "color": "#ffd8b1"
   }
 ]
