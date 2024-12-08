@@ -116,7 +116,7 @@ const InteractiveEmbeddingGraph = ({
     const xScale = d3
       .scaleLinear()
       .domain(d3.extent(axisWords, x_val))
-      .range([0, width])
+      .range([0, width - 10])
       .clamp(true);
 
     const colorScale = d3
@@ -246,16 +246,12 @@ const InteractiveEmbeddingGraph = ({
       .text((d) => d)
       .attr("fill", (d) => colorScale(x_val(d)))
       .attr("text-anchor", (d, i) => (i === 0 ? "start" : "end")) // Align labels
-      .style("font-size", "14px");
+      .style("font-size", "14px")
+      .style("font-weight", "bold");
   };
 
   return (
     <div className="flex flex-col gap-2">
-      {errors.size > 0 && (
-        <div style={{ marginBottom: "10px", color: "red" }}>
-          {Array.from(errors).join()} not found in the Love Letters
-        </div>
-      )}
       <div id={`${id}chart`}></div>
       {axisEditable && (
         <div className="flex flex-row items-center gap-4 w-full p-2 border rounded-lg shadow-sm bg-gray-50">
@@ -271,7 +267,13 @@ const InteractiveEmbeddingGraph = ({
               id={`${id}inputAx0`}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
               defaultValue={axis0}
-              onBlur={(e) => setAxis0(e.target.value)}
+              onBlur={(e) => {
+                setAxis0(e.target.value);
+              }}
+              onChange={(e) => {
+                setAxis0(e.target.value);
+                setErrors(new Set());
+              }}
               placeholder="Axis 0"
             />
             <span className="text-sm font-semibold text-gray-600">to</span>
@@ -280,7 +282,13 @@ const InteractiveEmbeddingGraph = ({
               id={`${id}inputAx1`}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
               defaultValue={axis1}
-              onBlur={(e) => setAxis1(e.target.value)}
+              onBlur={(e) => {
+                setAxis1(e.target.value);
+              }}
+              onChange={(e) => {
+                setAxis1(e.target.value);
+                setErrors(new Set());
+              }}
               placeholder="Axis 1"
             />
           </div>
@@ -304,7 +312,10 @@ const InteractiveEmbeddingGraph = ({
                 setErrors(new Set());
               }}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                setErrors(new Set());
+              }}
             />
           </div>
         )}
@@ -321,6 +332,11 @@ const InteractiveEmbeddingGraph = ({
           Reset
         </button>
       </div>
+      {errors.size > 0 && (
+        <div style={{ marginBottom: "10px", color: "red" }}>
+          {Array.from(errors).join()} cannot be found in r/LoveLetters.
+        </div>
+      )}
     </div>
   );
 };
