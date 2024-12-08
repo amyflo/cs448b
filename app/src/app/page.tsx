@@ -254,11 +254,17 @@ This observation suggests that longer narratives allow for more nuanced and vari
             "Family Dynamics",
           ]}
         ></ThemesTransition>
+
         <Card
-          howToUse="This card provides insights into theme analysis from r/LoveLetters. Use the information to understand patterns in sentiment, post frequency, and length across different themes."
-          howItWasCreated="The data was analyzed by aggregating posts into themes, calculating average sentiment scores, word counts, and total post counts. Visualizations were created using D3.js to compare metrics dynamically."
-          title="Insights into Theme Metrics"
-          description="The 'Idealistic Soulmates' theme consistently stands out across all metrics, combining the highest sentiment score, frequent posts, and moderate word count, reflecting its highly romantic and optimistic tone. Users frequently write about their idealized vision of love or 'the one,' with posts ranging from short declarations to detailed reflections. In contrast, themes like 'Uncertainty in Relationships' and 'Reflection on Life Journey' feature longer posts, as these topics often demand detailed storytelling. High sentiment themes, such as 'Hopeful Goodbyes' and 'Playful Flirtation,' tend to have shorter posts, aligning with their lighter or more straightforward nature."
+          howToUse="This visualization provides a comprehensive look at the relationships between topics, sentiment scores, average word counts, and the number of posts in r/LoveLetters. Each bubble represents a topic, with its size indicating the average sentiment score, its color representing the topic category, its horizontal position showing the number of posts, and its vertical position showing the average word count. You can explore this chart by hovering over the bubbles to reveal detailed information about each topic, including the average sentiment score, average word count, and total number of posts. Observing the positioning of the bubbles allows you to understand how frequently topics are discussed and whether the love letters tend to be brief or detailed. Larger bubbles represent topics with higher sentiment scores, indicating a more positive tone in the posts, while smaller bubbles suggest more neutral sentiments."
+          howItWasCreated="The data was analyzed by grouping posts into thematic categories. For each theme, average sentiment scores, word counts, and total post counts were calculated. A bubble chart was generated, mapping the number of posts on the x-axis, average word count on the y-axis, topic as the bubble color, and sentiment score as the bubble size."
+          title="Analyzing Themes in r/LoveLetters"
+          description={`Generally, topics with more posts tend to have higher average word counts. Topics with more posts and higher word counts may reflect themes that elicit more emotional engagement. Users may feel compelled to contribute longer and richer content on such topics. However, notable exceptions include **Serenity and Beauty** and **Idealistic Soulmates,** which have a moderate word count but a large number of posts. This suggests these topics resonate widely but don’t necessarily require lengthy expressions. 
+    
+Sentiment scores across topics are generally positive, with **Playful Longing** standing out with a score of 0.17, closer to neutral. This indicates some diversity in emotional tone, but the overall sentiment suggests a positive outlook in the subreddit. 
+    
+Topics such as **Family Dynamics** and **Playful Longing** with lower average word counts and fewer posts cluster in the lower-right quadrant. These topics may involve quicker, more casual expressions of sentiment, whereas topics with longer posts, like "Reflection on Life Journey," may reflect deeper or more detailed discussions.
+  `}
         >
           <TopicAnalyzer />
         </Card>
