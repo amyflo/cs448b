@@ -99,7 +99,22 @@ const PostLengthVsSentiment = () => {
       .attr("y", 40)
       .attr("text-anchor", "middle")
       .attr("fill", "#333")
-      .text("Post Length (words)");
+      .text("Post Length (word count)");
+
+    svg
+      .append("g")
+      .selectAll(".grid")
+      .data(yScale.ticks(10)) // Generate grid lines
+      .enter()
+      .append("line")
+      .attr("class", "grid")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", (d) => yScale(d))
+      .attr("y2", (d) => yScale(d))
+      .attr("stroke", "#ddd")
+      .attr("stroke-width", 0.5)
+      .attr("stroke-dasharray", "2,2");
 
     // Add Y Axis
     svg
@@ -167,6 +182,7 @@ const PostLengthVsSentiment = () => {
         .html(
           `<strong>${d.postTitle}</strong><br>
            Post Length: ${d.postLength} words<br>
+           Date: ${new Date(d.createdAt).toLocaleDateString()}<br>
            Sentiment Score: ${d.bodyScore.toFixed(2)}`
         )
         .style("left", `${tooltipX}px`)

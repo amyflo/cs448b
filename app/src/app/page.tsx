@@ -51,6 +51,8 @@ For our analysis, we scraped data from the **r/LoveLetters** subreddit, spanning
         />
         <Card
           title="Growth Reflecting Cultural Rhythms"
+          howToUse="This chart visualizes the total posts in r/LoveLetters over the given time period. Hover over a point to see the month, the number of posts for that month, and the cumulative total of posts up to that point."
+          howItWasCreated="This chart aggregates the number of posts per month by processing data scraped from the r/LoveLetters subreddit. The dataset includes timestamps for each post, which were grouped into monthly intervals to create the visualization."
           description={`From **May 2021 to December 2022**, posting frequency grew steadily, punctuated by occasional spikes likely tied to significant events or community-driven discussions. 
 
 A turning point emerges in **January 2023**, coinciding with the lead-up to Valentine’s Day. A subsequent peak in **April 2023** suggests that the subreddit serves as an emotional outlet during culturally significant moments centered on love and relationships. This seasonality mirrors broader cultural patterns, where holidays and anniversaries often amplify emotional reflection.`}
@@ -64,6 +66,8 @@ A turning point emerges in **January 2023**, coinciding with the lead-up to Vale
         </Card>
         <Card
           title="Adapting to Growth: A Pause and Rebirth"
+          howToUse="This chart visualizes the total posts in r/LoveLetters over the given time period. Hover over a point to see the month, the number of posts for that month, and the cumulative total of posts up to that point."
+          howItWasCreated="This chart aggregates the number of posts per month by processing data scraped from the r/LoveLetters subreddit. The dataset includes timestamps for each post, which were grouped into monthly intervals to create the visualization."
           description={`Following the April 2023 peak, r/LoveLetters experienced a self-imposed hiatus in **June 2023**, citing challenges in maintaining quality amid increasing activity. This reflects a common tension in online spaces: balancing growth with the preservation of core values.
 
 The subreddit reopened in **November 2024**, signaling a renewed commitment to its mission. Activity levels rebounded, though at a moderated pace, suggesting that the community successfully weathered this period of transformation. This resilience underscores the importance of moderation in sustaining trust and focus in online communities.`}
@@ -76,6 +80,8 @@ The subreddit reopened in **November 2024**, signaling a renewed commitment to i
         </Card>
         <Card
           title="Explore the timeline"
+          howToUse="This chart visualizes the total posts in r/LoveLetters over time. Use the dropdowns on the side to select a start and end month to zoom into a specific period. Click the reset button to view the entire dataset again. Hover over a point to see the month, the number of posts for that month, and the cumulative total of posts up to that point."
+          howItWasCreated="This chart aggregates the number of posts per month by processing data scraped from the r/LoveLetters subreddit. The dataset includes timestamps for each post, which were grouped into monthly intervals to create the visualization."
           description="Use the interactive timeline to uncover correlations between posting trends and external events or cultural shifts."
         >
           <FrequencyOfPosts
@@ -90,34 +96,37 @@ The subreddit reopened in **November 2024**, signaling a renewed commitment to i
         {/* Transition Screen */}
         <TransitionScreen
           title="What is the emotional breakdown?"
-          description="Sentiment analysis assigns numerical values to text, translating emotional tone into data. Using a predefined lexicon, positive words like love or happy receive positive scores, while negative words like regret or sad score negatively. Context is also considered to refine results. 
-
-Scores range from negative to positive, with the magnitude of the score indicating the intensity of the emotion expressed."
+          description="This is TBD"
         />
 
         <Card
           title="An Emotional Landscape: The Prevalence of Positivity"
-          description={`Of the posts analyzed, **77% exhibit positive sentiment**, while **23% are negative**. This skew towards positivity reflects both the subreddit’s moderation policies and its focus on uplifting, heartfelt content. However, the presence of negative sentiment—particularly in posts about heartbreak or regret—reveals that vulnerability is equally welcome.
+          howToUse="This chart displays the number of posts classified as positive, neutral, or negative. The bars represent the sentiment categories."
+          howItWasCreated="The chart was generated leveraging sentiment scores from a JSON dataset analysed using Sentiment.js. The bars are color-coded to represent sentiment polarity, with animations triggered when the chart is rendered. Negative posts are have a sentiment score less than zero, while positive posts have a sentiment score greater than zero."
+          description={`Sentiment analysis was used to quantify the emotional tone of posts in r/LoveLetters. Numerical scores were assigned based on a predefined lexicon, where positive words like "love" or "happy" received positive scores, and negative words like "regret" or "sad" received negative scores. Context was considered to improve accuracy, and the magnitude of each score reflects the intensity of the emotion expressed.
 
-These findings highlight r/LoveLetters as a dual-purpose space: one for sharing joy and hope, and another for processing pain and grief. This balance is central to its identity as a sanctuary for emotional honesty.`}
+The analysis reveals that **68% (571 posts) express positive sentiment**, while **20% (170 posts) exhibit negative sentiment**. This highlights the dual purpose of r/LoveLetters: a space for celebrating joy and hope, as well as for processing pain and grief. The positive skew of the posts may be due to the subreddit’s focus on love and gratitude, moderation policies that encourage uplifting content, or the natural tendency of users to share positive experiences more openly.`}
         >
           <SentimentPosts />
         </Card>
         <Card
-          title="Temporal Shifts in Sentiment"
-          description={`Sentiment trends reveal that positivity (red) has become increasingly dominant over time, particularly following the subreddit’s reopening in late 2024. Yet, negative sentiment (blue) persists, reflecting the universality of heartbreak and regret in discussions of love.
+          title="Do Longer Posts Convey Greater Emotion?"
+          howItWasCreated="We used Sentiment.js to calculate sentiment scores for each post in the dataset. Sentiment.js assigns a numerical score based on the presence of positive and negative words in the text. Posts with higher positive scores reflect stronger positive sentiment, while negative scores indicate negative sentiment. To better visualize the relationship between post length and sentiment, we plotted post lengths on a logarithmic scale, as lengths varied widely across posts. This scaling allowed for a clearer comparison by reducing the impact of outliers and emphasizing patterns in the data."
+          howToUse="This scatterplot shows sentiment scores on the y-axis and post lengths on the x-axis. Each dot represents a post, with its color indicating its sentiment (positive, neutral, or negative). A dotted line at y=0 marks neutral sentiment. Hover over a dot to view its title, date, sentiment score, and post length, and click on a dot to see detailed information about the post in the details panel."
+          description={`Longer posts tend to express greater emotional intensity, with extremes in both positive and negative sentiment. Shorter posts, on the other hand, often cluster near neutrality, possibly due to limited narrative depth.
 
-These findings align with psychological theories of emotional regulation, suggesting that the subreddit offers both catharsis for negative emotions and reinforcement for positive experiences.`}
-        >
-          <Sentiment2OverTime />
-        </Card>
-        <Card
-          title="Narrative Depth and Emotional Intensity"
-          description={`Post length correlates strongly with emotional intensity. Short posts cluster around neutrality, likely due to limited narrative detail. In contrast, longer posts frequently display extreme sentiment values, both positive and negative.
-
-This supports the idea that longer narratives enable more nuanced emotional expression and greater range in emotional expression.`}
+This observation suggests that longer narratives allow for more nuanced and varied emotional expression.`}
         >
           <Length />
+        </Card>
+
+        <Card
+          title="How has sentiment in r/LoveLetters changed over time?"
+          howItWasCreated="We used Sentiment.js to calculate sentiment scores for each post in the dataset. Sentiment.js assigns a numerical score based on the presence of positive and negative words in the text. Posts with higher positive scores reflect stronger positive sentiment, while negative scores indicate negative sentiment."
+          howToUse="This scatterplot shows sentiment scores on the y-axis and the months on the x-axis. Each dot represents a post, with its color indicating its sentiment (positive, neutral, or negative). A dotted line at y=0 marks neutral sentiment. Hover over a dot to view its title, date and sentiment score, and click on a dot to see detailed information about the post in the details panel."
+          description={`Zooming in on November 2021 to June 2023 before r/Loveletters was temporarily closed, we see that sentiment trends reveal that positivity (red) has become increasingly dominant over time. This skew towards positivity reflects both the subreddit’s moderation policies and its focus on uplifting, heartfelt content. However, the presence of negative sentiment—particularly in posts about heartbreak or regret—reveals that vulnerability is equally welcome.`}
+        >
+          <Sentiment2OverTime />
         </Card>
 
         {/* ********************************* Language modelling CARDS START HERE ********************************* */}
@@ -242,6 +251,8 @@ This supports the idea that longer narratives enable more nuanced emotional expr
         ></ThemesTransition>
 
         <Card
+          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
+          howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
           title="Letters aligned with language from multiple personas and emotional states."
           description={`Letters did not strictly cluster with a single primary topic, but instead showed **overlapping associations** with other topics as well. They often reflected multiple *personas* and *emotional states* like the **'wishful thinker'** or the **'romantic idealist'**. Nodes positioned near those from different topics are letters that share **similar word-usage**, indicating that **multiple themes** were prominent.
 `}
@@ -266,6 +277,8 @@ This supports the idea that longer narratives enable more nuanced emotional expr
 
         <Card
           title="Division within the Same Topic"
+          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
+          howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
           description="Letters within the same topic can be divided due to strong associations with other topics. The distinct language and tone of the author create variations within the primary topic, revealing **how different personas can emerge from the same theme.** For example, in the 'Idealistic Soulmates' topic, **we observe two contrasting personas**: one that expresses playful physical longing, and another that portrays a more serious, reflective tone. Letters from Idealistic Soulmates divided between Playful Flirtation and Reflection on Life Journey"
         >
           <TopicVisualization
@@ -291,6 +304,8 @@ This supports the idea that longer narratives enable more nuanced emotional expr
           />
         </Card>
         <Card
+          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
+          howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
           title="Time as a Lens for Vulnerability: Reflecting on the Past and Dreaming of the Future"
           description="Letters on Vulnerability and Hearbreak share language with letters from Reflections on Moments of Time. Letters reflecting on moments in time, particularly the past and future, are closely linked to themes of vulnerability and heartbreak. Authors often **compare their present selves to their past,** reminiscing about previous experiences and **envisioning missed opportunities** or irreversible moments. They also **dream or wonder about the future**, imagining how things might have been different. In their most vulnerable moments, these authors revisit past memories or imagine future possibilities, contemplating what could have been. "
         >
@@ -308,6 +323,8 @@ This supports the idea that longer narratives enable more nuanced emotional expr
         </Card>
 
         <Card
+          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
+          howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
           title="Now, it's your turn to explore!"
           description="Hover over the legend to learn more about each topic. Select and filter by topics to discover how closely related or distinct the letters are from each other. Click on specific points to zoom in and view a snippet of the love letter, a link to the full post, and the topic weight assignments for that letter."
         >

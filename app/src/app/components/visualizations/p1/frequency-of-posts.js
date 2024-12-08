@@ -70,9 +70,9 @@ const PostFrequencyChart = ({
 
   useEffect(() => {
     if (isInView && filteredData.length) {
-      const margin = { top: 60, right: 50, bottom: 80, left: 50 }; // Increased margins for labels and title
-      const width = 800 - margin.left - margin.right;
-      const height = 500 - margin.top - margin.bottom;
+      const margin = { top: 60, right: 10, bottom: 80, left: 50 }; // Increased margins for labels and title
+      const width = 1000 - margin.left - margin.right;
+      const height = 600 - margin.top - margin.bottom;
 
       const svg = d3
         .select(chartRef.current)
@@ -156,7 +156,7 @@ const PostFrequencyChart = ({
         .attr("text-anchor", "middle")
         .attr("transform", `rotate(-90)`)
         .attr("x", -height / 2)
-        .attr("y", -margin.left)
+        .attr("y", -margin.left + 10)
         .attr("fill", "black")
         .style("font-size", "12px")
         .text("Number of posts");

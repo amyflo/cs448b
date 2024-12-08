@@ -176,9 +176,12 @@ const EnhancedSentimentScatterplot = () => {
       .append("g")
       .attr("transform", `translate(0,${height})`)
       .call(xAxis)
-      .selectAll("text")
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end");
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", 40)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#333")
+      .text("Month");
 
     // Add Y Axis
     svg.append("g").call(yAxis);
@@ -195,6 +198,19 @@ const EnhancedSentimentScatterplot = () => {
       .attr("stroke-dasharray", "5,5");
 
     // ** Add Grid Lines **
+
+    // Add Y Axis
+    svg
+      .append("g")
+      .call(yAxis)
+      .append("text")
+      .attr("x", -height / 2)
+      .attr("y", -50)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#333")
+      .attr("transform", "rotate(-90)")
+      .text("Sentiment Score");
+
     svg
       .append("g")
       .selectAll(".grid")
@@ -276,9 +292,11 @@ const EnhancedSentimentScatterplot = () => {
       tooltip.transition().duration(200).style("opacity", 1);
       tooltip
         .html(
-          `<strong>${
-            d.postTitle
-          }</strong><br>Sentiment Score: ${d.bodyScore.toFixed(2)}`
+          `<strong>${d.postTitle}<br/>Date: ${new Date(
+            d.createdAt
+          ).toLocaleDateString()}<br></strong>Sentiment Score: ${d.bodyScore.toFixed(
+            2
+          )}`
         )
         .style("left", `${adjustedX}px`)
         .style("top", `${adjustedY}px`);
