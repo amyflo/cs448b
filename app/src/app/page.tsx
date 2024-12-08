@@ -122,9 +122,10 @@ This observation suggests that longer narratives allow for more nuanced and vari
         />
         <Card
           title="r/LoveLetters posts are about women more often than they are about men"
+          description='Possesives like  "my", "mine", "your", and "yours" tend to refer to women, rather than men. Additionally, Words potentially used to discuss romantic rivalry like "that", "other", "current" (as in "your current man/woman"), and "still" (as in "still with him/her") also more often refer to women than men'
+
           howItWasCreated="TODO"
           howToUse="TODO"
-          description='Possesives like  "my", "mine", "your", and "yours" tend to refer to women, rather than men. Additionally, Words potentially used to discuss romantic rivalry like "that", "other", "current" (as in "your current man/woman"), and "still" (as in "still with him/her") also more often refer to women than men'
         >
           <InteractiveEmbeddingGraph
             title="Word co-occurrence with the words 'woman' and 'man'"
@@ -172,36 +173,30 @@ This observation suggests that longer narratives allow for more nuanced and vari
           />
         </Card>
         <Card
-          title="TODO"
-          description="TODO"
+          title="Some gender stereotypes invert for posts discussing young people"
+          description='We see some gendered traits flip across masculinity and femininity when we comare "boy" and "girl" instead of "man" and "woman". The word "boy" becomes more closely associated with the words "sad" and "emotional" and the word "girl" becomes more closely associated with words like "angry", "confused", and "stupid". '
           howItWasCreated="TODO"
           howToUse="TODO"
         >
           <InteractiveEmbeddingGraph
-            id="boy-girl-2"
+            id="gender-emotions-2"
             axis={["boy", "girl"]}
             axisEditable={false}
             points={[
-              "angry",
-              "sad",
-              "happy",
-              "crazy",
-              "scared",
-              "stupid",
-              "emotional",
+              "angry", "sad", "scared", "stupid", "emotional", "confused", "guilty", "emotional"
             ]}
           />
         </Card>
         <Card
-          title="TODO"
-          description="TODO"
+          title="Create your own"
+          description="Explore what other associations and biases exist in r/LoveLetters using this customizable chart."
           howItWasCreated="TODO"
           howToUse="TODO"
         >
           <InteractiveEmbeddingGraph
             id="me-you"
-            axis={["i", "you"]}
-            axisEditable={false}
+            axis={["I", "you"]}
+            axisEditable={true}
             points={[
               "regret",
               "feel",
@@ -212,29 +207,7 @@ This observation suggests that longer narratives allow for more nuanced and vari
               "fear",
               "wish",
             ]}
-          />
-        </Card>
-        <Card
-          title="TODO"
-          description="TODO"
-          howItWasCreated="TODO"
-          howToUse="TODO"
-        >
-          <InteractiveEmbeddingGraph
-            id="diy"
-            axis={["love", "hate"]}
-            points={[
-              "angry",
-              "quiet",
-              "sad",
-              "happy",
-              "empty",
-              "emotional",
-              "nothing",
-              "everything",
-              "scared",
-            ]}
-          />
+          /> 
         </Card>
 
         {/* ********************************* TOPIC MODELING CARDS START HERE ********************************* */}
