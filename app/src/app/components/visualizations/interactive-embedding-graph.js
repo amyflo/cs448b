@@ -132,10 +132,8 @@ const InteractiveEmbeddingGraph = ({
 
     // y function ensures words don't get plotted on top of the x axis
     const y = (i) => {
-      if (i >= pointsWords.length / 2 - 1) {
-        return yScale(i + 1);
-      }
-      return yScale(i);
+      const y_val = yScale(i);
+      return y_val + (y_val < height / 2 - 10 ? 0 : yScale(1));
     };
 
     const tooltip = d3
