@@ -100,7 +100,7 @@ const TSNEVisualization = ({
 
     // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
     const chartSVG = d3.select(`#${id}-chart`);
-    const tooltip = d3.select(`#${id}-tooltip`);
+    const tooltipTopic = d3.select(`#${id}-tooltip`);
 
     // Define scales for the x and y axes so it fits within the canvas
     // matches the raw data coordinates (tsne first and second components) to pixels in svg
@@ -134,6 +134,17 @@ const TSNEVisualization = ({
     const clickInMsg = `<p style="font-size: 12px; color: #333;"><i>Click on a point to see more details about the love letter.</i></p>`;
     const clickOutMsg = `<p style="font-size: 12px; color: #333;"><i>Explore another point or click anywhere outside the point to unselect.</i></p>`;
 
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "rgba(0, 0, 0, 0.7)")
+      .style("color", "#fff")
+      .style("padding", "8px")
+      .style("border-radius", "4px")
+      .style("opacity", 0) // Initially hidden
+      .style("pointer-events", "none");
+
     // point selection variables
     let zoomScale = 1;
     for (let i = 0; i < reducedData.length; i++) {
@@ -163,30 +174,25 @@ const TSNEVisualization = ({
           const topic = +d3.select(this).attr("data-topic");
           return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
         })
-        .on("mouseover", (event) => {
-          const [x, y] = [event.clientX, event.clientY];
-          const tooltipWidth = 250;
-          const tooltipHeight = 100;
-
-          const tooltipX =
-            x + tooltipWidth > window.innerWidth
-              ? x - tooltipWidth - 10
-              : x + 10;
-          const tooltipY =
-            y + tooltipHeight > window.innerHeight
-              ? y - tooltipHeight - 10
-              : y + 10;
-
-          tooltip.transition().duration(200).style("opacity", 1);
+        .on("mouseover", (event, d) => {
+          // Show the tooltip with word details
           tooltip
+            .style("opacity", 1)
             .html(
               `<strong style="font-size: 12px">${topLabel}</strong><br><p style="font-style: italic; font-size: 12px; color: #fff; margin: 0;">"${letter.title}"</p></h3>`
             )
-            .style("left", `${tooltipX - 140}px`)
-            .style("top", `${tooltipY - 120}px`);
+            .style("left", `${event.pageX + 10}px`)
+            .style("top", `${event.pageY - 20}px`);
+        })
+        .on("mousemove", (event) => {
+          // Move the tooltip with the mouse
+          tooltip
+            .style("left", `${event.pageX + 10}px`)
+            .style("top", `${event.pageY - 20}px`);
         })
         .on("mouseout", () => {
-          tooltip.transition().duration(200).style("opacity", 0);
+          // Hide the tooltip
+          tooltip.style("opacity", 0);
         })
         .on("click", (event) => {
           console.log("clicked on post: ", post.post_id);
@@ -348,8 +354,8 @@ const TSNEVisualization = ({
           console.log(`${topicsRefData[index].label} selected`);
         })
         .on("mouseover", () => {
-          tooltip.transition().duration(200).style("opacity", 1);
-          tooltip
+          tooltipTopic.transition().duration(200).style("opacity", 1);
+          tooltipTopic
             .html(
               `<ul style="list-style: none; padding: 0; font-size: 10px; color: #ffff;">
                 <li><strong>${topicLabel}</strong></li>
@@ -362,7 +368,7 @@ const TSNEVisualization = ({
             .style("top", `${375}px`);
         })
         .on("mouseout", () => {
-          tooltip.transition().duration(200).style("opacity", 0);
+          tooltipTopic.transition().duration(200).style("opacity", 0);
         });
 
       if (activeTopicsLocal.has(index)) {
