@@ -128,7 +128,7 @@ const InteractiveEmbeddingGraph = ({
       .scaleLinear()
       .domain(d3.extent(pointsWords, x_val))
       .domain([0, pointsWords.length - 1])
-      .range([0, height]);
+      .range([0, height - 50]);
 
     // y function ensures words don't get plotted on top of the x axis
     const y = (i) => {
@@ -153,7 +153,13 @@ const InteractiveEmbeddingGraph = ({
     var sortedPointsWords = pointsWords.filter(function (d) {
       return emb(d) != null;
     });
-    sortedPointsWords = d3.sort(sortedPointsWords, (d) => x_val(d));
+    sortedPointsWords = d3.sort(
+      Array.from(
+        d3.group(sortedPointsWords, x_val).values(),
+        (group) => group[0]
+      ),
+      (d) => x_val(d)
+    ); // sort and remove duplicates
     sortedPointsWords = sortedPointsWords
       .slice(0, sortedPointsWords.length / 2 - 1)
       .concat(
@@ -268,10 +274,10 @@ const InteractiveEmbeddingGraph = ({
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
               defaultValue={axis0}
               onBlur={(e) => {
-                setAxis0(e.target.value);
+                setAxis1(e.target.value);
               }}
               onChange={(e) => {
-                setAxis0(e.target.value);
+                setAxis1(e.target.value);
                 setErrors(new Set());
               }}
               placeholder="Axis 0"
@@ -283,10 +289,10 @@ const InteractiveEmbeddingGraph = ({
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
               defaultValue={axis1}
               onBlur={(e) => {
-                setAxis1(e.target.value);
+                setAxis0(e.target.value);
               }}
               onChange={(e) => {
-                setAxis1(e.target.value);
+                setAxis0(e.target.value);
                 setErrors(new Set());
               }}
               placeholder="Axis 1"
