@@ -177,7 +177,7 @@ This observation suggests that longer narratives allow for more nuanced and vari
         </Card>
         <Card
           title="Some gender stereotypes invert for posts discussing young people"
-          description='We see some gendered traits flip across masculinity and femininity when we comare "boy" and "girl" instead of "man" and "woman". The word "boy" becomes more closely associated with the words "sad" and "emotional" and the word "girl" becomes more closely associated with words like "angry", "confused", and "stupid". '
+          description='We see some gendered traits flip across masculinity and femininity when we comare "boy" and "girl" instead of "man" and "woman". The word "boy" becomes more closely associated with the words "sad" and "emotional" and the word "girl" becomes more closely associated with words like "angry", "confused", and "stupid". This might show that gender stereotypes are shifting across generations of r/LoveLetters authors.'
           
           howToUse="You can change what words are being plotted by editing the list below the chart. Make sure to separate each word with a comma. You can only plot single words at a time, no multple-word phrases."
 
