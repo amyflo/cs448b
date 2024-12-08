@@ -1,12 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as d3 from "d3";
 
-const PostLengthChart = () => {
-  const chartRef = useRef(null);
+const SentimentBoxPlot = () => {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [filter, setFilter] = useState({ start: null, end: null });
-  const [availableMonths, setAvailableMonths] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,35 +10,18 @@ const PostLengthChart = () => {
         const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
-        const parsedData = Object.entries(json).map(([postId, post]) => ({
-          date: d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")(post.createdAt),
-          wordCount: post.body
-            ? post.body.split(/\s+/).filter((word) => word.trim().length > 0)
-                .length
-            : 0, // Calculate number of words
-        }));
+        // Parse the data to extract topic and sentiment
+        const parsedData = Object.entries(json)
+          .map(([postId, post]) => ({
+            topic: post.topic_label, // Assuming `topic` is available in the data
+            word_len: post.body
+              ? post.body.split(/\s+/).filter((word) => word.trim().length > 0)
+                  .length
+              : 0, // Calculate number of words
+          }))
+          .filter((post) => post.topic);
 
-        // Group by month and calculate average word count
-        const groupedData = d3.rollups(
-          parsedData,
-          (values) => d3.mean(values, (d) => d.wordCount), // Average word count
-          (d) => d3.timeMonth.floor(d.date)
-        );
-
-        const avgLengthData = groupedData.map(([date, avgLength]) => ({
-          date,
-          avgLength,
-        }));
-
-        setData(avgLengthData);
-        setFilteredData(avgLengthData);
-
-        // Extract unique months and years
-        const months = Array.from(
-          new Set(avgLengthData.map((d) => d3.timeFormat("%Y-%m")(d.date)))
-        ).sort();
-
-        setAvailableMonths(months);
+        setData(parsedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -52,223 +31,227 @@ const PostLengthChart = () => {
   }, []);
 
   useEffect(() => {
-    if (!filteredData.length) return;
+    if (data.length > 0) {
+      // Prepare data for visualization
+      const groupedData = d3.group(data, (d) => d.topic);
 
-    const margin = { top: 20, right: 30, bottom: 50, left: 50 };
-    const width = 800 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+      // Create the box plot visualization here, passing groupedData
+      createBoxPlot(groupedData);
+    }
+  }, [data]);
 
+  const createBoxPlot = (groupedData) => {
+    // Clear previous SVG (if exists)
+    d3.select("#box-plot-post-length").select("svg").remove();
+
+    // Dimensions and margins
+    const margin = { top: 40, right: 40, bottom: 80, left: 60 };
+    const containerWidth =
+      document.getElementById("box-plot-post-length")?.offsetWidth ||
+      window.innerWidth;
+    const width = containerWidth - margin.left - margin.right;
+
+    const height = 1000 - margin.top - margin.bottom;
+
+    // Create SVG canvas
     const svg = d3
-      .select(chartRef.current)
-      .attr(
-        "viewBox",
-        `0 0 ${width + margin.left + margin.right} ${
-          height + margin.top + margin.bottom
-        }`
-      )
+      .select("#box-plot-post-length")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // Prepare data for box plot
+    const boxData = Array.from(groupedData, ([topic, values]) => {
+      const word_lens = values.map((d) => d.word_len).sort(d3.ascending);
+      const q1 = d3.quantile(word_lens, 0.25);
+      const median = d3.quantile(word_lens, 0.5);
+      const q3 = d3.quantile(word_lens, 0.75);
+      const min = d3.min(word_lens);
+      const max = d3.max(word_lens);
+      const range = max - min;
+      return { topic, q1, median, q3, min, max, range, word_lens };
+    });
+
+    boxData.sort((a, b) => b.median - a.median);
+
+    // Scales
     const xScale = d3
-      .scaleTime()
-      .domain(d3.extent(filteredData, (d) => d.date))
-      .range([0, width]);
+      .scaleBand()
+      .domain(boxData.map((d) => d.topic))
+      .range([0, width])
+      .padding(0.2);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(filteredData, (d) => d.avgLength)])
+      .domain([d3.min(boxData, (d) => d.min), d3.max(boxData, (d) => d.max)])
       .nice()
       .range([height, 0]);
 
-    // Gridlines
-    const gridlinesX = d3.axisBottom(xScale).tickSize(-height).tickFormat("");
-    const gridlinesY = d3.axisLeft(yScale).tickSize(-width).tickFormat("");
-
     svg
       .append("g")
-      .attr("class", "grid grid-x")
-      .attr("transform", `translate(0, ${height})`)
-      .call(gridlinesX)
+      .attr("class", "grid-lines")
       .selectAll("line")
-      .attr("stroke", "#ddd")
-      .attr("stroke-dasharray", "2,2");
-
-    svg
-      .append("g")
-      .attr("class", "grid grid-y")
-      .call(gridlinesY)
-      .selectAll("line")
-      .attr("stroke", "#ddd")
-      .attr("stroke-dasharray", "2,2");
-
-    // X Axis
+      .data(yScale.ticks())
+      .enter()
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", (d) => yScale(d))
+      .attr("y2", (d) => yScale(d))
+      .attr("stroke", "#e0e0e0")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "4,4");
+    // Axes
     svg
       .append("g")
       .attr("transform", `translate(0, ${height})`)
-      .call(
-        d3
-          .axisBottom(xScale)
-          .ticks(d3.timeMonth.every(2))
-          .tickFormat(d3.timeFormat("%b %Y"))
-      )
+      .call(d3.axisBottom(xScale))
       .selectAll("text")
       .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "10px");
+      .style("text-anchor", "end");
 
-    svg
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("x", width / 2)
-      .attr("y", height + margin.bottom)
-      .attr("fill", "black")
-      .style("font-size", "12px")
-      .text("Month");
-
-    // Y Axis
     svg.append("g").call(d3.axisLeft(yScale));
 
-    svg
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("transform", `rotate(-90)`)
-      .attr("x", -height / 2)
-      .attr("y", -margin.left + 15)
-      .attr("fill", "black")
-      .style("font-size", "12px")
-      .text("Average word count");
-
-    // Draw line
-    const lineGenerator = d3
-      .line()
-      .x((d) => xScale(d.date))
-      .y((d) => yScale(d.avgLength))
-      .curve(d3.curveMonotoneX);
-
-    svg
-      .append("path")
-      .datum(filteredData)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 2)
-      .attr("d", lineGenerator);
-
-    // Tooltip setup
+    // Tooltip
     const tooltip = d3
-      .select("body")
+      .select("#box-plot-post-length")
       .append("div")
-      .attr("class", "sentiment-tooltip")
-      .style("position", "absolute")
-      .style("background-color", "white")
-      .style("border", "1px solid #ccc")
-      .style("border-radius", "4px")
-      .style("padding", "8px")
-      .style("font-size", "12px")
-      .style("display", "none")
-      .style("pointer-events", "none")
-      .style("z-index", "10");
+      .attr("class", "tooltip")
+      .style("opacity", 0);
 
-    // Add dots
+    // Add box plots
     svg
-      .selectAll(".dot")
-      .data(filteredData)
+      .selectAll(".box")
+      .data(boxData)
       .enter()
-      .append("circle")
-      .attr("class", "dot")
-      .attr("cx", (d) => xScale(d.date))
-      .attr("cy", (d) => yScale(d.avgLength))
-      .attr("r", 4)
-      .attr("fill", "steelblue")
-      .on("mouseover", (event, d) => {
-        tooltip.style("display", "block").html(
-          `<strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
-           <strong>Average word count:</strong> ${d.avgLength.toFixed(2)}<br/>`
-        );
-      })
-      .on("mousemove", (event) => {
-        tooltip
-          .style("left", `${event.pageX + 10}px`)
-          .style("top", `${event.pageY - 20}px`);
-      })
-      .on("mouseout", () => {
-        tooltip.style("display", "none");
+      .append("g")
+      .attr("class", "box")
+      .attr(
+        "transform",
+        (d) => `translate(${xScale(d.topic) + xScale.bandwidth() / 2}, 0)`
+      )
+      .each(function (d) {
+        const box = d3.select(this);
+
+        // Box
+        box
+          .append("rect")
+          .attr("x", -xScale.bandwidth() / 2)
+          .attr("width", xScale.bandwidth())
+          .attr("y", yScale(d.q3))
+          .attr("height", yScale(d.q1) - yScale(d.q3))
+          .attr("fill", "#69b3a2")
+          .attr("stroke", "black")
+          .on("mouseover", (event) => {
+            tooltip.transition().duration(200).style("opacity", 1);
+            tooltip
+              .html(
+                `<strong>${d.topic}</strong><br>
+                Q1: ${d.q1.toFixed(2)}<br>
+                Median: ${d.median.toFixed(2)}<br>
+                Q3: ${d.q3.toFixed(2)}<br>
+                Min: ${d.min.toFixed(2)}<br>
+                Max: ${d.max.toFixed(2)}<br>
+                Range: ${d.range.toFixed(2)}`
+              )
+              .style("left", `${event.pageX + 10}px`)
+              .style("top", `${event.pageY - 40}px`);
+          })
+          .on("mouseout", () => {
+            tooltip.transition().duration(200).style("opacity", 0);
+          });
+
+        // Median line
+        box
+          .append("line")
+          .attr("x1", -xScale.bandwidth() / 2)
+          .attr("x2", xScale.bandwidth() / 2)
+          .attr("y1", yScale(d.median))
+          .attr("y2", yScale(d.median))
+          .attr("stroke", "black");
+
+        // Whiskers
+        box
+          .append("line")
+          .attr("x1", 0)
+          .attr("x2", 0)
+          .attr("y1", yScale(d.min))
+          .attr("y2", yScale(d.q1))
+          .attr("stroke", "black")
+          .attr("stroke-width", 2);
+
+        box
+          .append("text")
+          .attr("x", -xScale.bandwidth() / 2)
+          .attr("y", yScale(d.min) - 5) // Slightly above the min whisker
+          .attr("text-anchor", "middle")
+          .attr("font-size", "16px")
+          .text(d.min);
+
+        // Max label
+        box
+          .append("text")
+          .attr("x", -xScale.bandwidth() / 2)
+          .attr("y", yScale(d.max) + 15) // Slightly below the max whisker
+          .attr("text-anchor", "middle")
+          .attr("font-size", "16px")
+          .text(d.max);
+        box
+          .append("line")
+          .attr("x1", 0)
+          .attr("x2", 0)
+          .attr("y1", yScale(d.q3))
+          .attr("y2", yScale(d.max))
+          .attr("stroke", "black");
+
+        // Whisker caps
+        box
+          .append("line")
+          .attr("x1", -xScale.bandwidth() / 4)
+          .attr("x2", xScale.bandwidth() / 4)
+          .attr("y1", yScale(d.min))
+          .attr("y2", yScale(d.min))
+          .attr("stroke", "black");
+
+        box
+          .append("line")
+          .attr("x1", -xScale.bandwidth() / 4)
+          .attr("x2", xScale.bandwidth() / 4)
+          .attr("y1", yScale(d.max))
+          .attr("y2", yScale(d.max))
+          .attr("stroke", "black");
       });
 
-    return () => {
-      d3.select(chartRef.current).selectAll("*").remove();
-    };
-  }, [filteredData]);
+    // Add labels
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilter((prev) => ({
-      ...prev,
-      [name]: value ? d3.timeParse("%Y-%m")(value) : null,
-    }));
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 20)
+      .style("text-anchor", "middle")
+      .text("Topics");
+
+    svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left + 20)
+      .attr("x", -height / 2)
+      .style("text-anchor", "middle")
+      .text("Word count");
+
+    // Add title
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -margin.top / 2)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .text("Word count Distribution Across Topics");
   };
 
-  const resetFilters = () => {
-    setFilter({ start: null, end: null });
-    setFilteredData(data);
-  };
-
-  useEffect(() => {
-    if (filter.start || filter.end) {
-      const filtered = data.filter(
-        (d) =>
-          (!filter.start || d.date >= filter.start) &&
-          (!filter.end || d.date <= filter.end)
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data);
-    }
-  }, [filter, data]);
-
-  return (
-    <>
-      <div>
-        <label>
-          Start Month:
-          <select
-            name="start"
-            onChange={handleFilterChange}
-            value={filter.start ? d3.timeFormat("%Y-%m")(filter.start) : ""}
-          >
-            <option value="">Select Start Month</option>
-            {availableMonths.map((month) => (
-              <option key={month} value={month}>
-                {d3.timeFormat("%B %Y")(d3.timeParse("%Y-%m")(month))}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          End Month:
-          <select
-            name="end"
-            onChange={handleFilterChange}
-            value={filter.end ? d3.timeFormat("%Y-%m")(filter.end) : ""}
-          >
-            <option value="">Select End Month</option>
-            {availableMonths.map((month) => (
-              <option key={month} value={month}>
-                {d3.timeFormat("%B %Y")(d3.timeParse("%Y-%m")(month))}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button onClick={resetFilters}>Reset</button>
-      </div>
-      <svg
-        ref={chartRef}
-        style={{
-          width: "100%",
-          height: "auto",
-        }}
-      ></svg>
-    </>
-  );
+  return <div id="box-plot-post-length"></div>;
 };
 
-export default PostLengthChart;
+export default SentimentBoxPlot;

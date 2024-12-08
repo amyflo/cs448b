@@ -15,7 +15,7 @@ import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
 import Hero from "./components/ui/hero";
 import Navbar from "./components/ui/nav";
-import TopicAnalyzer from "./components/visualizations/p2/topic-by-sentiment-bar";
+import TopicAnalyzer from "./components/visualizations/p2/bubble-chart";
 
 export default function Home() {
   return (
