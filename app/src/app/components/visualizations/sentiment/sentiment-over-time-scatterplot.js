@@ -249,11 +249,10 @@ const EnhancedSentimentScatterplot = () => {
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
       .on("click", (event, d) => {
-        setSelectedPost(d); // Show post details
-        circles.attr("stroke-width", 0.5);
-        d3.select(event.currentTarget).attr("stroke-width", 3);
-
-        setSelectedPost(d);
+        event.stopPropagation(); // Prevents bubbling up to the SVG
+        setSelectedPost(d); // Set the selected post
+        circles.attr("stroke-width", 0.5); // Reset all circle strokes
+        d3.select(event.currentTarget).attr("stroke-width", 3); // Highlight clicked circle
       })
       .on("mouseover", (event, d) => {
         // Show tooltip on hover
@@ -262,6 +261,18 @@ const EnhancedSentimentScatterplot = () => {
       .on("mouseout", () => {
         // Hide tooltip
         hideTooltip();
+      });
+
+    // Add a background rectangle to the SVG to reliably detect clicks outside the circles
+    svg
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "transparent")
+      .lower() // Ensure the rectangle is behind all other elements
+      .on("click", () => {
+        setSelectedPost(null); // Reset the selected post
+        circles.attr("stroke-width", 0.5); // Reset all circle strokes
       });
 
     // Tooltip
