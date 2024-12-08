@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-const LoadingHearts = ({ children, title = "Analyzing love letters..." }) => {
+const LoadingHearts = ({ children, title = "Reading love letters..." }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Simulate loading time

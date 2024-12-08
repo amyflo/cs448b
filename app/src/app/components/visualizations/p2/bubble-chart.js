@@ -12,9 +12,9 @@ const HorizontalBarChart = () => {
 
         // Parse and aggregate data
         const parsedData = Object.entries(json)
-          .map((post) => ({
+          .map(([, post]) => ({
+            // Use the second element of the pair
             topic: post.topic_label,
-            description: post.topic_description,
             sentiment: post.bodySentiment?.score || 0,
             length: post.body?.split(" ").length || 0,
           }))
@@ -26,7 +26,6 @@ const HorizontalBarChart = () => {
             numPosts: posts.length,
             avgSentiment: d3.mean(posts, (d) => d.sentiment),
             avgLength: d3.mean(posts, (d) => d.length),
-            description: posts[0].description,
           }),
           (d) => d.topic
         );
