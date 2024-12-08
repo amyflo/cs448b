@@ -105,13 +105,23 @@ const InteractiveEmbeddingGraph = ({
       .attr("r", 5) // Radius of the dot
       .attr("fill", axisColor); // Use the same color as the axes
 
-    const axisVector = diff(emb(axis0), emb(axis1));
+    // calulate value of axis vector, then normalize to unit length
+    var ax = diff(emb(axis0), emb(axis1));
+    const lenAx = Math.sqrt(ax[0] ** 2 + ax[1] ** 2);
+    const axisVector = ax.map((n) => n / lenAx);  
+
     const x_val = (d) => dot(axisVector, emb(d));
 
+    const axisWords = [axis0, axis1];
     const xScale = d3
       .scaleLinear()
-      .domain(d3.extent(pointsWords, x_val))
-      .range([0, width]);
+      .domain(d3.extent(axisWords, x_val))
+      .range([0, width])
+      .clamp(true);
+    
+    const colorScale = d3.scaleLinear()
+      .domain(d3.extent(axisWords, x_val))
+      .range(["blue", "red"])
 
     const yScale = d3
       .scaleLinear()
@@ -119,7 +129,13 @@ const InteractiveEmbeddingGraph = ({
       .domain([0, pointsWords.length - 1])
       .range([0, height]);
 
-    const y = (i) => yScale(i);
+    // y function ensures words don't get plotted on top of the x axis
+    const y = (i) => {
+      if(i >= pointsWords.length / 2 - 1){
+        return yScale(i + 1)
+      }
+      return yScale(i)
+      };
 
     const tooltip = d3
       .select("body")
@@ -132,25 +148,29 @@ const InteractiveEmbeddingGraph = ({
       .style("opacity", 0) // Initially hidden
       .style("pointer-events", "none");
 
+    
+    // sort words to ensure no words overlap lines
+    var sortedPointsWords = pointsWords.filter(function (d) { return emb(d) != null }) 
+    sortedPointsWords = d3.sort(sortedPointsWords, (d) => x_val(d))
+    sortedPointsWords = sortedPointsWords.slice(0, sortedPointsWords.length / 2 - 1).concat(sortedPointsWords.slice(sortedPointsWords.length / 2 - 1).reverse())
+
     // Draw points
     svg
       .append("g")
       .selectAll("text")
-      .data(
-        pointsWords.filter(function (d) {
-          return emb(d) != null;
-        })
-      )
+      .data(sortedPointsWords)
       .enter()
       .append("text")
       .attr("x", (d) => xScale(x_val(d)))
+      .attr("dx", 5)
       .attr("y", (_, i) => y(i))
+      .attr("dy", 3)
       .text((d) => d)
-      .attr("fill", "black")
+      .attr("fill", (d) => colorScale(x_val(d)))
       .on("mouseover", (event, d) => {
         // Show the tooltip with word details
-        const distanceToAxis0 = Math.abs(x_val(d) - xScale.range()[1]);
-        const distanceToAxis1 = Math.abs(x_val(d) - xScale.range()[0]);
+        const distanceToAxis0 = Math.abs(x_val(d) - x_val(axis0)) / (x_val(axis0) - x_val(axis1));
+        const distanceToAxis1 = Math.abs(x_val(d) - x_val(axis1)) / (x_val(axis0) - x_val(axis1));
         tooltip
           .style("opacity", 1)
           .html(
@@ -176,18 +196,32 @@ const InteractiveEmbeddingGraph = ({
         tooltip.style("opacity", 0);
       });
 
+    // Draw lines from points to axes
+    svg.append("g")
+      .selectAll("line")
+      .data(sortedPointsWords)
+      .enter()
+      .append("line")
+      .attr("x1", (d) => xScale(x_val(d)))
+      .attr("y1", (_, i) => y(i))
+      .attr("x2", (d) => xScale(x_val(d)))
+      .attr("y2", height / 2)
+      .attr("stroke", (d) => colorScale(x_val(d)))
+      .attr("stroke-dasharray", "2 5 10 5")
+      .attr("opacity", 0.5)
+
     // Label axes
-    const axisWords = [axis0, axis1];
     svg
       .append("g")
       .selectAll(".axis-label")
       .data(axisWords)
       .enter()
       .append("text")
-      .attr("x", (d, i) => (i === 0 ? 0 : width)) // Position at start and end of x-axis
+      .attr("x", (d) => xScale(x_val(d))) // Position at start and end of x-axis
+      .attr("dx", (d, i) => (i === 0 ? 5 : -5))
       .attr("y", height / 2 - 10)
       .text((d) => d)
-      .attr("fill", (d, i) => (i === 0 ? "blue" : "red"))
+      .attr("fill", (d) => colorScale(x_val(d)))
       .attr("text-anchor", (d, i) => (i === 0 ? "start" : "end")) // Align labels
       .style("font-size", "14px");
   };
@@ -242,10 +276,10 @@ const InteractiveEmbeddingGraph = ({
               type="text"
               id={`${id}inputPoints`}
               className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
-              // defaultValue={pointsWords.join(", ")}
-              onBlur={(e) =>
-                setPointsWords(e.target.value.split(",").map((w) => w.trim()))
-              }
+              onBlur={(e) =>{
+                setPointsWords(e.target.value.split(",").map((w) => w.trim()));
+                setErrors(new Set());
+              }}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
