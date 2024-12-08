@@ -7,8 +7,16 @@ const HorizontalBarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // fetch post data
         const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
+
+        // fetch topics data
+        const responseTopics = await fetch(
+          "/data/topic-modeling/results/topics_NMF_15.json"
+        );
+        const topicsJson = await responseTopics.json();
+        console.log("bubble fetched topics: ", topicsJson);
 
         // Parse and aggregate data
         const parsedData = Object.entries(json)
@@ -31,10 +39,20 @@ const HorizontalBarChart = () => {
         );
 
         setData(
-          aggregatedData.map(([topic, stats]) => ({
-            topic,
-            ...stats,
-          }))
+          aggregatedData.map(([topic, stats]) => {
+            // find corresponding topic color from topicsJson
+            const topicData = topicsJson.find((t) => t.label === topic);
+            const color = topicData.color; // Default to black if no match
+            const description = topicData.description;
+            const topWords = topicData.top_words;
+            return {
+              topic,
+              ...stats,
+              color, // Add color to each aggregated data entry
+              description,
+              topWords,
+            };
+          })
         );
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,6 +63,7 @@ const HorizontalBarChart = () => {
   }, []);
 
   const createBubbleChart = (chartData, containerId) => {
+    console.log("data structure in bubble", data);
     d3.select(`#${containerId}`).select("svg").remove();
 
     const margin = { top: 60, right: 300, bottom: 60, left: 100 };
@@ -80,9 +99,9 @@ const HorizontalBarChart = () => {
       ])
       .range([5, 30]); // Bubble size represents sentiment
 
-    const colorScale = d3
-      .scaleOrdinal(d3.schemeTableau10) // Use categorical colors for topics
-      .domain(chartData.map((d) => d.topic));
+    // const colorScale = d3
+    //   .scaleOrdinal(d3.schemeTableau10) // Use categorical colors for topics
+    //   .domain(chartData.map((d) => d.topic));
 
     // Axes
     svg
@@ -155,16 +174,26 @@ const HorizontalBarChart = () => {
       .attr("cx", (d) => xScale(d.numPosts)) // X-axis is number of posts
       .attr("cy", (d) => yScale(d.avgLength)) // Y-axis is average word length
       .attr("r", (d) => sizeScale(d.avgSentiment)) // Bubble size is sentiment
-      .attr("fill", (d) => colorScale(d.topic)) // Color represents topic
+      // .attr("fill", (d) => colorScale(d.topic)) // Color represents topic
+      .attr("fill", (d) => d.color)
       .attr("opacity", 0.5)
       .on("mouseover", (event, d) => {
         tooltip.transition().duration(200).style("opacity", 1);
         tooltip
           .html(
-            `<strong>${d.topic}</strong><br>
-             Average Sentiment Score: ${d.avgSentiment.toFixed(2)}<br>
-             Average word count: ${d.avgLength.toFixed(1)} words<br>
-             Total number of posts: ${d.numPosts}`
+            `
+            <strong>${d.topic}</strong><br>
+            <div style="word-wrap: break-word; white-space: normal; display: block; max-width: 250px;">${
+              d.description
+            }</div><br>
+            <strong>Average Sentiment Score:</strong> ${d.avgSentiment.toFixed(
+              2
+            )}<br>
+            <strong>Average word count:</strong> ${d.avgLength.toFixed(
+              1
+            )} words<br>
+            <strong>Total number of posts:</strong> ${d.numPosts}<br>
+            `
           )
           .style("left", `${event.clientX}px`) // Offset horizontally by 10px
           .style("top", `${event.clientY - 100}px`); // Offset vertically by 10px
@@ -218,7 +247,7 @@ const HorizontalBarChart = () => {
         .attr("cx", 10)
         .attr("cy", 20 + i * 20)
         .attr("r", 5)
-        .attr("fill", colorScale(d.topic));
+        .attr("fill", d.color);
 
       legend
         .append("text")

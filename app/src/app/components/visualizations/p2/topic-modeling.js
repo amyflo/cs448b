@@ -156,7 +156,7 @@ const TSNEVisualization = ({
       const topicWeights = assignedTopicsData[i]["all_weights"];
       const topTopic = post.topics.first.topic;
       const topLabel = topicsRefData[topTopic].label;
-      const color = colors[topTopic];
+      const color = topicsRefData[topTopic].color;
 
       // Plot the data points as circles
 
@@ -365,7 +365,7 @@ const TSNEVisualization = ({
           tooltipTopic.transition().duration(200).style("opacity", 1);
           tooltipTopic
             .html(
-              `<ul style="list-style: none; padding: 0; font-size: 10px; color: #ffff;">
+              `<ul style="list-style: none; padding: 0; font-size: 12px; color: #ffff;">
                 <li><strong>${topicLabel}</strong></li>
                 <li>${topicDescription}</li>
                 <li><strong>Top Words:</strong></li>

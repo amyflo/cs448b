@@ -1,14 +1,45 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-interface ThemesTransitionScreenProps {
-  themes: string[];
+interface TopicObjectType {
+  topic: number;
+  top_words: string[];
+  num_letters_assigned: number;
+  label: string;
+  description: string;
+  color: string;
 }
 
-const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
-  themes,
-}) => {
+const ThemesTransition: React.FC = () => {
+  const [themes, setThemes] = useState<TopicObjectType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // fetch the topic data
+  const topicFilePath = "/data/topic-modeling/results/topics_NMF_15.json";
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        // fetch the themes, load the data
+        const response = await fetch(topicFilePath);
+        const topicData = await response.json();
+        // reformat topics
+        console.log("fetched topics: ", topicData);
+        setThemes(topicData);
+      } catch (error) {
+        console.log("failed fetching themes: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchThemes();
+  }, []);
+
+  if (isLoading) {
+    return <p>Loading Themes...</p>;
+  }
+
   return (
     <div
       className={`w-full min-h-screen flex flex-col items-center justify-center text-center px-6 py-12`}
@@ -27,7 +58,19 @@ const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
             key={index}
             className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-gray-800 font-medium text-sm md:text-base"
           >
-            {theme}
+            {/* heart on top of header */}
+            <div className="flex justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill={theme.color} // can change to "currentcolor" to get pink theme color if multicolor is ugly
+                className="w-5 h-5 text-pink-300 group-hover:text-pink-500 transition duration-200 opacity-70"
+              >
+                <path d="M12 4.248C8.852-1.154 0 .423 0 7.192c0 4.661 5.571 9.427 12 15.808 6.429-6.381 12-11.147 12-15.808 0-6.792-8.875-8.306-12-2.944z" />
+              </svg>
+            </div>
+            <h2 className="font-bold text-base mb-2">{theme.label}</h2>{" "}
+            <p className="text-sm text-gray-600">{theme.description}</p>{" "}
           </div>
         ))}
       </div>
