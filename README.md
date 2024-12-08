@@ -1,4 +1,4 @@
-# cs448b
+# CS448B Final Project: Exploring r/LoveLetters
 
 ## Preprocessing Love Letter Text for Topic Modeling + Word Embeddings
 
@@ -51,3 +51,7 @@ Use `pip` to install the necessary Python packages:
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
+
+## Navigate to the app folder
+
+Run `npm run start` to see the project on `localhost:3000`! 
