@@ -49,7 +49,7 @@ const Card: React.FC<CardProps> = ({
                   </>
                 ) : (
                   <>
-                    <span>Learn more about this chart</span>
+                    <span>Learn how to explore this chart</span>
                     <span>&#9660;</span> {/* Downward caret */}
                   </>
                 )}
