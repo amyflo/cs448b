@@ -16,9 +16,9 @@ const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
       className={`w-full min-h-screen flex flex-col items-center justify-center text-center px-6 py-12`}
     >
       <h1 className="text-4xl md:text-5xl font-serif font-extrabold text-pink-600 mb-8 drop-shadow-lg">
-        15 Key Topics Identified
+        15 topics define r/LoveLetters.
       </h1>
-      <p className="text-lg md:text-xl text-gray-700 font-light leading-relaxed max-w-3xl mb-12">
+      <p className="font-serif text-lg md:text-xl text-gray-700 font-light leading-relaxed max-w-3xl mb-12">
         Each topic captures a unique aspect of love letters, ranging from
         reflections on relationships to moments of vulnerability and heartfelt
         goodbyes.

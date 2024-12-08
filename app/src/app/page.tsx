@@ -27,7 +27,7 @@ export default function Home() {
         {/* ********************************* POSTING CARDS START HERE ********************************* */}
         <TransitionScreen
           title="How Has r/LoveLetters Grown and Changed Over Time?"
-          description="Explore the subreddit’s growth, periods of inactivity, and eventual resurgence"
+          description="Tracking the growth and changes in posting patterns over time."
         />
 
         <Card
@@ -78,8 +78,8 @@ The subreddit reopened in **November 2024**, signaling a renewed commitment to i
 
         {/* Transition Screen */}
         <TransitionScreen
-          title="What is the emotional breakdown?"
-          description="This is TBD"
+          title="How does sentiment shape the love letters in r/LoveLetters?"
+          description="A closer look at the distribution of positive, neutral, and negative sentiments"
         />
 
         <Card
@@ -114,8 +114,8 @@ This observation suggests that longer narratives allow for more nuanced and vari
 
         {/* ********************************* Language modelling CARDS START HERE ********************************* */}
         <TransitionScreen
-          title="What does language reveal about love letters?"
-          description="Analyzing language usage uncovers subtle societal dynamics and emotional patterns."
+          title="What can the connections between words in love letters reveal?"
+          description="Exploring language patterns sheds light on societal influences, emotional tones, and the deeper meanings behind love letters."
         />
         <Card
           title="Letters with gendered language tend to be written from the perspective of straight women."
@@ -231,8 +231,8 @@ This observation suggests that longer narratives allow for more nuanced and vari
 
         {/* ********************************* TOPIC MODELING CARDS START HERE ********************************* */}
         <TransitionScreen
-          title="What themes emerge across love letters shared in online communities?"
-          description="We analyzed the love letters by turning them into numerical representations based on the words they contain, comparing terms that appear frequently in each letter but less often across all letters (TF-IDF). Then, we grouped similar letters together using a topic-modeling algorithm called NMF and labeled these groups with themes based on the most common words in each group."
+          title="What topics emerge across love letters shared in r/LoveLetters?"
+          description="Through analysis of love letters, we discovered themes surfaced that reveal the many ways people express emotions, relationships, and personal experiences."
         />
 
         <ThemesTransition
@@ -340,8 +340,16 @@ Authors often **compare their present selves to their past**, reminiscing about 
 
         <Card
           title="Conclusion"
-          description={`TODO: 
-      `}
+          description={`The analysis of r/LoveLetters highlights its growth as a space for emotional expression and connection. Posting trends show steady growth from its inception, with notable spikes around culturally significant times such as Valentine’s Day, suggesting the community serves as an outlet for reflection during moments tied to love and relationships. 
+
+Sentiment analysis reveals a predominantly positive tone across posts (68%). **Longer posts tend to express greater emotional intensity**, including extremes in both positive and negative sentiment, while shorter letters often cluster near neutrality, reflecting limited narrative depth. 
+
+Word associations within the letters **reveal underlying societal dynamics**, such as gendered perspectives, and provide insight into how language captures the complexity of relationships and emotions.  
+
+Thematic analysis uncovers a wide range of topics, from reflections on life journeys and idealistic soulmates to playful longing and hopeful goodbyes. While topics with more posts generally tend to have longer word counts, exceptions like **“Serenity and Beauty”** and **“Idealistic Soulmates”** resonate widely without requiring lengthy expressions. 
+
+Together, these findings illustrate the ways love is expressed in r/LoveLetters while reflecting the deeply personal and shared nature of relationships in an online community.  
+`}
         />
       </Slideshow>
     </LoadingHearts>

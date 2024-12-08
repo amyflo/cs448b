@@ -63,7 +63,7 @@ const PostLengthVsSentiment = () => {
       .style("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")
-      .text("Sentiment vs word count of Love Letters in r/LoveLetters");
+      .text("Sentiment vs. word count of love letters in r/LoveLetters");
 
     // Define scales
     const xScale = d3
@@ -84,6 +84,15 @@ const PostLengthVsSentiment = () => {
       .nice()
       .range([height, 0]);
 
+    svg
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", yScale(0)) // Neutral line (sentiment score 0)
+      .attr("y2", yScale(0))
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", "5,5");
     // Define color scale for sentiment (Negative = Blue, Positive = Red)
     const colorScale = d3
       .scaleLinear()

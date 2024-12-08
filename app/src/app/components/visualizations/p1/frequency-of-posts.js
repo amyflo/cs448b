@@ -159,7 +159,7 @@ const PostFrequencyChart = ({
         .attr("y", -margin.left + 10)
         .attr("fill", "black")
         .style("font-size", "12px")
-        .text("Number of posts");
+        .text("Total number of posts");
 
       // Line Animation
       const lineGenerator = d3

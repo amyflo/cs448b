@@ -163,9 +163,9 @@ const HorizontalBarChart = () => {
         tooltip
           .html(
             `<strong>${d.topic}</strong><br>
-             Sentiment: ${d.avgSentiment.toFixed(2)}<br>
+             Average Sentiment Score: ${d.avgSentiment.toFixed(2)}<br>
              Average word count: ${d.avgLength.toFixed(1)} words<br>
-             Posts: ${d.numPosts}`
+             Total number of posts: ${d.numPosts}`
           )
           .style("left", `${event.clientX}px`) // Offset horizontally by 10px
           .style("top", `${event.clientY - 100}px`); // Offset vertically by 10px
