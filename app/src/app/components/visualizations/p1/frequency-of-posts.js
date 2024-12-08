@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
 
 const PostFrequencyChart = ({
+  uniqueId = "chart",
   showSpecificPoints = false,
   pointA = "",
   pointB = "",
   title = "Post Frequency Over Time",
   editable = false,
 }) => {
-  const chartRef = useRef(null);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [availableMonths, setAvailableMonths] = useState([]);
-  const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,12 +20,10 @@ const PostFrequencyChart = ({
         const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
 
-        // Parse dates and prepare data
-        const parsedData = Object.entries(json).map(([postId, post]) => ({
+        const parsedData = Object.entries(json).map(([, post]) => ({
           date: d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")(post.createdAt),
         }));
 
-        // Group by month and count posts
         const groupedData = d3.rollups(
           parsedData,
           (values) => values.length,
@@ -34,25 +32,22 @@ const PostFrequencyChart = ({
 
         let totalPostsData = groupedData
           .map(([date, count]) => ({ date, totalPosts: count }))
-          .sort((a, b) => a.date - b.date); // Sort data by date
+          .sort((a, b) => a.date - b.date);
 
-        // Calculate accumulated total
         let accumulatedTotal = 0;
         totalPostsData = totalPostsData.map((d) => {
           accumulatedTotal += d.totalPosts;
-          return { ...d, accumulatedTotal }; // Include the running total
+          return { ...d, accumulatedTotal };
         });
 
         setData(totalPostsData);
 
-        // Extract unique months for dropdown
         const months = Array.from(
           new Set(totalPostsData.map((d) => d3.timeFormat("%Y-%m")(d.date)))
         ).sort();
 
         setAvailableMonths(months);
 
-        // Filter data for initial display
         const filteredByRange = totalPostsData.filter(
           (d) =>
             (!pointA || d.date >= d3.timeParse("%Y-%m")(pointA)) &&
@@ -69,13 +64,15 @@ const PostFrequencyChart = ({
   }, [pointA, pointB]);
 
   useEffect(() => {
-    if (isInView && filteredData.length) {
-      const margin = { top: 60, right: 10, bottom: 80, left: 50 }; // Increased margins for labels and title
+    if (filteredData.length) {
+      const margin = { top: 60, right: 10, bottom: 80, left: 50 };
       const width = 1000 - margin.left - margin.right;
       const height = 600 - margin.top - margin.bottom;
 
+      d3.select(`#${uniqueId}`).selectAll("*").remove();
+
       const svg = d3
-        .select(chartRef.current)
+        .select(`#${uniqueId}`)
         .attr(
           "viewBox",
           `0 0 ${width + margin.left + margin.right} ${
@@ -85,13 +82,45 @@ const PostFrequencyChart = ({
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+      // Tooltip container
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("background", "rgba(0, 0, 0, 0.8)")
+        .style("color", "#fff")
+        .style("padding", "10px")
+        .style("border-radius", "5px")
+        .style("opacity", 0)
+        .style("pointer-events", "none");
+
+      function showTooltip(tooltip, event, d) {
+        tooltip
+          .html(
+            `
+              <strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
+              <strong>Number of posts:</strong> ${d.totalPosts}<br/>
+              <strong>Total posts so far:</strong> ${d.accumulatedTotal}
+            `
+          )
+          .style("left", `${event.pageX}px`)
+          .style("top", `${event.pageY}px`)
+          .transition()
+          .duration(200)
+          .style("opacity", 1);
+      }
+
+      function hideTooltip(tooltip) {
+        tooltip.transition().duration(200).style("opacity", 0);
+      }
+
       svg
         .append("text")
         .attr("x", width / 2)
-        .attr("y", -10) // Position above the chart
+        .attr("y", -10)
         .attr("text-anchor", "middle")
         .attr("fill", "black")
-        .style("font-size", "12px")
+        .style("font-size", "16px")
         .style("font-weight", "bold")
         .text(title);
 
@@ -106,25 +135,6 @@ const PostFrequencyChart = ({
         .nice()
         .range([height, 0]);
 
-      // Add grid lines
-      svg
-        .append("g")
-        .attr("class", "grid grid-y")
-        .call(d3.axisLeft(yScale).tickSize(-width).tickFormat(""))
-        .selectAll("line")
-        .attr("stroke", "#ddd")
-        .attr("stroke-dasharray", "2,2");
-
-      svg
-        .append("g")
-        .attr("class", "grid grid-x")
-        .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale).tickSize(-height).tickFormat(""))
-        .selectAll("line")
-        .attr("stroke", "#ddd")
-        .attr("stroke-dasharray", "2,2");
-
-      // X Axis
       svg
         .append("g")
         .attr("transform", `translate(0, ${height})`)
@@ -148,7 +158,6 @@ const PostFrequencyChart = ({
         .style("font-size", "12px")
         .text("Month");
 
-      // Y Axis
       svg.append("g").call(d3.axisLeft(yScale));
 
       svg
@@ -161,31 +170,68 @@ const PostFrequencyChart = ({
         .style("font-size", "12px")
         .text("Total number of posts");
 
-      // Line Animation
-      const lineGenerator = d3
-        .line()
-        .x((d) => xScale(d.date))
-        .y((d) => yScale(d.accumulatedTotal))
-        .curve(d3.curveMonotoneX);
+      svg
+        .append("g")
+        .attr("class", "grid grid-y")
+        .call(d3.axisLeft(yScale).tickSize(-width).tickFormat(""))
+        .selectAll("line")
+        .attr("stroke", "#ddd")
+        .attr("stroke-dasharray", "2,2");
 
-      const path = svg
+      svg
+        .append("g")
+        .attr("class", "grid grid-x")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale).tickSize(-height).tickFormat(""))
+        .selectAll("line")
+        .attr("stroke", "#ddd")
+        .attr("stroke-dasharray", "2,2");
+      svg
         .append("path")
         .datum(filteredData)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "pink")
         .attr("stroke-width", 2)
-        .attr("d", lineGenerator);
+        .attr(
+          "d",
+          d3
+            .line()
+            .x((d) => xScale(d.date))
+            .y((d) => yScale(d.accumulatedTotal))
+            .curve(d3.curveMonotoneX)
+        );
 
-      const totalLength = path.node().getTotalLength();
+      const specificPoints = [
+        { date: "2023-01", label: "Spike in posts" },
+        { date: "2023-04", label: "Peak submissions" },
+        { date: "2023-06", label: "Closed" },
+        { date: "2024-11", label: "Reopened" },
+      ];
 
-      path
-        .attr("stroke-dasharray", `${totalLength} ${totalLength}`)
-        .attr("stroke-dashoffset", totalLength)
-        .transition()
-        .duration(2000) // Adjust duration for smoother animation
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
-      // Dots Animation
+      specificPoints.forEach((point) => {
+        if (showSpecificPoints) {
+          // Find the matching data point
+          const dataPoint = filteredData.find(
+            (d) => d3.timeFormat("%Y-%m")(d.date) === point.date
+          );
+
+          // Check if the dataPoint exists before proceeding
+          if (dataPoint) {
+            svg
+              .append("text")
+              .attr("x", xScale(dataPoint.date) - 10)
+              .attr("y", yScale(dataPoint.accumulatedTotal) - 10)
+              .attr("fill", "black")
+              .style("font-size", "9px")
+              .style("text-anchor", "end")
+              .text(point.label);
+          } else {
+            console.warn(
+              `No matching data point found for specific point: ${point.date}`
+            );
+          }
+        }
+      });
 
       svg
         .selectAll(".dot")
@@ -195,132 +241,43 @@ const PostFrequencyChart = ({
         .attr("class", "dot")
         .attr("cx", (d) => xScale(d.date))
         .attr("cy", (d) => yScale(d.accumulatedTotal))
-        .attr("r", 0) // Start with radius 0
-        .attr("fill", "steelblue")
+        .attr("r", (d) => {
+          // Check if this point matches a specific point
+          const isSpecificPoint =
+            showSpecificPoints &&
+            specificPoints.some(
+              (point) => d3.timeFormat("%Y-%m")(d.date) === point.date
+            );
+          return isSpecificPoint ? 6 : 4; // Larger radius for specific points
+        })
+        .attr("fill", (d) => {
+          // Assign a different color for specific points
+          const isSpecificPoint =
+            showSpecificPoints &&
+            specificPoints.some(
+              (point) => d3.timeFormat("%Y-%m")(d.date) === point.date
+            );
+          return isSpecificPoint ? "red" : "pink";
+        })
+        .style("cursor", "pointer") // Pointer cursor for hover effect
         .on("mouseover", (event, d) => {
-          showTooltip(event, d);
+          const matchedPoint = specificPoints.find(
+            (point) => d3.timeFormat("%Y-%m")(d.date) === point.date
+          );
+          const tooltipData = matchedPoint
+            ? { ...d, label: matchedPoint.label }
+            : d;
+          showTooltip(tooltip, event, tooltipData); // Pass label if it exists
         })
         .on("mouseout", () => {
-          hideTooltip();
-        })
-        .transition()
-        .delay((_, i) => i * 100) // Stagger animation
-        .duration(500)
-        .attr("r", 4); // Final radius
-
-      // Add specific points if enabled
-      if (showSpecificPoints) {
-        const specificPoints = [
-          { date: d3.timeParse("%Y-%m")("2023-01"), label: "Spike in posts" },
-          { date: d3.timeParse("%Y-%m")("2023-04"), label: "Peak submissions" },
-          { date: d3.timeParse("%Y-%m")("2023-06"), label: "Closed" },
-          { date: d3.timeParse("%Y-%m")("2024-11"), label: "Reopened" },
-        ];
-
-        specificPoints.forEach((point) => {
-          const dataPoint = filteredData.find(
-            (d) =>
-              d3.timeFormat("%Y-%m")(d.date) ===
-              d3.timeFormat("%Y-%m")(point.date)
-          );
-
-          if (dataPoint) {
-            svg
-              .append("circle")
-              .attr("cx", xScale(dataPoint.date))
-              .attr("cy", yScale(dataPoint.accumulatedTotal))
-              .attr("r", 6)
-              .attr("fill", "lightblue")
-              .style("cursor", "pointer") // Optional: pointer cursor for hover effect
-              .on("mouseover", (event) =>
-                showTooltip(event, { ...dataPoint, label: point.label })
-              )
-              .on("mousemove", (event) => {
-                tooltip
-                  .style("left", `${event.pageX + 10}px`)
-                  .style("top", `${event.pageY - 20}px`);
-              })
-              .on("mouseout", hideTooltip);
-
-            svg
-              .append("text")
-              .attr("x", xScale(dataPoint.date) - 10)
-              .attr("y", yScale(dataPoint.accumulatedTotal) - 10)
-              .attr("fill", "black")
-              .style("font-size", "9px")
-              .style("text-anchor", "end")
-              .text(point.label);
-          }
+          hideTooltip(tooltip);
         });
-      }
-
-      // Tooltip
-      const tooltip = d3
-        .select("body")
-        .append("div")
-        .style("position", "absolute")
-        .style("background", "rgba(0, 0, 0, 0.8)")
-        .style("color", "#fff")
-        .style("padding", "10px")
-        .style("border-radius", "5px")
-        .style("opacity", 0)
-        .style("pointer-events", "none");
-
-      function showTooltip(event, d) {
-        const [x, y] = [event.clientX, event.clientY];
-        const tooltipWidth = 250;
-        const tooltipHeight = 100;
-
-        const tooltipX =
-          x + tooltipWidth > window.innerWidth ? x - tooltipWidth - 10 : x + 10;
-        const tooltipY =
-          y + tooltipHeight > window.innerHeight
-            ? y - tooltipHeight - 10
-            : y + 10;
-
-        tooltip.transition().duration(200).style("opacity", 1);
-        tooltip
-          .html(
-            ` <strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
-           <strong>Number of posts:</strong> ${d.totalPosts}<br/>
-            <strong>Total posts so far:</strong> ${d.accumulatedTotal}`
-          )
-          .style("left", `${tooltipX}px`)
-          .style("top", `${tooltipY}px`);
-      }
-
-      function hideTooltip() {
-        tooltip.transition().duration(200).style("opacity", 0);
-      }
-
-      return () => {
-        d3.select(chartRef.current).selectAll("*").remove();
-      };
     }
-  }, [isInView, filteredData, showSpecificPoints]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (chartRef.current) {
-      observer.observe(chartRef.current);
-    }
-
-    return () => {
-      if (chartRef.current) {
-        observer.unobserve(chartRef.current);
-      }
-    };
-  }, []);
+  }, [filteredData, uniqueId]);
 
   return (
     <>
-      <svg ref={chartRef} className="w-full h-auto mt-4"></svg>
+      <svg id={uniqueId} className="w-full h-auto mt-4"></svg>
       {editable && (
         <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow-md">
           <label className="flex flex-col text-sm font-medium text-gray-700">

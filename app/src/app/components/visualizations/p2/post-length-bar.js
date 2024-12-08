@@ -12,7 +12,7 @@ const SentimentBarChart = () => {
 
         // Parse the data to extract topic and word count
         const parsedData = Object.entries(json)
-          .map(([postId, post]) => ({
+          .map((post) => ({
             topic: post.topic_label, // Assuming `topic` is available in the data
             word_len: post.body
               ? post.body.split(/\s+/).filter((word) => word.trim().length > 0)

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import * as d3 from "d3";
 import "./topic-styling.css";
@@ -21,7 +21,7 @@ const TSNEVisualization = ({
 
   useEffect(() => {
     updatePointOpacities();
-  }, []);
+  }, [updatePointOpacities]);
 
   let activeTopicsLocal = new Set(activeTopics);
 
@@ -80,6 +80,28 @@ const TSNEVisualization = ({
     const chartLeftMargin = 160;
     const chartContainerW = 925;
     const chartContainerH = 600;
+<<<<<<< HEAD
+=======
+
+    // define the color theme (15 colors for 15 topics)
+    const colors = [
+      "#e6194B",
+      "#f58231",
+      "#FFDB58",
+      "#bfef45",
+      "#3cb44b",
+      "#4363d8",
+      "#42d4f4",
+      "#911eb4",
+      "#f032e6",
+      "#808000",
+      "#8a9edb",
+      "#9A6324",
+      "#000075",
+      "#a9a9a9",
+      "#ffd8b1",
+    ];
+>>>>>>> main
 
     // Select the SVG element chart and tooltip (these are the things that should be loading the plots)
     const chartSVG = d3.select(`#${id}-chart`);

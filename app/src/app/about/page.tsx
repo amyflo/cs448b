@@ -3,8 +3,6 @@
 import React from "react";
 import Card from "../components/ui/about-card";
 import Navbar from "../components/ui/nav";
-import Slideshow from "../components/ui/slideshow";
-import Hero from "../components/ui/hero";
 
 export default function Home() {
   return (

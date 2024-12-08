@@ -38,9 +38,10 @@ export default function Home() {
             
 From **April 2021 to December 2022**, posting frequency grew steadily, punctuated by occasional spikes likely tied to significant events or community-driven discussions. 
 
-A turning point emerges in **January 2023**, coinciding with the lead-up to Valentine’s Day. A subsequent peak in **April 2023** suggests that the subreddit serves as an emotional outlet during culturally significant moments centered on love and relationships. This seasonality mirrors broader cultural patterns, where holidays and anniversaries often amplify emotional reflection.`}
+A turning point emerges in **January 2023**, coinciding with the lead-up to Valentine’s Day. A subsequent peak in number of 146 letters posted in **April 2023** suggests that the subreddit serves as an emotional outlet during culturally significant moments centered on love and relationships. This seasonality mirrors broader cultural patterns, where holidays and anniversaries often amplify emotional reflection.`}
         >
           <FrequencyOfPosts
+            uniqueId="posts1"
             title="Total Posts Over Time in r/LoveLetters (April 2021–April 2023)"
             pointA=""
             pointB="2023-04"
@@ -56,6 +57,7 @@ A turning point emerges in **January 2023**, coinciding with the lead-up to Vale
 The subreddit reopened in **November 2024**, signaling a renewed commitment to its mission. Activity levels rebounded, though at a moderated pace, suggesting that the community successfully weathered this period of transformation. This resilience underscores the importance of moderation in sustaining trust and focus in online communities.`}
         >
           <FrequencyOfPosts
+            uniqueId="posts2"
             title="Total Posts Over Time in r/LoveLetters (February 2023–November 2024)"
             pointA="2023-02"
             showSpecificPoints
@@ -68,6 +70,7 @@ The subreddit reopened in **November 2024**, signaling a renewed commitment to i
           description="Use the interactive timeline to uncover correlations between posting trends and external events or cultural shifts."
         >
           <FrequencyOfPosts
+            uniqueId="posts3"
             title="Total Posts Over Time in r/LoveLetters (April 2021–November 2024)"
             showSpecificPoints
             editable

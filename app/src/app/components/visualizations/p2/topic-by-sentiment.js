@@ -3,7 +3,6 @@ import * as d3 from "d3";
 
 const SentimentBoxPlot = () => {
   const [data, setData] = useState([]);
-  const [sortingMethod, setSortingMethod] = useState("median");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +12,7 @@ const SentimentBoxPlot = () => {
 
         // Parse the data to extract topic and sentiment
         const parsedData = Object.entries(json)
-          .map(([postId, post]) => ({
+          .map((post) => ({
             topic: post.topic_label, // Assuming `topic` is available in the data
             sentiment: post.bodySentiment?.score || 0,
           }))
@@ -72,15 +71,6 @@ const SentimentBoxPlot = () => {
     });
 
     boxData.sort((a, b) => b.median - a.median);
-
-    svg
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", -30)
-      .style("text-anchor", "middle")
-      .style("font-size", "16px")
-      .style("font-weight", "bold")
-      .text("Sentiment, Average Length, and Number of Posts by Topic");
 
     // Scales
     const xScale = d3

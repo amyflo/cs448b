@@ -263,7 +263,7 @@ const InteractiveEmbeddingGraph = ({
             htmlFor={`${id}inputAx0`}
             className="text-sm font-semibold text-gray-700"
           >
-            Customize your axes labels (e.g., "love" to "hate"):
+            Customize your axes labels (e.g., love to hate):
           </label>
           <div className="flex flex-row items-center gap-2">
             <input
