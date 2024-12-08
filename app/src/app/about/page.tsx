@@ -10,7 +10,7 @@ export default function Home() {
       <Navbar />
       <Card
         title="About the Project"
-        description={`This project was created as part of the Fall 2024 CS448B: Data Visualization course final project at Stanford University by Amy Lo, Ellie Vela, and Caroline Tran. None of this would have been possible without a sweet treat every once in a while and a fondness for love letters. We love love, what can we say?`}
+        description={`This project was created as part of the Fall 2024 CS448B: Data Visualization course final project at Stanford University by Amy Lo, Ellie Vela, and Caroline Tran. [See the code for this project on GitHub](https://github.com/amyflo/cs448b). None of this would have been possible without a sweet treat every once in a while and a fondness for love letters. We love love, what can we say?`}
       />
       <Card
         title="About r/LoveLetters"
@@ -22,11 +22,7 @@ export default function Home() {
       />
       <Card
         title="Data Cleaning and Sentiment Analysis"
-        description={`After cleaning the data, we used the [Sentiment.js](https://github.com/thisandagain/sentiment) library to analyze the sentiment of each post and comment, providing insights into the emotional tone of the content. Our data cleaning process involved:
-    - Normalizing the text by converting it to lowercase to avoid duplicate counts.
-    - Tokenizing the text into individual words or tokens for analysis.
-    - Converting words to their root forms (stemming/lemmatization) to better scale the number of unique words.
-    - Removing common stop words (e.g., "the," "and," "is") using a [stopword library](https://github.com/fergiemcdowall/stopword) to focus on meaningful content.
+        description={`After cleaning the data, we used the [Sentiment.js](https://github.com/thisandagain/sentiment) library to analyze the sentiment of each post and comment, providing insights into the emotional tone of the content. Our data cleaning process involved normalizing the text by converting it to lowercase to avoid duplicate counts, tokenizing the text into individual words or tokens for analysis, converting words to their root forms (stemming/lemmatization) to better scale the number of unique words, and removing common stop words (e.g., "the," "and," "is") using a [stopword library](https://github.com/fergiemcdowall/stopword) to focus on meaningful content.
   `}
       />
 
