@@ -4,12 +4,10 @@ import React from "react";
 
 interface ThemesTransitionScreenProps {
   themes: string[];
-  gradient?: string;
 }
 
 const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
   themes,
-  gradient = "bg-gradient-to-b from-white via-pink-50 to-pink-100",
 }) => {
   return (
     <div

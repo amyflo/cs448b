@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import * as d3 from "d3";
 import "./topic-styling.css";
@@ -21,7 +21,7 @@ const TSNEVisualization = ({
 
   useEffect(() => {
     updatePointOpacities();
-  }, []);
+  }, [updatePointOpacities]);
 
   let activeTopicsLocal = new Set(activeTopics);
 
@@ -80,7 +80,6 @@ const TSNEVisualization = ({
     const chartLeftMargin = 160;
     const chartContainerW = 925;
     const chartContainerH = 600;
-    const tooltipWidth = 250;
 
     // define the color theme (15 colors for 15 topics)
     const colors = [
@@ -177,7 +176,7 @@ const TSNEVisualization = ({
           const topic = +d3.select(this).attr("data-topic");
           return activeTopicsLocal.has(topic) ? 0.8 : 0.025; // Set opacity based on active topics
         })
-        .on("mouseover", (event, d) => {
+        .on("mouseover", (event) => {
           // Show the tooltip with word details
           tooltip
             .style("opacity", 1)

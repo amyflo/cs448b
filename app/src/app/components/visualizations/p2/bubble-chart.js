@@ -12,7 +12,7 @@ const HorizontalBarChart = () => {
 
         // Parse and aggregate data
         const parsedData = Object.entries(json)
-          .map(([postId, post]) => ({
+          .map((post) => ({
             topic: post.topic_label,
             description: post.topic_description,
             sentiment: post.bodySentiment?.score || 0,
