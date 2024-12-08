@@ -53,8 +53,8 @@ const SentimentBarChartHorizontal = () => {
 
   const renderChart = (data) => {
     const svgWidth = 800;
-    const svgHeight = 450; // Increased height to accommodate the title
-    const margin = { top: 70, right: 50, bottom: 50, left: 100 };
+    const svgHeight = 450; // Increased height to accommodate the title and labels
+    const margin = { top: 70, right: 50, bottom: 70, left: 120 }; // Adjusted margins for axis labels
     const chartWidth = svgWidth - margin.left - margin.right;
     const chartHeight = svgHeight - margin.top - margin.bottom;
 
@@ -106,11 +106,30 @@ const SentimentBarChartHorizontal = () => {
     // Y-Axis
     chartGroup.append("g").call(d3.axisLeft(yScale));
 
+    // Add Y-Axis label
+    svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -svgHeight / 2)
+      .attr("y", margin.left / 3)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .text("Sentiment Category");
+
     // X-Axis
     chartGroup
       .append("g")
       .attr("transform", `translate(0, ${chartHeight})`)
       .call(d3.axisBottom(xScale).ticks(5));
+
+    // Add X-Axis label
+    svg
+      .append("text")
+      .attr("x", margin.left + chartWidth / 2)
+      .attr("y", svgHeight - margin.bottom / 3)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .text("Number of Posts");
 
     // Bars with animation
     const bars = chartGroup
@@ -158,7 +177,6 @@ const SentimentBarChartHorizontal = () => {
       .attr("x", (d) => xScale(d.count) + 5)
       .text((d) => d.count);
   };
-
   useEffect(() => {
     if (isInView && data.length) {
       renderChart(data);
