@@ -15,7 +15,7 @@ import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
 import Hero from "./components/ui/hero";
 import Navbar from "./components/ui/nav";
-import TopicAnalyzer from "./components/visualizations/p2/bubble-chart";
+import BubbleChart from "./components/visualizations/p2/bubble-chart";
 
 export default function Home() {
   return (
@@ -269,7 +269,7 @@ Sentiment scores across topics are generally positive, with **Playful Longing** 
 Topics such as **Family Dynamics** and **Playful Longing** with lower average word counts and fewer posts cluster in the lower-right quadrant. These topics may involve quicker, more casual expressions of sentiment, whereas topics with longer posts, like "Reflection on Life Journey," may reflect deeper or more detailed discussions.
   `}
         >
-          <TopicAnalyzer />
+          <BubbleChart />
         </Card>
 
         <Card
