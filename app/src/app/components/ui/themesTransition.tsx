@@ -63,7 +63,7 @@ const ThemesTransition: React.FC = () => {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                fill="currentColor"
+                fill={theme.color} // can change to "currentcolor" to get pink theme color if multicolor is ugly
                 className="w-5 h-5 text-pink-300 group-hover:text-pink-500 transition duration-200"
               >
                 <path d="M12 4.248C8.852-1.154 0 .423 0 7.192c0 4.661 5.571 9.427 12 15.808 6.429-6.381 12-11.147 12-15.808 0-6.792-8.875-8.306-12-2.944z" />

@@ -3,12 +3,22 @@ import * as d3 from "d3";
 
 const HorizontalBarChart = () => {
   const [data, setData] = useState([]);
+  const [topicsData, setTopicsData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // fetch post data
         const response = await fetch("/data/consolidated_posts.json");
         const json = await response.json();
+
+        // fetch topics data
+        const responseTopics = await fetch(
+          "/data/topic-modeling/results/topics_NMF_15.json"
+        );
+        const topicsJson = await responseTopics.json();
+        console.log("bubble fetched topics: ", topicsJson);
+        setTopicsData(topicsJson);
 
         // Parse and aggregate data
         const parsedData = Object.entries(json)
@@ -31,10 +41,17 @@ const HorizontalBarChart = () => {
         );
 
         setData(
-          aggregatedData.map(([topic, stats]) => ({
-            topic,
-            ...stats,
-          }))
+          aggregatedData.map(([topic, stats]) => {
+            // find corresponding topic color from topicsJson
+            const topicData = topicsJson.find((t) => t.label === topic);
+            const color = topicData ? topicData.color : "#000000"; // Default to black if no match
+
+            return {
+              topic,
+              ...stats,
+              color, // Add color to each aggregated data entry
+            };
+          })
         );
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,6 +62,7 @@ const HorizontalBarChart = () => {
   }, []);
 
   const createBubbleChart = (chartData, containerId) => {
+    console.log("data structure in bubble", data);
     d3.select(`#${containerId}`).select("svg").remove();
 
     const margin = { top: 60, right: 300, bottom: 60, left: 100 };
@@ -155,7 +173,8 @@ const HorizontalBarChart = () => {
       .attr("cx", (d) => xScale(d.numPosts)) // X-axis is number of posts
       .attr("cy", (d) => yScale(d.avgLength)) // Y-axis is average word length
       .attr("r", (d) => sizeScale(d.avgSentiment)) // Bubble size is sentiment
-      .attr("fill", (d) => colorScale(d.topic)) // Color represents topic
+      // .attr("fill", (d) => colorScale(d.topic)) // Color represents topic
+      .attr("fill", (d) => d.color)
       .attr("opacity", 0.5)
       .on("mouseover", (event, d) => {
         tooltip.transition().duration(200).style("opacity", 1);
@@ -218,7 +237,7 @@ const HorizontalBarChart = () => {
         .attr("cx", 10)
         .attr("cy", 20 + i * 20)
         .attr("r", 5)
-        .attr("fill", colorScale(d.topic));
+        .attr("fill", d.color);
 
       legend
         .append("text")
