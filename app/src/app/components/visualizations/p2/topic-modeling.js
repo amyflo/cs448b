@@ -330,18 +330,18 @@ const TSNEVisualization = ({
       .style("font-weight", "bold");
 
     // for each topic, get color and append to legend
-    Object.keys(topicsRefData).forEach((topicIndex) => {
+    Object.keys(topicsRefData).forEach((legendIndex) => {
       // console.log("Legend item created for topic:", index); // Debugging log
-      const topicLabel = topicsRefData[topicIndex].label;
-      const topicDescription = topicsRefData[topicIndex].description;
-      const color = topicsRefData[topicIndex].color;
+      const topicLabel = topicsRefData[legendIndex].label;
+      const topicDescription = topicsRefData[legendIndex].description;
+      const color = topicsRefData[legendIndex].color;
       // console.log(topicDescription);
       const legendItem = legendContainer
         .append("div")
         .attr("class", "legend-item")
         .on("click", () => {
-          toggleTopicOpacity(index, legendItem);
-          console.log(`${topicsRefData[topicIndex].label} selected`);
+          toggleTopicOpacity(legendIndex, legendItem);
+          console.log(`${topicsRefData[legendIndex].label} selected`);
         })
         .on("mouseover", () => {
           tooltipTopic.transition().duration(200).style("opacity", 1);
@@ -351,7 +351,7 @@ const TSNEVisualization = ({
                 <li><strong>${topicLabel}</strong></li>
                 <li>${topicDescription}</li>
                 <li><strong>Top Words:</strong></li>
-                <li>${topicsRefData[topicIndex].top_words.join(", ")}</li>
+                <li>${topicsRefData[legendIndex].top_words.join(", ")}</li>
               </ul>`
             )
             .style("left", `${10}px`)
@@ -361,7 +361,7 @@ const TSNEVisualization = ({
           tooltipTopic.transition().duration(200).style("opacity", 0);
         });
 
-      if (activeTopicsLocal.has(topicIndex)) {
+      if (activeTopicsLocal.has(legendIndex)) {
         legendItem.classed("selected", true); // Highlight as selected if topic is active
       } else {
         legendItem.classed("selected", false); // Remove highlight if not active

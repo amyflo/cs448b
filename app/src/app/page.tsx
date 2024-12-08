@@ -286,7 +286,7 @@ This highlights how vulnerable emotional states can inspire language similar to 
           <TopicVisualization
             id="tsne138"
             key="tsne138"
-            title="Title of visualization"
+            title="Overlapping Personas and Emotional States across Topics"
             editable={false}
             activeTopics={new Set([1, 3, 8])}
           />
@@ -309,7 +309,7 @@ The letters from Idealistic Soulmates are influenced by two main themes, which s
             id="tsne146"
             key="tsne146"
             editable={false}
-            title="Title of visualization"
+            title="Contrasting Personas within a Single Topic"
             activeTopics={new Set([1, 4, 6])}
           />
         </Card>
@@ -326,7 +326,7 @@ Authors often **compare their present selves to their past**, reminiscing about 
             id="tsne08"
             key="tsne08"
             editable={false}
-            title="Title of Visualization"
+            title="Vulnerability and Reflections on the Past and Future"
             activeTopics={new Set([0, 8])}
           />
         </Card>
@@ -338,7 +338,7 @@ Authors often **compare their present selves to their past**, reminiscing about 
           description="Hover over the legend to learn more about each topic. Select and filter by topics to discover how closely related or distinct the letters are from each other. Click on specific points to zoom in and view a snippet of the love letter, a link to the full post, and the topic weight assignments for that letter."
         >
           <TopicVisualization
-            title="Title of visualization"
+            title="Thematic Clustering of Letters Through Topic Modeling"
             id="tsneExplore"
             key="tsneExplore"
           />
