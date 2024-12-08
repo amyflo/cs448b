@@ -166,6 +166,10 @@ const InteractiveEmbeddingGraph = ({
         sortedPointsWords.slice(sortedPointsWords.length / 2 - 1).reverse()
       );
 
+      const normalizedDist = (w1, w2) => {
+        return Math.abs(xScale(x_val(w1)) - xScale(x_val(w2))) / (xScale(x_val(axis0)) - xScale(x_val(axis1)));
+      }
+
     // Draw points
     svg
       .append("g")
@@ -181,10 +185,8 @@ const InteractiveEmbeddingGraph = ({
       .attr("fill", (d) => colorScale(x_val(d)))
       .on("mouseover", (event, d) => {
         // Show the tooltip with word details
-        const distanceToAxis0 =
-          Math.abs(x_val(d) - x_val(axis0)) / (x_val(axis0) - x_val(axis1));
-        const distanceToAxis1 =
-          Math.abs(x_val(d) - x_val(axis1)) / (x_val(axis0) - x_val(axis1));
+        const distanceToAxis0 = normalizedDist(d, axis0)
+        const distanceToAxis1 = normalizedDist(d, axis1)
         tooltip
           .style("opacity", 1)
           .html(
