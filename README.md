@@ -1,4 +1,4 @@
-# cs448b
+# CS448B Final Project: Exploring r/LoveLetters
 
 ## Preprocessing Love Letter Text for Topic Modeling + Word Embeddings
 
