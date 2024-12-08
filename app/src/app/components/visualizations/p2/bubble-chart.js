@@ -3,7 +3,6 @@ import * as d3 from "d3";
 
 const HorizontalBarChart = () => {
   const [data, setData] = useState([]);
-  const [topicsData, setTopicsData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +17,6 @@ const HorizontalBarChart = () => {
         );
         const topicsJson = await responseTopics.json();
         console.log("bubble fetched topics: ", topicsJson);
-        setTopicsData(topicsJson);
 
         // Parse and aggregate data
         const parsedData = Object.entries(json)
@@ -44,12 +42,15 @@ const HorizontalBarChart = () => {
           aggregatedData.map(([topic, stats]) => {
             // find corresponding topic color from topicsJson
             const topicData = topicsJson.find((t) => t.label === topic);
-            const color = topicData ? topicData.color : "#000000"; // Default to black if no match
-
+            const color = topicData.color; // Default to black if no match
+            const description = topicData.description;
+            const topWords = topicData.top_words;
             return {
               topic,
               ...stats,
               color, // Add color to each aggregated data entry
+              description,
+              topWords,
             };
           })
         );
@@ -98,9 +99,9 @@ const HorizontalBarChart = () => {
       ])
       .range([5, 30]); // Bubble size represents sentiment
 
-    const colorScale = d3
-      .scaleOrdinal(d3.schemeTableau10) // Use categorical colors for topics
-      .domain(chartData.map((d) => d.topic));
+    // const colorScale = d3
+    //   .scaleOrdinal(d3.schemeTableau10) // Use categorical colors for topics
+    //   .domain(chartData.map((d) => d.topic));
 
     // Axes
     svg
@@ -180,10 +181,19 @@ const HorizontalBarChart = () => {
         tooltip.transition().duration(200).style("opacity", 1);
         tooltip
           .html(
-            `<strong>${d.topic}</strong><br>
-             Average Sentiment Score: ${d.avgSentiment.toFixed(2)}<br>
-             Average word count: ${d.avgLength.toFixed(1)} words<br>
-             Total number of posts: ${d.numPosts}`
+            `
+            <strong>${d.topic}</strong><br>
+            <div style="word-wrap: break-word; white-space: normal; display: block; max-width: 250px;">${
+              d.description
+            }</div><br>
+            <strong>Average Sentiment Score:</strong> ${d.avgSentiment.toFixed(
+              2
+            )}<br>
+            <strong>Average word count:</strong> ${d.avgLength.toFixed(
+              1
+            )} words<br>
+            <strong>Total number of posts:</strong> ${d.numPosts}<br>
+            `
           )
           .style("left", `${event.clientX}px`) // Offset horizontally by 10px
           .style("top", `${event.clientY - 100}px`); // Offset vertically by 10px
