@@ -241,8 +241,8 @@ Topics such as **Family Dynamics** and **Playful Longing** with lower average wo
         <Card
           howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
           howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
-          title="Letters aligned with language from multiple personas and emotional states."
-          description={`Letters did not strictly cluster into a single primary topic but instead displayed **overlapping associations** with other topics. These letters often reflected multiple *personas* and *emotional states*, such as the **'wishful thinker'** or the **'romantic idealist'**. Nodes positioned near those from different topics represent letters sharing **similar word usage**, indicating that **multiple themes** were often prominent.
+          title="Letters shared perspectives from multiple personas and emotional states."
+          description={`Letters did not strictly cluster into a single primary topic but instead displayed **overlapping associations** with other topics. These letters often reflected multiple *personas* and *emotional states*, such as the **'wishful thinker'** or the **'romantic idealist'**. Nodes plotted near nodes from other topics represent letters that share **similar word usage and language**, despite being assigned different primary topics. The proximity between these different topics indicate how letters can express **multiple themes**.
 
 Wishful thinkers frequently use metaphors that align with the word-usage in the topic **Serenity and Beauty**. Some letters from **Idealistic Soulmates** also closely align with the word-usage in **Vulnerability and Heartbreak**.
 
@@ -275,7 +275,7 @@ The letters from Idealistic Soulmates are influenced by two main themes, which s
             id="tsne146"
             key="tsne146"
             editable={false}
-            title="Contrasting Personas within a Single Topic"
+            title="Contrasting Personas within a Idealistic Soulmates"
             activeTopics={new Set([1, 4, 6])}
           />
         </Card>
