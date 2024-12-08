@@ -108,7 +108,7 @@ const InteractiveEmbeddingGraph = ({
     // calulate value of axis vector, then normalize to unit length
     var ax = diff(emb(axis0), emb(axis1));
     const lenAx = Math.sqrt(ax[0] ** 2 + ax[1] ** 2);
-    const axisVector = ax.map((n) => n / lenAx);  
+    const axisVector = ax.map((n) => n / lenAx);
 
     const x_val = (d) => dot(axisVector, emb(d));
 
@@ -118,10 +118,11 @@ const InteractiveEmbeddingGraph = ({
       .domain(d3.extent(axisWords, x_val))
       .range([0, width])
       .clamp(true);
-    
-    const colorScale = d3.scaleLinear()
+
+    const colorScale = d3
+      .scaleLinear()
       .domain(d3.extent(axisWords, x_val))
-      .range(["blue", "red"])
+      .range(["blue", "red"]);
 
     const yScale = d3
       .scaleLinear()
@@ -131,11 +132,11 @@ const InteractiveEmbeddingGraph = ({
 
     // y function ensures words don't get plotted on top of the x axis
     const y = (i) => {
-      if(i >= pointsWords.length / 2 - 1){
-        return yScale(i + 1)
+      if (i >= pointsWords.length / 2 - 1) {
+        return yScale(i + 1);
       }
-      return yScale(i)
-      };
+      return yScale(i);
+    };
 
     const tooltip = d3
       .select("body")
@@ -148,11 +149,16 @@ const InteractiveEmbeddingGraph = ({
       .style("opacity", 0) // Initially hidden
       .style("pointer-events", "none");
 
-    
     // sort words to ensure no words overlap lines
-    var sortedPointsWords = pointsWords.filter(function (d) { return emb(d) != null }) 
-    sortedPointsWords = d3.sort(sortedPointsWords, (d) => x_val(d))
-    sortedPointsWords = sortedPointsWords.slice(0, sortedPointsWords.length / 2 - 1).concat(sortedPointsWords.slice(sortedPointsWords.length / 2 - 1).reverse())
+    var sortedPointsWords = pointsWords.filter(function (d) {
+      return emb(d) != null;
+    });
+    sortedPointsWords = d3.sort(sortedPointsWords, (d) => x_val(d));
+    sortedPointsWords = sortedPointsWords
+      .slice(0, sortedPointsWords.length / 2 - 1)
+      .concat(
+        sortedPointsWords.slice(sortedPointsWords.length / 2 - 1).reverse()
+      );
 
     // Draw points
     svg
@@ -169,8 +175,10 @@ const InteractiveEmbeddingGraph = ({
       .attr("fill", (d) => colorScale(x_val(d)))
       .on("mouseover", (event, d) => {
         // Show the tooltip with word details
-        const distanceToAxis0 = Math.abs(x_val(d) - x_val(axis0)) / (x_val(axis0) - x_val(axis1));
-        const distanceToAxis1 = Math.abs(x_val(d) - x_val(axis1)) / (x_val(axis0) - x_val(axis1));
+        const distanceToAxis0 =
+          Math.abs(x_val(d) - x_val(axis0)) / (x_val(axis0) - x_val(axis1));
+        const distanceToAxis1 =
+          Math.abs(x_val(d) - x_val(axis1)) / (x_val(axis0) - x_val(axis1));
         tooltip
           .style("opacity", 1)
           .html(
@@ -197,7 +205,8 @@ const InteractiveEmbeddingGraph = ({
       });
 
     // Draw lines from points to axes
-    svg.append("g")
+    svg
+      .append("g")
       .selectAll("line")
       .data(sortedPointsWords)
       .enter()
@@ -207,8 +216,22 @@ const InteractiveEmbeddingGraph = ({
       .attr("x2", (d) => xScale(x_val(d)))
       .attr("y2", height / 2)
       .attr("stroke", (d) => colorScale(x_val(d)))
-      .attr("stroke-dasharray", "2 5 10 5")
-      .attr("opacity", 0.5)
+      .attr("stroke-dotted", "2 5 10 5")
+      .attr("opacity", 0.5);
+
+    // draw a dot on the axis, too
+    svg
+      .append("g")
+      .selectAll("circle")
+      .data(sortedPointsWords)
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => xScale(x_val(d))) // Same x-coordinate as the lines
+      .attr("cy", height / 2) // Positioned on the axis
+      .attr("r", 1) // Dot radius
+      .attr("fill", (d) => colorScale(x_val(d))) // Use the same color scale
+      .attr("stroke", "black")
+      .attr("stroke-width", 1);
 
     // Label axes
     svg
@@ -276,7 +299,7 @@ const InteractiveEmbeddingGraph = ({
               type="text"
               id={`${id}inputPoints`}
               className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm shadow-sm"
-              onBlur={(e) =>{
+              onBlur={(e) => {
                 setPointsWords(e.target.value.split(",").map((w) => w.trim()));
                 setErrors(new Set());
               }}

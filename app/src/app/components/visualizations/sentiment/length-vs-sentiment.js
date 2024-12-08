@@ -314,7 +314,7 @@ const PostLengthVsSentiment = () => {
               </div>
             </>
           ) : (
-            <p>Select a post to see details</p>
+            <p>Click on a point to see more details about the love letter.</p>
           )}
         </div>
       </div>

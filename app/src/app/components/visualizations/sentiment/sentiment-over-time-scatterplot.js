@@ -345,6 +345,10 @@ const EnhancedSentimentScatterplot = () => {
           <h2>Post Details</h2>
           {selectedPost ? (
             <>
+              <p>
+                Explore another point or click anywhere outside the point to
+                unselect.
+              </p>
               <div
                 style={{
                   padding: "15px",
@@ -405,7 +409,7 @@ const EnhancedSentimentScatterplot = () => {
               </div>
             </>
           ) : (
-            <p>Select a post to see details</p>
+            <p>Click on a point to see more details about the love letter.</p>
           )}
         </div>
       </div>
