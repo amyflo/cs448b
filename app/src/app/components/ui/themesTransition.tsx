@@ -18,7 +18,7 @@ const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
       <h1 className="text-4xl md:text-5xl font-serif font-extrabold text-pink-600 mb-8 drop-shadow-lg">
         15 Key Topics Identified
       </h1>
-      <p className="font-lg font-serif md:text-xl text-gray-700 font-light leading-relaxed max-w-3xl mb-12">
+      <p className="text-lg md:text-xl text-gray-700 font-light leading-relaxed max-w-3xl mb-12">
         Each topic captures a unique aspect of love letters, ranging from
         reflections on relationships to moments of vulnerability and heartfelt
         goodbyes.
@@ -35,8 +35,7 @@ const ThemesTransition: React.FC<ThemesTransitionScreenProps> = ({
       </div>
       <p className="font-serif mt-12 text-lg text-gray-600 max-w-2xl">
         These themes helped uncover patterns and insights about how love,
-        emotions, and relationships are expressed in r/LoveLetters. Below our
-        are insights.
+        emotions, and relationships are expressed in r/LoveLetters.
       </p>
     </div>
   );

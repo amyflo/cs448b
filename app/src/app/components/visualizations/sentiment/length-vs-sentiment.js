@@ -56,6 +56,15 @@ const PostLengthVsSentiment = () => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -30)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Sentiment vs word count of Love Letters in r/LoveLetters");
+
     // Define scales
     const xScale = d3
       .scaleLog()
@@ -99,7 +108,7 @@ const PostLengthVsSentiment = () => {
       .attr("y", 40)
       .attr("text-anchor", "middle")
       .attr("fill", "#333")
-      .text("Post Length (word count)");
+      .text("word count (word count)");
 
     svg
       .append("g")
@@ -181,7 +190,7 @@ const PostLengthVsSentiment = () => {
       tooltip
         .html(
           `<strong>${d.postTitle}</strong><br>
-           Post Length: ${d.postLength} words<br>
+           word count: ${d.postLength} words<br>
            Date: ${new Date(d.createdAt).toLocaleDateString()}<br>
            Sentiment Score: ${d.bodyScore.toFixed(2)}`
         )

@@ -73,6 +73,15 @@ const SentimentBoxPlot = () => {
 
     boxData.sort((a, b) => b.median - a.median);
 
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -30)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Sentiment, Average Length, and Number of Posts by Topic");
+
     // Scales
     const xScale = d3
       .scaleBand()

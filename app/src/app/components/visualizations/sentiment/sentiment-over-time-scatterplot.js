@@ -67,6 +67,15 @@ const EnhancedSentimentScatterplot = () => {
       (d) => d.date >= startDate && d.date <= endDate
     );
 
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -30)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .text("Sentiment over time in r/LoveLetters (November 2021 – June 2023)");
+
     // Define scales
     const xScale = d3
       .scaleTime()

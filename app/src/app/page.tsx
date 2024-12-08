@@ -15,6 +15,7 @@ import Card from "./components/ui/card";
 import Slideshow from "./components/ui/slideshow";
 import Hero from "./components/ui/hero";
 import Navbar from "./components/ui/nav";
+import TopicAnalyzer from "./components/visualizations/p2/topic-by-sentiment-bar";
 
 export default function Home() {
   return (
@@ -93,8 +94,8 @@ The analysis reveals that **68% (571 posts) express positive sentiment**, while 
         </Card>
         <Card
           title="Longer love letters exhibit a greater range in emotional intensity than shorter ones."
-          howItWasCreated="We used Sentiment.js to calculate sentiment scores for each post, or love letter, in the dataset. Sentiment.js assigns a numerical score based on the presence of positive and negative words in the text. Posts with higher positive scores reflect stronger positive sentiment, while negative scores indicate negative sentiment. To better visualize the relationship between post length and sentiment, we plotted post lengths on a logarithmic scale, as lengths varied widely across posts. This scaling allowed for a clearer comparison by reducing the impact of outliers and emphasizing patterns in the data."
-          howToUse="This scatterplot shows sentiment scores on the y-axis and post lengths on the x-axis. Each dot represents a post, with its color indicating its sentiment (positive, neutral, or negative). A dotted line at y=0 marks neutral sentiment. Hover over a dot to view its title, date, sentiment score, and post length, and click on a dot to see detailed information about the post in the details panel."
+          howItWasCreated="We used Sentiment.js to calculate sentiment scores for each post, or love letter, in the dataset. Sentiment.js assigns a numerical score based on the presence of positive and negative words in the text. Posts with higher positive scores reflect stronger positive sentiment, while negative scores indicate negative sentiment. To better visualize the relationship between word count and sentiment, we plotted word counts on a logarithmic scale, as lengths varied widely across posts. This scaling allowed for a clearer comparison by reducing the impact of outliers and emphasizing patterns in the data."
+          howToUse="This scatterplot shows sentiment scores on the y-axis and word counts on the x-axis. Each dot represents a post, with its color indicating its sentiment (positive, neutral, or negative). A dotted line at y=0 marks neutral sentiment. Hover over a dot to view its title, date, sentiment score, and word count, and click on a dot to see detailed information about the post in the details panel."
           description={`Longer posts tend to express greater emotional intensity, with extremes in both positive and negative sentiment. Shorter posts, on the other hand, often cluster near neutrality, possibly due to limited narrative depth.
 
 This observation suggests that longer narratives allow for more nuanced and varied emotional expression.`}
@@ -253,6 +254,14 @@ This observation suggests that longer narratives allow for more nuanced and vari
             "Family Dynamics",
           ]}
         ></ThemesTransition>
+        <Card
+          howToUse="This card provides insights into theme analysis from r/LoveLetters. Use the information to understand patterns in sentiment, post frequency, and length across different themes."
+          howItWasCreated="The data was analyzed by aggregating posts into themes, calculating average sentiment scores, word counts, and total post counts. Visualizations were created using D3.js to compare metrics dynamically."
+          title="Insights into Theme Metrics"
+          description="The 'Idealistic Soulmates' theme consistently stands out across all metrics, combining the highest sentiment score, frequent posts, and moderate word count, reflecting its highly romantic and optimistic tone. Users frequently write about their idealized vision of love or 'the one,' with posts ranging from short declarations to detailed reflections. In contrast, themes like 'Uncertainty in Relationships' and 'Reflection on Life Journey' feature longer posts, as these topics often demand detailed storytelling. High sentiment themes, such as 'Hopeful Goodbyes' and 'Playful Flirtation,' tend to have shorter posts, aligning with their lighter or more straightforward nature."
+        >
+          <TopicAnalyzer />
+        </Card>
 
         <Card
           howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."

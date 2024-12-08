@@ -182,7 +182,7 @@ const PostLengthChart = () => {
       .on("mouseover", (event, d) => {
         tooltip.style("display", "block").html(
           `<strong>Month:</strong> ${d3.timeFormat("%B %Y")(d.date)}<br/>
-           <strong>Average Post Length:</strong> ${d.avgLength.toFixed(2)}<br/>`
+           <strong>Average word count:</strong> ${d.avgLength.toFixed(2)}<br/>`
         );
       })
       .on("mousemove", (event) => {
