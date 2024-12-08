@@ -42,7 +42,7 @@ const ScrollSlideshow = ({ children }) => {
   return (
     <div
       ref={containerRef}
-      className="w-full h-screen overflow-y-scroll scrollbar-hide"
+      className="w-screen h-screen overflow-y-scroll scrollbar-hide"
       style={{
         scrollSnapType: "y mandatory",
       }}
@@ -50,7 +50,7 @@ const ScrollSlideshow = ({ children }) => {
       {React.Children.map(children, (child, index) => (
         <div
           ref={(el) => (slideRefs.current[index] = el)}
-          className={`w-full flex items-center justify-center bg-white overflow-hidden transition-opacity duration-500 ${
+          className={`w-screen flex gap-24  items-center justify-center bg-white overflow-hidden transition-opacity duration-500 ${
             index === currentSlide
               ? "opacity-100 translate-y-0 scale-100"
               : "opacity-50 translate-y-5 scale-95"

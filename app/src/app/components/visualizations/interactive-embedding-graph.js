@@ -6,6 +6,7 @@ import * as d3 from "d3";
 const InteractiveEmbeddingGraph = ({
   id,
   axis,
+  title = "TODO",
   points,
   axisEditable = true,
   pointsEditable = true,
@@ -25,7 +26,7 @@ const InteractiveEmbeddingGraph = ({
         const sanitizedWord = w.toLowerCase().replace(/[^0-9a-z]/gi, "");
         const e = embeddings[sanitizedWord];
         if (!e) {
-          setErrors(prevState => new Set(prevState.add(w)))
+          setErrors((prevState) => new Set(prevState.add(w)));
           return null;
         }
         return e;
@@ -86,7 +87,7 @@ const InteractiveEmbeddingGraph = ({
       .attr("text-anchor", "middle") // Center the text
       .style("font-size", "18px") // Larger font size for emphasis
       .style("font-weight", "bold") // Bold text for visibility
-      .text("Sentiment Analysis of Posts in r/LoveLetters");
+      .text(title);
 
     // Draw axes
     svg
@@ -135,7 +136,11 @@ const InteractiveEmbeddingGraph = ({
     svg
       .append("g")
       .selectAll("text")
-      .data(pointsWords.filter(function(d){return emb(d) != null}))
+      .data(
+        pointsWords.filter(function (d) {
+          return emb(d) != null;
+        })
+      )
       .enter()
       .append("text")
       .attr("x", (d) => xScale(x_val(d)))
@@ -189,8 +194,10 @@ const InteractiveEmbeddingGraph = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {(errors.size > 0) && (
-        <div style={{ marginBottom: "10px", color:"red" }}>{Array.from(errors).join()} not found in the Love Letters</div>
+      {errors.size > 0 && (
+        <div style={{ marginBottom: "10px", color: "red" }}>
+          {Array.from(errors).join()} not found in the Love Letters
+        </div>
       )}
       <div id={`${id}chart`}></div>
       {axisEditable && (
@@ -240,8 +247,7 @@ const InteractiveEmbeddingGraph = ({
                 setPointsWords(e.target.value.split(",").map((w) => w.trim()))
               }
               value={input}
-              onChange={(e)=>setInput(e.target.value)}
-
+              onChange={(e) => setInput(e.target.value)}
             />
           </div>
         )}
@@ -252,7 +258,7 @@ const InteractiveEmbeddingGraph = ({
             setAxis1(axis[1]);
             setPointsWords(points);
             setErrors(new Set());
-            setInput(points.join(', '))
+            setInput(points.join(", "));
           }}
         >
           Reset

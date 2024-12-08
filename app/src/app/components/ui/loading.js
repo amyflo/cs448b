@@ -18,6 +18,7 @@ const LoadingHearts = ({ children, title = "Analyzing love letters..." }) => {
     return (
       <div className="flex flex-col items-center justify-center w-screen h-screen bg-pink-50">
         {/* Title */}
+        <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-r from-pink100 to-pink-200 backdrop-blur-md pointer-events-none z-0"></div>
         <h1 className="text-xl font-bold text-pink-700 mb-6 animate-pulse">
           {title}
         </h1>

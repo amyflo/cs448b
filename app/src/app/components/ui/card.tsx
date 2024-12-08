@@ -19,8 +19,8 @@ const Card: React.FC<CardProps> = ({
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   return (
-    <div className="flex flex-col p-4 items-center justify-center">
-      <div className="max-w-prose">
+    <div className="flex flex-col pt-16 items-center justify-center">
+      <div className="max-w-prose pt-24">
         {title && <div className="font-serif font-bold text-xl">{title}</div>}
         {description && (
           <ReactMarkdown className="font-serif text-md text-gray-800 leading-relaxed mt-2">
@@ -31,7 +31,7 @@ const Card: React.FC<CardProps> = ({
       {/* Info Section */}
 
       {(howToUse || howItWasCreated) && (
-        <div className="mb-4 w-full max-w-prose">
+        <div className="mb-4 w-2/3 max-w-prose">
           <div className="flex">
             <div className="flex">
               <a
@@ -81,7 +81,7 @@ const Card: React.FC<CardProps> = ({
 
       {children && (
         <div
-          className="bg-white p-4 w-screen rounded-lg flex-1 flex items-center justify-center"
+          className="bg-white p-16 w-screen rounded-lg flex-1 flex items-center justify-center"
           id="visualization-content"
         >
           {children}
