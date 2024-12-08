@@ -225,3 +225,7 @@ textarea::placeholder {
   color: #888; /* Lighter color for placeholder */
   font-style: italic;
 }
+
+::selection {
+  background-color: #fbcfe7;
+}

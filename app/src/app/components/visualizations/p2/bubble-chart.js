@@ -225,7 +225,7 @@ const HorizontalBarChart = () => {
       .style("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")
-      .text("Sentiment, Average Length, and Number of Posts by Topic");
+      .text("Sentiment, Average Word Count, and Number of Posts by Topic");
 
     // Legend
     const legend = svg
