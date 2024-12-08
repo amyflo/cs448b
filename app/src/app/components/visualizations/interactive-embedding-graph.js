@@ -6,7 +6,7 @@ import * as d3 from "d3";
 const InteractiveEmbeddingGraph = ({
   id,
   axis,
-  title = "TODO",
+  title = "",
   points,
   axisEditable = true,
   pointsEditable = true,

@@ -121,38 +121,38 @@ This observation suggests that longer narratives allow for more nuanced and vari
           description="Exploring language patterns sheds light on societal influences, emotional tones, and the deeper meanings behind love letters."
         />
         <Card
-          title="Letters with gendered language tend to be written from the perspective of straight women."
+          title="r/LoveLetters posts are about women more often than they are about men"
           howItWasCreated="TODO"
           howToUse="TODO"
-          description='First and second person pronouns tend to be used near the word "girl". We also see "that" and "other" more closely associated with "girl", indicating that authors of our love letters tend to see other women as romantic rivals. On the other hand, "dream" is more closely related to "boy", indicating that love letter authors are writing about men."'
+          description='Possesives like  "my", "mine", "your", and "yours" tend to refer to women, rather than men. Additionally, Words potentially used to discuss romantic rivalry like "that", "other", "current" (as in "your current man/woman"), and "still" (as in "still with him/her") also more often refer to women than men'
         >
           <InteractiveEmbeddingGraph
-            id="boy-girl"
-            axis={["boy", "girl"]}
+            title="Word co-occurrence with the words 'woman' and 'man'"
+            id="gender-subjects"
+            axis={["man", "woman"]}
             axisEditable={false}
             points={[
-              "i",
-              "me",
               "my",
-              "im",
-              "you",
+              "mine",
               "your",
-              "youre",
               "yours",
               "that",
               "other",
-              "dream",
+              "still",
+              "current"
             ]}
           />
         </Card>
         <Card
-          title="TODO"
-          description="TODO"
+          title="Discussions of emotion conform to gender stereotypes"
+          description='In posts on r/LoveLetters, traits indicating emotional intellgience and sensitivity are associated with women (e.g. "smart", "loving", "happy", "sad"). We also see "crazy" and "confusing" more closely associated with women, reflecting the stereotype of women as instable and hysterical.
+          
+          On the other hand, men, stereotyped as being emotionless and angry, are associated with traits like "stupid" and "confused". We also see masculine-leaning emotion words fall closer to neutral than feminine-leaning emotion words i.e. there is less discussion of male emotions in general.' 
           howItWasCreated="TODO"
           howToUse="TODO"
         >
           <InteractiveEmbeddingGraph
-            id="man-woman"
+            id="gender-emotions"
             axis={["man", "woman"]}
             axisEditable={false}
             points={[
@@ -163,6 +163,11 @@ This observation suggests that longer narratives allow for more nuanced and vari
               "scared",
               "stupid",
               "emotional",
+              "confused", 
+              "loving", 
+              "guilty", 
+              "smart",
+              "confusing"
             ]}
           />
         </Card>
