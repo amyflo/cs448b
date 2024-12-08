@@ -214,7 +214,7 @@ const PostLengthVsSentiment = () => {
       tooltip
         .html(
           `<strong>${d.postTitle}</strong><br>
-           word count: ${d.postLength} words<br>
+           Word count: ${d.postLength} words<br>
            Date: ${new Date(d.createdAt).toLocaleDateString()}<br>
            Sentiment Score: ${d.bodyScore.toFixed(2)}`
         )
