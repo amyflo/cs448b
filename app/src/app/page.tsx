@@ -238,25 +238,7 @@ This observation suggests that longer narratives allow for more nuanced and vari
           description="Through analysis of love letters, we discovered themes surfaced that reveal the many ways people express emotions, relationships, and personal experiences."
         />
 
-        <ThemesTransition
-          themes={[
-            "Reflections on Moments of Time",
-            "Idealistic Soulmates",
-            "Enduring Relationship Struggles",
-            "Serenity and Beauty",
-            "Playful Flirtation",
-            "Hopeful Goodbyes",
-            "Reflection on Life Journey",
-            "Empathy, Forgiveness, and Apology",
-            "Vulnerability and Heartbreak",
-            "Playful Longing",
-            "Uncertainty in Relationships",
-            "Substance Use and Escapism",
-            "Spirituality and Music",
-            "Sexuality, Longing, and Confusion",
-            "Family Dynamics",
-          ]}
-        ></ThemesTransition>
+        <ThemesTransition></ThemesTransition>
 
         <Card
           howToUse="This visualization provides a comprehensive look at the relationships between topics, sentiment scores, average word counts, and the number of posts in r/LoveLetters. Each bubble represents a topic, with its size indicating the average sentiment score, its color representing the topic category, its horizontal position showing the number of posts, and its vertical position showing the average word count. You can explore this chart by hovering over the bubbles to reveal detailed information about each topic, including the average sentiment score, average word count, and total number of posts. Observing the positioning of the bubbles allows you to understand how frequently topics are discussed and whether the love letters tend to be brief or detailed. Larger bubbles represent topics with higher sentiment scores, indicating a more positive tone in the posts, while smaller bubbles suggest more neutral sentiments."
