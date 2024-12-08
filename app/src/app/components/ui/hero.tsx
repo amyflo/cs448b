@@ -108,7 +108,7 @@ export default function Hero() {
           <span className="text-pink-600 font-semibold">
             themes that emerge across love letters
           </span>
-          .
+          from April 2021 to November 2024.
         </p>
         <Link className="text-pink-600 hover:text-pink-700" href="/about">
           Explore how we process the data

@@ -27,7 +27,7 @@ export default function Home() {
         {/* ********************************* POSTING CARDS START HERE ********************************* */}
         <TransitionScreen
           title="How Has r/LoveLetters Grown and Changed Over Time?"
-          description="Tracking the growth and changes in posting patterns over time."
+          description="Tracking the growth and changes in posting patterns over time from April 2021 - November 2024."
         />
 
         <Card
