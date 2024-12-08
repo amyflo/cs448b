@@ -349,17 +349,30 @@ const TSNEVisualization = ({
       .style("font-weight", "bold");
 
     // for each topic, get color and append to legend
+<<<<<<< HEAD
     colors.forEach((color, index) => {
       // console.log("Legend item created for topic:", index); // Debugging log
       const topicLabel = topicsRefData[index].label;
       const topicDescription = topicsRefData[index].description;
+=======
+    Object.keys(topicsRefData).forEach((legendIndex) => {
+      // console.log("Legend item created for topic:", index); // Debugging log
+      const topicLabel = topicsRefData[legendIndex].label;
+      const topicDescription = topicsRefData[legendIndex].description;
+      const color = topicsRefData[legendIndex].color;
+>>>>>>> 8e4008d (found bug with topic selection)
       // console.log(topicDescription);
       const legendItem = legendContainer
         .append("div")
         .attr("class", "legend-item")
         .on("click", () => {
+<<<<<<< HEAD
           toggleTopicOpacity(index, legendItem);
           console.log(`${topicsRefData[index].label} selected`);
+=======
+          toggleTopicOpacity(legendIndex, legendItem);
+          console.log(`${topicsRefData[legendIndex].label} selected`);
+>>>>>>> 8e4008d (found bug with topic selection)
         })
         .on("mouseover", () => {
           tooltipTopic.transition().duration(200).style("opacity", 1);
@@ -369,7 +382,11 @@ const TSNEVisualization = ({
                 <li><strong>${topicLabel}</strong></li>
                 <li>${topicDescription}</li>
                 <li><strong>Top Words:</strong></li>
+<<<<<<< HEAD
                 <li>${topicsRefData[index].top_words.join(", ")}</li>
+=======
+                <li>${topicsRefData[legendIndex].top_words.join(", ")}</li>
+>>>>>>> 8e4008d (found bug with topic selection)
               </ul>`
             )
             .style("left", `${10}px`)
@@ -379,7 +396,11 @@ const TSNEVisualization = ({
           tooltipTopic.transition().duration(200).style("opacity", 0);
         });
 
+<<<<<<< HEAD
       if (activeTopicsLocal.has(index)) {
+=======
+      if (activeTopicsLocal.has(legendIndex)) {
+>>>>>>> 8e4008d (found bug with topic selection)
         legendItem.classed("selected", true); // Highlight as selected if topic is active
       } else {
         legendItem.classed("selected", false); // Remove highlight if not active
