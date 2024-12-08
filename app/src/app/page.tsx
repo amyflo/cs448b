@@ -284,13 +284,14 @@ This highlights how vulnerable emotional states can inspire language similar to 
             id="tsne138"
             key="tsne138"
             title="Title of visualization"
+            editable={false}
             activeTopics={new Set([1, 3, 8])}
           />
         </Card>
 
         <Card
           title="Letters could be divided into different themes within the same topic."
-          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
+          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
           howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
           description={`Letters within the same topic can be divided due to strong associations with other topics. The distinct language and tone of the author create variations within the primary topic, revealing **how different personas can emerge from the same theme.** For example, in the 'Idealistic Soulmates' topic, **we observe two contrasting personas**: one that expresses playful physical longing, and another that portrays a more serious, reflective tone. Letters from Idealistic Soulmates are divided between **Playful Flirtation** and **Reflection on Life Journey**.
 
@@ -304,12 +305,13 @@ The letters from Idealistic Soulmates are influenced by two main themes, which s
           <TopicVisualization
             id="tsne146"
             key="tsne146"
+            editable={false}
             title="Title of visualization"
             activeTopics={new Set([1, 4, 6])}
           />
         </Card>
         <Card
-          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Select topics on the legend to filter the datapoints by theme. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
+          howToUse="This chart visualizes how letters in r/LoveLetters are distributed across 15 primary themes, filtered by the selected topics in the legend. Hover over each letter datapoint to see the assigned topic and the letter title. Click on that point to see the original post and the 15 topic weight assignments for that letter."
           howItWasCreated="Each letter was transformed into a 15-element vector using topic modeling with NMF, where each value represents the letter's alignment with a specific topic. These vectors were then reduced to two dimensions and plotted on this chart, positioning similar letters closer together to reveal thematic relationships."
           title="Letters related to time also touched on vulnerability as they reflected on the past or dreamed of the future."
           description={`Letters on **Vulnerability and Heartbreak** share language with letters from **Reflections on Moments of Time**. These letters, reflecting on the past and future, are closely linked to themes of vulnerability and heartbreak. 

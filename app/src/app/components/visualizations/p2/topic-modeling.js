@@ -9,6 +9,7 @@ const TSNEVisualization = ({
   id,
   activeTopics = new Set(),
   defaultDetailsPanelHTML = "",
+  editable = true,
   dataFiles = {
     assignedTopics: "/data/topic-modeling/results/top_topics_with_weights.json",
     topicsRef: "/data/topic-modeling/results/topics_NMF_15.json",
@@ -49,18 +50,20 @@ const TSNEVisualization = ({
 
   // function for keeping track of filter selections
   function toggleTopicOpacity(topicIndex, legendItem) {
-    // unselect topic
-    if (activeTopicsLocal.has(topicIndex)) {
-      activeTopicsLocal.delete(topicIndex);
-      legendItem.classed("selected", false);
-      console.log("active topics: ", activeTopicsLocal);
-    } else {
-      // select topic
-      activeTopicsLocal.add(topicIndex);
-      legendItem.classed("selected", true);
-      console.log("active topics: ", activeTopicsLocal);
+    if (editable) {
+      // unselect topic
+      if (activeTopicsLocal.has(topicIndex)) {
+        activeTopicsLocal.delete(topicIndex);
+        legendItem.classed("selected", false);
+        console.log("active topics: ", activeTopicsLocal);
+      } else {
+        // select topic
+        activeTopicsLocal.add(topicIndex);
+        legendItem.classed("selected", true);
+        console.log("active topics: ", activeTopicsLocal);
+      }
+      updatePointOpacities();
     }
-    updatePointOpacities();
   }
 
   // Load the topic assignments, topic reference file, TSNE reduced data, and consolidated posts info
