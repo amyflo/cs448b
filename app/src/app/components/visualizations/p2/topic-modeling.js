@@ -209,7 +209,7 @@ const TSNEVisualization = ({
 
           // if there were prev selected points, reset it so highlights don't persist
           if (selectedPt) {
-            const prevPtTopic = selectedPt.attr("data-topic");
+            const prevPtTopic = +selectedPt.attr("data-topic");
             const isSelectedTopic = activeTopicsLocal.has(prevPtTopic);
 
             console.log("Resetting previous point:", {
