@@ -15,7 +15,7 @@ export default function Navbar() {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-6 h-6 text-pink-300 group-hover:text-pink-500 transition duration-200"
+              className="w-6 h-6 text-pink-400 group-hover:text-pink-500 transition duration-200"
             >
               <path d="M12 4.248C8.852-1.154 0 .423 0 7.192c0 4.661 5.571 9.427 12 15.808 6.429-6.381 12-11.147 12-15.808 0-6.792-8.875-8.306-12-2.944z" />
             </svg>
@@ -27,7 +27,7 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Links */}
-        <ul className="flex space-x-6 text-sm md:text-base">
+        <ul className="flex space-x-6 items-center justify-center text-sm md:text-base">
           <li>
             <Link
               href="about"
@@ -37,15 +37,33 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <a
+            <Link
+              className="text-pink-600 hover:text-pink-700"
+              href="https://github.com/amyflo/cs448b"
+            >
+              GitHub
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="text-pink-600 hover:text-pink-700"
               href="https://www.reddit.com/r/LoveLetters"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-pink-500 hover:text-pink-600 relative transition duration-200"
             >
               r/LoveLetters
-              <span className="absolute left-0 bottom-0 w-full h-[2px] bg-pink-500 scale-x-0 origin-left transition-transform duration-200 hover:scale-x-100"></span>
-            </a>
+            </Link>
+          </li>
+          <li>
+            {/* TODO: AMY UPDATE */}
+            <div className="bg-pink-400 p-1 px-2 rounded-lg hover:bg-pink-500">
+              <Link
+                className="text-pink-50 hover:text-pink-100"
+                href="https://youtube.com"
+              >
+                Watch our demo
+              </Link>
+            </div>
           </li>
         </ul>
       </div>

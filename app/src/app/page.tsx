@@ -26,7 +26,7 @@ export default function Home() {
 
         {/* ********************************* POSTING CARDS START HERE ********************************* */}
         <TransitionScreen
-          title="How Has r/LoveLetters Grown and Changed Over Time?"
+          title="How has r/LoveLetters grown and changed over time?"
           description="Tracking the growth and changes in posting patterns over time from April 2021 - November 2024."
         />
 
@@ -123,7 +123,6 @@ This observation suggests that longer narratives allow for more nuanced and vari
         <Card
           title="r/LoveLetters posts are about women more often than they are about men"
           description='Possesives like  "my", "mine", "your", and "yours" tend to refer to women, rather than men. Additionally, Words potentially used to discuss romantic rivalry like "that", "other", "current" (as in "your current man/woman"), and "still" (as in "still with him/her") also more often refer to women than men'
-
           howItWasCreated="TODO"
           howToUse="TODO"
         >
@@ -140,7 +139,7 @@ This observation suggests that longer narratives allow for more nuanced and vari
               "that",
               "other",
               "still",
-              "current"
+              "current",
             ]}
           />
         </Card>
@@ -148,7 +147,7 @@ This observation suggests that longer narratives allow for more nuanced and vari
           title="Discussions of emotion conform to gender stereotypes"
           description='In posts on r/LoveLetters, traits indicating emotional intellgience and sensitivity are associated with women (e.g. "smart", "loving", "happy", "sad"). We also see "crazy" and "confusing" more closely associated with women, reflecting the stereotype of women as instable and hysterical.
           
-          On the other hand, men, stereotyped as being emotionless and angry, are associated with traits like "stupid" and "confused". We also see masculine-leaning emotion words fall closer to neutral than feminine-leaning emotion words i.e. there is less discussion of male emotions in general.' 
+          On the other hand, men, stereotyped as being emotionless and angry, are associated with traits like "stupid" and "confused". We also see masculine-leaning emotion words fall closer to neutral than feminine-leaning emotion words i.e. there is less discussion of male emotions in general.'
           howItWasCreated="TODO"
           howToUse="TODO"
         >
@@ -164,11 +163,11 @@ This observation suggests that longer narratives allow for more nuanced and vari
               "scared",
               "stupid",
               "emotional",
-              "confused", 
-              "loving", 
-              "guilty", 
+              "confused",
+              "loving",
+              "guilty",
               "smart",
-              "confusing"
+              "confusing",
             ]}
           />
         </Card>
@@ -183,7 +182,14 @@ This observation suggests that longer narratives allow for more nuanced and vari
             axis={["boy", "girl"]}
             axisEditable={false}
             points={[
-              "angry", "sad", "scared", "stupid", "emotional", "confused", "guilty", "emotional"
+              "angry",
+              "sad",
+              "scared",
+              "stupid",
+              "emotional",
+              "confused",
+              "guilty",
+              "emotional",
             ]}
           />
         </Card>
@@ -207,7 +213,7 @@ This observation suggests that longer narratives allow for more nuanced and vari
               "fear",
               "wish",
             ]}
-          /> 
+          />
         </Card>
 
         {/* ********************************* TOPIC MODELING CARDS START HERE ********************************* */}

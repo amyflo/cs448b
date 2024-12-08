@@ -81,40 +81,70 @@ export default function Hero() {
       ))}
 
       {/* Content */}
-      <div className="relative z-10 max-w-4xl px-6 backdrop-blur-sm rounded-xl">
+      <div className="relative z-10 max-w-4xl backdrop-blur-sm rounded-xl">
         <h1 className="text-4xl font-serif md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in">
           Exploring how love is expressed in{" "}
           <span className="text-pink-400">r/LoveLetters</span>
         </h1>
-        <p
-          className="max-w-lg mx-auto text-lg font-serif md:text-xl leading-relaxed mb-8 animate-fade-in delay-500"
-          style={{
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
+        <p className="max-w-xl mx-auto text-lg font-serif leading-relaxed animate-fade-in delay-500">
           r/LoveLetters is a subreddit where users share heartfelt stories of
-          love, gratitude, and heartbreak. We explore how r/LoveLetters has{" "}
-          <span className="text-pink-600 font-semibold">
+          love, gratitude, and heartbreak online. We explore how r/LoveLetters
+          has{" "}
+          <span className="text-pink-400 font-semibold">
             grown and changed over time
           </span>
           , examine{" "}
-          <span className="text-pink-600 font-semibold">
+          <span className="text-pink-400 font-semibold">
             sentiment patterns
           </span>{" "}
           and{" "}
-          <span className="text-pink-600 font-semibold">word associations</span>
+          <span className="text-pink-400 font-semibold">word associations</span>
           , and uncover{" "}
-          <span className="text-pink-600 font-semibold">
-            themes that emerge across love letters
+          <span className="text-pink-400 font-semibold">
+            themes that emerge across love letters{" "}
           </span>
           from April 2021 to November 2024.
         </p>
-        <Link className="text-pink-600 hover:text-pink-700" href="/about">
-          Explore how we process the data
-        </Link>
 
-        <p className="text-5xl mt-8 animate-pulse">↓</p>
+        <div className="flex flex-row text-gray-700 mx-auto justify-center gap-4 mb-8">
+          <Link className="text-pink-600 hover:text-pink-700" href="/about">
+            Explore how we process the data
+          </Link>
+          //
+          <Link
+            className="text-pink-600 hover:text-pink-700"
+            href="https://github.com/amyflo/cs448b"
+          >
+            View our code for the project
+          </Link>
+          //
+          {/* TODO: AMY UPDATE */}
+          <Link
+            className="text-pink-600 hover:text-pink-700"
+            href="https://youtube.com"
+          >
+            Watch our demo video
+          </Link>
+        </div>
+
+        <div className="pt-4 font-serif">
+          <p className="text-lg font-semibold text-pink-400 mb-2">
+            Guiding Questions
+          </p>
+          <div className="text-gray-700">
+            <p className="font-medium">
+              How has r/LoveLetters grown and changed over time?
+              <br />
+              How does sentiment shape the love letters in r/LoveLetters?
+              <br />
+              What can the connections between words in love letters reveal?
+              <br />
+              What topics emerge across love letters shared in r/LoveLetters?
+            </p>
+          </div>
+        </div>
+
+        <p className="text-5xl m-0 font-bold animate-pulse">↓</p>
       </div>
 
       {/* Floating Heart Animations */}
