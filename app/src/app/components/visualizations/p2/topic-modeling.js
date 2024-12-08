@@ -343,6 +343,12 @@ const TSNEVisualization = ({
     const legendContainer = d3.select(`#${id}-legend`);
     legendContainer.selectAll("*").remove();
 
+    legendContainer
+      .append("text")
+      .text("Topics")
+      .style("font-size", "12px")
+      .style("font-weight", "bold");
+
     // for each topic, get color and append to legend
     colors.forEach((color, index) => {
       // console.log("Legend item created for topic:", index); // Debugging log
@@ -368,7 +374,7 @@ const TSNEVisualization = ({
               </ul>`
             )
             .style("left", `${10}px`)
-            .style("top", `${375}px`);
+            .style("top", `${400}px`);
         })
         .on("mouseout", () => {
           tooltipTopic.transition().duration(200).style("opacity", 0);

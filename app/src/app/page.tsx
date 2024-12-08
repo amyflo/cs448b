@@ -322,6 +322,7 @@ Authors often **compare their present selves to their past**, reminiscing about 
           <TopicVisualization
             id="tsne08"
             key="tsne08"
+            editable={false}
             title="Title of Visualization"
             activeTopics={new Set([0, 8])}
           />
