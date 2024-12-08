@@ -182,8 +182,8 @@ const TSNEVisualization = ({
             .html(
               `<strong style="font-size: 12px">${topLabel}</strong><br><p style="font-style: italic; font-size: 12px; color: #fff; margin: 0;">"${letter.title}"</p></h3>`
             )
-            .style("left", `${tooltipX - 140}px`)
-            .style("top", `${tooltipY - 120}px`);
+            .style("left", `${tooltipX}px`)
+            .style("top", `${tooltipY}px`);
         })
         .on("mouseout", () => {
           tooltip.transition().duration(200).style("opacity", 0);
