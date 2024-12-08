@@ -90,7 +90,7 @@ const TransitionScreen: React.FC<TransitionScreenProps> = ({
 
       {/* Description */}
       <p
-        className="max-w-xl relative z-10 text-lg md:text-xl text-gray-800 font-serif font-light leading-relaxed text-left"
+        className="max-w-xl relative z-10 text-lg md:text-xl text-gray-800 font-serif font-light text-center leading-relaxed text-left"
         style={{
           animation: "fadeIn 1s ease-in-out",
           animationDelay: "0.5s",
