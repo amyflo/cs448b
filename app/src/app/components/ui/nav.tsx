@@ -55,11 +55,10 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            {/* TODO: AMY UPDATE */}
             <div className="bg-pink-400 p-1 px-2 rounded-lg hover:bg-pink-500">
               <Link
                 className="text-pink-50 hover:text-pink-100"
-                href="https://youtube.com"
+                href="https://youtu.be/ti_n7dAzWcA"
               >
                 Watch our demo
               </Link>
